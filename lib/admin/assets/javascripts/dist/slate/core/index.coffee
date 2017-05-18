@@ -1,0 +1,11 @@
+#= require ../../jquery/jquery
+#= require ../../swagger/swagger-client
+#= require ../../lodash/lodash
+#= require ../../moment/moment
+#= require ../../kube/Core/Kube
+#= require ../../kube/Core/Kube.Plugin
+#= require ../../kube/Core/Kube.Utils
+#= require ../../kube/Core/Kube.Detect
+#= require ../../kube/Core/Kube.Animation
+#= require ../../kube/Core/Kube.Formdata
+#= require ../../kube/Core/Kube.Response

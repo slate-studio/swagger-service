@@ -1,0 +1,40 @@
+/%PATH%:
+  x-swagger-router-controller: %CONTROLLER%
+  get:
+    tags:
+      - %TAG%
+    operationId: %OPERATION%
+    parameters:
+      -
+        name: page
+        type: integer
+        format: int32
+        in: query
+        description: Results page number
+        required: false
+      -
+        name: perPage
+        type: integer
+        format: int32
+        in: query
+        description: Results per page
+        required: false
+      -
+        name: search
+        type: string
+        in: query
+        description: Search
+        required: false
+      -
+        name: only
+        type: string
+        in: query
+        description: Return only specific fields
+        required: false
+    responses:
+      200:
+        description: OK
+        schema:
+          type: array
+          items:
+            $ref: "#/definitions/%MODEL%"

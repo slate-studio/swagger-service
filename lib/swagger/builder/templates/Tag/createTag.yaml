@@ -1,0 +1,18 @@
+/%PATH%:
+  x-swagger-router-controller: %CONTROLLER%
+  post:
+    tags:
+      - %TAG%
+    operationId: %OPERATION%
+    parameters:
+      -
+        name: %INSTANCE%
+        in: body
+        required: true
+        schema:
+          $ref: "#/definitions/%MODEL%Input"
+    responses:
+      201:
+        description: Created
+        schema:
+          $ref: "#/definitions/%MODEL%"

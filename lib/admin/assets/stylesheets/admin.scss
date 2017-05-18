@@ -1,0 +1,16 @@
+@import 'kube/kube';
+
+.mb1 { margin-bottom: 1em; }
+
+.admin { padding: 2em; }
+
+table th { white-space: nowrap; }
+table th h6 { margin: 0; }
+
+.modal-header { padding: 14px 1em; }
+.modal-body { padding: 0; }
+
+.admin-modal > section { padding: 1.25em; }
+.admin-modal > footer {
+  padding: 1.25em;
+  border-top: 1px solid rgba(0, 0, 0, .05); }

@@ -1,0 +1,65 @@
+{
+  "name": "swagger-service",
+  "description": "Boilerplate for swagger based node.js micro services",
+  "tags": [
+    "swagger",
+    "node",
+    "mongoose",
+    "rabbitmq",
+    "express",
+    "api",
+    "redis"
+  ],
+  "version": "0.1.0",
+  "author": "Alexander Kravets <alex@slatestudio.com>",
+  "contributors": [
+    {
+      "name": "Denis Popov",
+      "email": "denis@slatestudio.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/slate-studio/swagger-service.git"
+  },
+  "bugs": {
+    "url": "http://github.com/slate-studio/swagger-service/issues"
+  },
+  "engines": [
+    "node >= 4.0"
+  ],
+  "main": "./index",
+  "dependencies": {
+    "amqplib": "^0.5.1",
+    "app-root-path": "^2.0.1",
+    "bunyan": "^1.8.10",
+    "bunyan-logstash": "^0.3.4",
+    "chai": "^3.5.0",
+    "coffee-script": "^1.12.6",
+    "config": "^1.26.1",
+    "connect-assets": "^5.4.0",
+    "database-cleaner": "^1.2.0",
+    "eslint": "^3.19.0",
+    "express": "^4.15.2",
+    "factory-girl": "^4.2.2",
+    "faker": "^4.1.0",
+    "hbs": "^4.0.1",
+    "istanbul": "^0.4.5",
+    "lodash": "^4.17.4",
+    "mocha": "^3.4.1",
+    "mongoose": "^4.9.9",
+    "mongoose-auto-increment": "^5.0.1",
+    "mongoose-timestamp": "^0.6.0",
+    "nock": "^9.0.13",
+    "node-sass": "^4.5.2",
+    "nsp": "^2.6.3",
+    "pm2": "^2.4.6",
+    "redis": "^2.7.1",
+    "request": "^2.81.0",
+    "response-time": "^2.3.2",
+    "supertest": "^3.0.0",
+    "swagger-client": "^3.0.10",
+    "swagger-express-mw": "^0.7.0"
+  },
+  "license": "ISC"
+}
