@@ -1,9 +1,9 @@
 'use strict'
 
 const initialize = () => {
-  global._             = require('lodash')
-  global._rootPath     = require('app-root-path')
-  global._version      = require(`${_rootPath}/package.json`).version
+  global._         = require('lodash')
+  global._rootPath = require('app-root-path')
+  global._version  = require(`${_rootPath}/package.json`).version
 
   require('./lib/config')
   require('./lib/logger')
@@ -24,14 +24,10 @@ const swaggerServices = () => {
     const Service = require('./lib/swagger/service')
 
     _.forEach(C.services, (config, projectName) => {
-      const serviceName    = config.name
-      const serviceSwagger = config.swagger
-      const serviceLocal   = config.local
+      const spec = require(`${_rootPath}/${config.spec}`)
+      spec.host  = config.host
 
-      const service = new Service(serviceName, serviceSwagger, serviceLocal)
-      service.initialize()
-
-      Services[serviceName] = service
+      Services[config.name] = new Service(config.name, spec)
     })
   }
 }
