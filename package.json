@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.1.5",
+  "version": "0.1.6",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -56,6 +56,7 @@
     "pm2": "^2.4.6",
     "redis": "^2.7.1",
     "request": "^2.81.0",
+    "request-promise-native": "^1.0.4",
     "response-time": "^2.3.2",
     "supertest": "^3.0.0",
     "swagger-client": "^3.0.10",

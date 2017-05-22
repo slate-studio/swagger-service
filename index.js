@@ -42,13 +42,7 @@ const expressLog = (express) => {
 const expressHealth = (express) => {
   const health = require('./lib/express/health')
 
-  const options = {
-    version:  _version,
-    name:     _serviceName,
-    services: C.services
-  }
-
-  express.get(`${_basePath}/health`, health(options))
+  express.get(`${_basePath}/health`, health)
 }
 
 const expressDocumentation = (express) => {
