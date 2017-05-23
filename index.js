@@ -140,6 +140,11 @@ const mongodb = (callback) => {
   database.connect(callback)
 }
 
+const listen = (express) => {
+  log.info(`Listening on port ${C.service.port}`)
+  express.listen(C.service.port)
+}
+
 const expressSwagger = (express) => {
   const swaggerBuilder = require('swagger-express-mw')
   const config         = require('./lib/swagger/config')
@@ -151,13 +156,11 @@ const expressSwagger = (express) => {
     }
 
     swagger.register(express)
-
-    log.info(`Listening on port ${C.service.port}`)
-    express.listen(C.service.port)
+    listen()
   })
 }
 
-module.exports = () => {
+const swagger = () => {
   initialize()
   redis()
   swaggerServices()
@@ -175,4 +178,19 @@ module.exports = () => {
   }
 
   return service
+}
+
+module.exports = {
+  initialize:           initialize,
+  redis:                redis,
+  swaggerServices:      swaggerServices,
+  expressLog:           expressLog,
+  expressHealth:        expressHealth,
+  expressDocumentation: expressDocumentation,
+  expressAdmin:         expressAdmin,
+  express:              express,
+  mongodb:              mongodb,
+  listen:               listen,
+  expressSwagger:       expressSwagger,
+  swagger:              swagger
 }
