@@ -156,7 +156,7 @@ const expressSwagger = (express) => {
     }
 
     swagger.register(express)
-    listen()
+    listen(express)
   })
 }
 
