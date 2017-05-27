@@ -145,7 +145,7 @@ const listen = (express) => {
   express.listen(C.service.port)
 }
 
-const expressSwagger = (express) => {
+const expressSwagger = (express, callback) => {
   const swaggerBuilder = require('swagger-express-mw')
   const config         = require('./lib/swagger/config')
 
@@ -157,10 +157,14 @@ const expressSwagger = (express) => {
 
     swagger.register(express)
     listen(express)
+
+    if (callback) {
+      callback()
+    }
   })
 }
 
-const swagger = () => {
+const swagger = (callback) => {
   initialize()
   redis()
   swaggerServices()
@@ -169,11 +173,11 @@ const swagger = () => {
 
   if (C.mongodb) {
     mongodb(() => {
-      expressSwagger(service)
+      expressSwagger(service, callback)
     })
 
   } else {
-    expressSwagger(service)
+    expressSwagger(service, callback)
 
   }
 
