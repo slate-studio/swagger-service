@@ -20,14 +20,25 @@ const redis = () => {
 
 const swaggerServices = () => {
   if (C.services) {
-    global.Services = {}
+    const EventEmitter = require('events')
+    global.Services = new EventEmitter()
+    Services.servicesReadyCounter = _.keys(C.services).length
+
     const Service = require('./lib/swagger/service')
 
-    _.forEach(C.services, (config, projectName) => {
+    _.forEach(C.services, (config) => {
       const spec = require(`${_rootPath}/${config.spec}`)
       spec.host  = config.host
 
-      Services[config.name] = new Service(config.name, spec)
+      const service = new Service(config.name, spec)
+      service.on('ready', () => {
+        Services.servicesReadyCounter -= 1
+        if (Services.servicesReadyCounter == 0) {
+          Services.emit('ready')
+        }
+      })
+
+      Services[config.name] = service
     })
   }
 }
