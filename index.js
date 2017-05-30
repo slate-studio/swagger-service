@@ -28,9 +28,11 @@ const swaggerServices = () => {
 
     _.forEach(C.services, (config) => {
       const spec = require(`${_rootPath}/${config.spec}`)
-      spec.host  = config.host
+      const name = config.name
 
-      const service = new Service(config.name, spec)
+      spec.host = config.host
+
+      const service = new Service(name, spec)
       service.on('ready', () => {
         Services.servicesReadyCounter -= 1
         if (Services.servicesReadyCounter == 0) {
@@ -38,7 +40,7 @@ const swaggerServices = () => {
         }
       })
 
-      Services[config.name] = service
+      Services[name] = service
     })
   }
 }
