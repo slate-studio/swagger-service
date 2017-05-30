@@ -105,7 +105,6 @@ const express = () => {
   global._crud = require('./lib/express/crud')
 
   const express       = require('express')()
-  const bodyParser    = require('body-parser')
   const responseTime  = require('response-time')
   const connectAssets = require('connect-assets')
   const hbs           = require('hbs')
@@ -132,7 +131,6 @@ const express = () => {
   })
 
   express.set('view engine', 'hbs')
-  express.use(bodyParser.json({ limit: '5mb' }))
   express.use(responseTime())
 
   expressLog(express)
