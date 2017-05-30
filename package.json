@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.2.9",
+  "version": "0.2.10",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -43,6 +43,7 @@
     "express": "^4.15.2",
     "factory-girl": "^4.2.2",
     "faker": "^4.1.0",
+    "fast-json-patch": "1.1.10",
     "hbs": "^4.0.1",
     "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
