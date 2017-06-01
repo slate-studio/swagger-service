@@ -38,3 +38,19 @@
           type: array
           items:
             $ref: "#/definitions/%MODEL%"
+        headers:
+          X-Page:
+            description: Page number
+            type: integer
+          X-Total-Count:
+            description: Total results
+            type: integer
+          X-Pages-Count:
+            description: Number of pages
+            type: integer
+          X-Per-Page:
+            description: Number of results per page
+            type: integer
+          X-Next-Page:
+            description: Next page number
+            type: integer
