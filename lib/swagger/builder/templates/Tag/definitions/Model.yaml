@@ -1,0 +1,18 @@
+%MODEL%:
+  properties:
+# META ------------------------------------------------------------------------
+    _id:
+      type: string
+      description: Internal database document id
+    integerId:
+      type: number
+      description: Main document id
+    createdAt:
+      type: string
+      format: date-time
+      description: Time when document was created
+    updatedAt:
+      type: string
+      format: date-time
+      description: Time when document was updated
+# DATA ------------------------------------------------------------------------
