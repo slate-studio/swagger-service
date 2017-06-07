@@ -60,6 +60,7 @@
     "request-promise-native": "^1.0.4",
     "response-time": "^2.3.2",
     "supertest": "^3.0.0",
+    "swagger-admin": "0.0.1",
     "swagger-client": "^3.0.10",
     "swagger-express-mw": "^0.7.0",
     "yamljs": "^0.2.10"

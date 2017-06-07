@@ -60,18 +60,17 @@ const expressHealth = (express) => {
 
 const expressDocumentation = (express) => {
   const staticServer = require('express').static
-  const assetsPath   = `${__dirname}/lib/swagger/ui/assets`
+  const assetsPath = `./node_modules/swagger-ui-dist`
   const viewPath     = `${__dirname}/lib/swagger/ui/index.hbs`
   const serviceTitle = _.upperFirst(_serviceName)
   const swaggerUrl   = '/swagger'
-
-  express.use(`${_basePath}/doc`, staticServer(assetsPath))
   express.get(`${_basePath}/doc`, (req, res) => {
     return res.render(viewPath, {
       title: serviceTitle,
       url:   swaggerUrl
     })
   })
+  express.use(`${_basePath}/doc`, staticServer(assetsPath))
 }
 
 const expressAdmin = (express) => {
@@ -108,29 +107,10 @@ const express = () => {
 
   const express       = require('express')()
   const responseTime  = require('response-time')
-  const connectAssets = require('connect-assets')
   const hbs           = require('hbs')
+  const admin         = require('swagger-admin')
 
-  const assets = connectAssets({
-    paths: [
-      `${__dirname}/lib/admin/assets/javascripts`,
-      `${__dirname}/lib/admin/assets/stylesheets`
-    ],
-    fingerprinting: true,
-    sourceMaps:     false
-  })
-
-  express.use(assets)
-
-  hbs.registerHelper('css', function() {
-    const css = assets.options.helperContext.css.apply(this, arguments)
-    return new hbs.SafeString(css)
-  })
-
-  hbs.registerHelper('js', function() {
-    const js = assets.options.helperContext.js.apply(this, arguments)
-    return new hbs.SafeString(js)
-  })
+  express.use(admin.assets)
 
   express.set('view engine', 'hbs')
   express.use(responseTime())
