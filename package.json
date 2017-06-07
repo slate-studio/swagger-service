@@ -63,6 +63,7 @@
     "swagger-admin": "0.0.1",
     "swagger-client": "^3.0.10",
     "swagger-express-mw": "^0.7.0",
+    "swagger-ui-dist": "^3.0.13",
     "yamljs": "^0.2.10"
   },
   "license": "ISC"
