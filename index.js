@@ -77,31 +77,16 @@ const expressAdmin = (express) => {
   if (_.keys(C.admin).length == 0 ) {
     return
   }
-  const connectAssets = require('connect-assets')
-  const hbs           = require('hbs')
+
+  const staticServer = require('express').static
   const viewPath      = `${__dirname}/lib/admin/index.hbs`
   const serviceTitle  = _.upperFirst(_serviceName)
   const swaggerUrl    = '/swagger'
   const firstTag      = C.admin[_.keys(C.admin)[0]].tag
 
-  const assets = connectAssets({
-    paths: [
-      `./node_modules/swagger-admin/assets/javascripts`,
-      `./node_modules/swagger-admin/assets/stylesheets`
-    ],
-    fingerprinting: true,
-    sourceMaps:     false
-  })
+  const assetsPath = `./node_modules/swagger-admin/dist`
 
-  hbs.registerHelper('css', function() {
-    const css = assets.options.helperContext.css.apply(this, arguments)
-    return new hbs.SafeString(css)
-  })
-
-  hbs.registerHelper('js', function() {
-    const js = assets.options.helperContext.js.apply(this, arguments)
-    return new hbs.SafeString(js)
-  })
+  express.use(`${_basePath}/admin`, staticServer(assetsPath))
 
   express.get(`${_basePath}/admin/:tag`, (req, res) => {
     const tag   = req.params.tag
@@ -120,6 +105,7 @@ const expressAdmin = (express) => {
   express.get(`${_basePath}/admin`, (req, res) => {
     return res.redirect(`${_basePath}/admin/${firstTag}`)
   })
+
 }
 
 const express = () => {
@@ -133,7 +119,6 @@ const express = () => {
   expressLog(express)
   expressHealth(express)
   expressDocumentation(express)
-  expressAdmin(express)
 
   if (C.admin) {
     expressAdmin(express)
