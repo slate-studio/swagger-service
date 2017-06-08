@@ -78,10 +78,15 @@ const expressAdmin = (express) => {
     return
   }
 
-  const viewPath     = `${__dirname}/lib/admin/index.hbs`
-  const serviceTitle = _.upperFirst(_serviceName)
-  const swaggerUrl   = '/swagger'
-  const firstTag     = C.admin[_.keys(C.admin)[0]].tag
+  const staticServer = require('express').static
+  const viewPath      = `${__dirname}/lib/admin/index.hbs`
+  const serviceTitle  = _.upperFirst(_serviceName)
+  const swaggerUrl    = '/swagger'
+  const firstTag      = C.admin[_.keys(C.admin)[0]].tag
+
+  const assetsPath = `./node_modules/swagger-admin/dist`
+
+  express.use(`${_basePath}/admin`, staticServer(assetsPath))
 
   express.get(`${_basePath}/admin/:tag`, (req, res) => {
     const tag   = req.params.tag
@@ -100,6 +105,7 @@ const expressAdmin = (express) => {
   express.get(`${_basePath}/admin`, (req, res) => {
     return res.redirect(`${_basePath}/admin/${firstTag}`)
   })
+
 }
 
 const express = () => {
@@ -107,12 +113,7 @@ const express = () => {
 
   const express       = require('express')()
   const responseTime  = require('response-time')
-  const hbs           = require('hbs')
-  const admin         = require('swagger-admin')
-
-  express.use(admin.assets)
-
-  express.set('view engine', 'hbs')
+  
   express.use(responseTime())
 
   expressLog(express)
