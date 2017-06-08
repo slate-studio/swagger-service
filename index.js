@@ -60,16 +60,18 @@ const expressHealth = (express) => {
 
 const expressDocumentation = (express) => {
   const staticServer = require('express').static
-  const assetsPath = `./node_modules/swagger-ui-dist`
+  const assetsPath   = `./node_modules/swagger-ui-dist`
   const viewPath     = `${__dirname}/lib/swagger/ui/index.hbs`
   const serviceTitle = _.upperFirst(_serviceName)
   const swaggerUrl   = '/swagger'
+
   express.get(`${_basePath}/doc`, (req, res) => {
     return res.render(viewPath, {
       title: serviceTitle,
       url:   swaggerUrl
     })
   })
+
   express.use(`${_basePath}/doc`, staticServer(assetsPath))
 }
 
@@ -79,12 +81,11 @@ const expressAdmin = (express) => {
   }
 
   const staticServer = require('express').static
-  const viewPath      = `${__dirname}/lib/admin/index.hbs`
-  const serviceTitle  = _.upperFirst(_serviceName)
-  const swaggerUrl    = '/swagger'
-  const firstTag      = C.admin[_.keys(C.admin)[0]].tag
-
-  const assetsPath = `./node_modules/swagger-admin/dist`
+  const assetsPath   = `./node_modules/swagger-admin/dist`
+  const viewPath     = `${__dirname}/lib/admin/index.hbs`
+  const serviceTitle = _.upperFirst(_serviceName)
+  const swaggerUrl   = '/swagger'
+  const firstTag     = C.admin[_.keys(C.admin)[0]].tag
 
   express.use(`${_basePath}/admin`, staticServer(assetsPath))
 
@@ -94,26 +95,25 @@ const expressAdmin = (express) => {
     const model = C.admin[title].model
 
     return res.render(viewPath, {
-      serviceTitle:  serviceTitle,
-      url:           swaggerUrl,
-      title:         title,
-      tag:           tag,
-      model:         model
+      serviceTitle: serviceTitle,
+      url:          swaggerUrl,
+      title:        title,
+      tag:          tag,
+      model:        model
     })
   })
 
   express.get(`${_basePath}/admin`, (req, res) => {
     return res.redirect(`${_basePath}/admin/${firstTag}`)
   })
-
 }
 
 const express = () => {
   global._crud = require('./lib/express/crud')
 
-  const express       = require('express')()
-  const responseTime  = require('response-time')
-  
+  const express      = require('express')()
+  const responseTime = require('response-time')
+
   express.use(responseTime())
 
   expressLog(express)

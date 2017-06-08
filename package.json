@@ -10,12 +10,16 @@
     "api",
     "redis"
   ],
-  "version": "0.2.13",
+  "version": "0.3.0",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
       "name": "Denis Popov",
       "email": "denis@slatestudio.com"
+    },
+    {
+      "name": "Artem Simonenkov",
+      "email": "artem@slatestudio.com"
     }
   ],
   "repository": {
@@ -35,15 +39,12 @@
     "bunyan": "^1.8.10",
     "bunyan-logstash": "^0.3.4",
     "chai": "^3.5.0",
-    "coffee-script": "^1.12.6",
     "config": "^1.26.1",
-    "connect-assets": "^5.4.0",
     "database-cleaner": "^1.2.0",
     "eslint": "^3.19.0",
     "express": "^4.15.2",
     "factory-girl": "^4.2.2",
     "faker": "^4.1.0",
-    "fast-json-patch": "1.1.10",
     "hbs": "^4.0.1",
     "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
@@ -52,7 +53,6 @@
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-timestamp": "^0.6.0",
     "nock": "^9.0.13",
-    "node-sass": "^4.5.2",
     "nsp": "^2.6.3",
     "pm2": "^2.4.6",
     "redis": "^2.7.1",
@@ -61,7 +61,7 @@
     "response-time": "^2.3.2",
     "supertest": "^3.0.0",
     "swagger-admin": "^0.0.5",
-    "swagger-client": "^3.0.10",
+    "swagger-client": "^3.0.13",
     "swagger-express-mw": "^0.7.0",
     "swagger-ui-dist": "^3.0.13",
     "yamljs": "^0.2.10"
