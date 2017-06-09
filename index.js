@@ -60,7 +60,7 @@ const expressHealth = (express) => {
 
 const expressDocumentation = (express) => {
   const staticServer = require('express').static
-  const assetsPath   = `./node_modules/swagger-ui-dist`
+  const assetsPath   = `./node_modules/swagger-ui/dist`
   const viewPath     = `${__dirname}/lib/swagger/ui/index.hbs`
   const serviceTitle = _.upperFirst(_serviceName)
   const swaggerUrl   = '/swagger'

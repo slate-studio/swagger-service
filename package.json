@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -63,7 +63,7 @@
     "swagger-admin": "^0.0.5",
     "swagger-client": "^3.0.13",
     "swagger-express-mw": "^0.7.0",
-    "swagger-ui-dist": "^3.0.13",
+    "swagger-ui": "github:slate-studio/swagger-ui",
     "yamljs": "^0.2.10"
   },
   "license": "ISC"
