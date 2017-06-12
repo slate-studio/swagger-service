@@ -60,7 +60,7 @@
     "request-promise-native": "^1.0.4",
     "response-time": "^2.3.2",
     "supertest": "^3.0.0",
-    "swagger-admin": "^0.0.6",
+    "swagger-admin": "0.0.6",
     "swagger-client": "^3.0.13",
     "swagger-express-mw": "^0.7.0",
     "swagger-ui-dist": "^3.0.14",
