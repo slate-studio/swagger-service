@@ -54,8 +54,13 @@ const expressLog = (express) => {
 
 const expressHealth = (express) => {
   const health = require('./lib/express/health')
+  const cors   = require('cors')
 
-  express.get(`${_basePath}/health`, health)
+  if (process.env.NODE_ENV == 'production') {
+    express.get(`${_basePath}/health`, health)
+  } else {
+    express.get(`${_basePath}/health`, cors(), health)
+  }
 }
 
 const expressDocumentation = (express) => {
