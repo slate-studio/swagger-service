@@ -54,8 +54,21 @@ const expressLog = (express) => {
 
 const expressHealth = (express) => {
   const health = require('./lib/express/health')
+  const cors   = require('cors')
 
-  express.get(`${_basePath}/health`, health)
+  var corsOptions = {
+    origin: function (origin, callback) {
+
+      if (process.env.NODE_ENV != 'production1') {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+
+    }
+  }
+
+  express.get(`${_basePath}/health`, cors(corsOptions), health)
 }
 
 const expressDocumentation = (express) => {
