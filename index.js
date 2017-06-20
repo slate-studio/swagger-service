@@ -56,12 +56,10 @@ const expressHealth = (express) => {
   const health = require('./lib/express/health')
   const cors   = require('cors')
 
-  if (process.env.NODE_ENV != 'production') {
-    express.get(`${_basePath}/health`, cors(), health)
-
-  } else {
+  if (process.env.NODE_ENV == 'production') {
     express.get(`${_basePath}/health`, health)
-
+  } else {
+    express.get(`${_basePath}/health`, cors(), health)
   }
 }
 
