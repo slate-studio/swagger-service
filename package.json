@@ -36,10 +36,13 @@
   "dependencies": {
     "amqplib": "^0.5.1",
     "app-root-path": "^2.0.1",
+    "bluebird": "^3.5.0",
     "bunyan": "^1.8.10",
     "bunyan-logstash": "^0.3.4",
     "chai": "^3.5.0",
+    "cls-bluebird": "^2.0.1",
     "config": "^1.26.1",
+    "continuation-local-storage": "^3.2.0",
     "cors": "^2.8.3",
     "database-cleaner": "^1.2.0",
     "eslint": "^3.19.0",

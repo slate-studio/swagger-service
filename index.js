@@ -1,4 +1,10 @@
 'use strict'
+const createNamespace = require('continuation-local-storage').createNamespace
+const namespace = createNamespace('requestNamespace')
+
+global.Promise=require("bluebird")
+var clsBluebird = require('cls-bluebird')
+clsBluebird(namespace)
 
 const initialize = () => {
   global._         = require('lodash')
@@ -161,6 +167,20 @@ const expressSwagger = (express, callback) => {
   })
 }
 
+const trackRequests = (express) => {
+    express.use((req, res, next) => {
+        const requestId = req.headers['x-request-id'];
+        log.info('creating namespace for ', req.method, req.url, requestId);
+
+        namespace.bindEmitter(req);
+        namespace.bindEmitter(res);
+        namespace.run(() => {
+            namespace.set('requestId', requestId);
+            next();
+        });
+    })
+}
+
 const swagger = (callback) => {
   initialize()
   redis()
@@ -175,8 +195,9 @@ const swagger = (callback) => {
 
   } else {
     expressSwagger(service, callback)
-
   }
+
+  trackRequests(service);
 
   return service
 }
