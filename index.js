@@ -1,4 +1,10 @@
 'use strict'
+const createNamespace = require('continuation-local-storage').createNamespace
+const namespace = createNamespace('requestNamespace')
+
+global.Promise=require("bluebird")
+var clsBluebird = require('cls-bluebird')
+clsBluebird(namespace)
 
 const initialize = () => {
   global._         = require('lodash')
@@ -54,24 +60,30 @@ const expressLog = (express) => {
 
 const expressHealth = (express) => {
   const health = require('./lib/express/health')
+  const cors   = require('cors')
 
-  express.get(`${_basePath}/health`, health)
+  if (process.env.NODE_ENV == 'production') {
+    express.get(`${_basePath}/health`, health)
+  } else {
+    express.get(`${_basePath}/health`, cors(), health)
+  }
 }
 
 const expressDocumentation = (express) => {
   const staticServer = require('express').static
-  const assetsPath   = `${__dirname}/lib/swagger/ui/assets`
+  const assetsPath   = `./node_modules/swagger-ui-dist`
   const viewPath     = `${__dirname}/lib/swagger/ui/index.hbs`
   const serviceTitle = _.upperFirst(_serviceName)
   const swaggerUrl   = '/swagger'
 
-  express.use(`${_basePath}/doc`, staticServer(assetsPath))
   express.get(`${_basePath}/doc`, (req, res) => {
     return res.render(viewPath, {
       title: serviceTitle,
       url:   swaggerUrl
     })
   })
+
+  express.use(`${_basePath}/doc`, staticServer(assetsPath))
 }
 
 const expressAdmin = (express) => {
@@ -79,10 +91,14 @@ const expressAdmin = (express) => {
     return
   }
 
+  const staticServer = require('express').static
+  const assetsPath   = `./node_modules/swagger-admin/dist`
   const viewPath     = `${__dirname}/lib/admin/index.hbs`
   const serviceTitle = _.upperFirst(_serviceName)
   const swaggerUrl   = '/swagger'
   const firstTag     = C.admin[_.keys(C.admin)[0]].tag
+
+  express.use(`${_basePath}/admin`, staticServer(assetsPath))
 
   express.get(`${_basePath}/admin/:tag`, (req, res) => {
     const tag   = req.params.tag
@@ -90,11 +106,11 @@ const expressAdmin = (express) => {
     const model = C.admin[title].model
 
     return res.render(viewPath, {
-      serviceTitle:  serviceTitle,
-      url:           swaggerUrl,
-      title:         title,
-      tag:           tag,
-      model:         model
+      serviceTitle: serviceTitle,
+      url:          swaggerUrl,
+      title:        title,
+      tag:          tag,
+      model:        model
     })
   })
 
@@ -106,33 +122,9 @@ const expressAdmin = (express) => {
 const express = () => {
   global._crud = require('./lib/express/crud')
 
-  const express       = require('express')()
-  const responseTime  = require('response-time')
-  const connectAssets = require('connect-assets')
-  const hbs           = require('hbs')
+  const express      = require('express')()
+  const responseTime = require('response-time')
 
-  const assets = connectAssets({
-    paths: [
-      `${__dirname}/lib/admin/assets/javascripts`,
-      `${__dirname}/lib/admin/assets/stylesheets`
-    ],
-    fingerprinting: true,
-    sourceMaps:     false
-  })
-
-  express.use(assets)
-
-  hbs.registerHelper('css', function() {
-    const css = assets.options.helperContext.css.apply(this, arguments)
-    return new hbs.SafeString(css)
-  })
-
-  hbs.registerHelper('js', function() {
-    const js = assets.options.helperContext.js.apply(this, arguments)
-    return new hbs.SafeString(js)
-  })
-
-  express.set('view engine', 'hbs')
   express.use(responseTime())
 
   expressLog(express)
@@ -175,6 +167,20 @@ const expressSwagger = (express, callback) => {
   })
 }
 
+const trackRequests = (express) => {
+    express.use((req, res, next) => {
+        const requestId = req.headers['x-request-id'];
+        log.info('creating namespace for ', req.method, req.url, requestId);
+
+        namespace.bindEmitter(req);
+        namespace.bindEmitter(res);
+        namespace.run(() => {
+            namespace.set('requestId', requestId);
+            next();
+        });
+    })
+}
+
 const swagger = (callback) => {
   initialize()
   redis()
@@ -189,8 +195,9 @@ const swagger = (callback) => {
 
   } else {
     expressSwagger(service, callback)
-
   }
+
+  trackRequests(service);
 
   return service
 }
