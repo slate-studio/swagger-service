@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.3.7",
+  "version": "0.3.8",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
