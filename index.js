@@ -3,7 +3,6 @@
 const cls = require('continuation-local-storage')
 
 const initialize = () => {
-  global._         = require('lodash')
   global._rootPath = require('app-root-path')
   global._version  = require(`${_rootPath}/package.json`).version
 
