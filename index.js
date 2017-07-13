@@ -1,10 +1,11 @@
 'use strict'
+
 const cls             = require('continuation-local-storage')
-
 const createNamespace = cls.createNamespace
-const namespace = createNamespace('requestNamespace')
+const namespace       = createNamespace('requestNamespace')
+const bluebird        = require('bluebird')
 
-global.Promise=require("bluebird")
+global.Promise = bluebird
 require('cls-bluebird')(namespace)
 
 const initialize = () => {
@@ -52,10 +53,18 @@ const swaggerServices = () => {
   }
 }
 
-const expressLog = (express) => {
+const expressLogRequests = express => {
   express.use((req, res, next) => {
-    log.info(req.method, req.url)
-    next()
+    const requestId = req.headers['x-request-id']
+
+    log.info({ requestId: requestId , method: req.method, url: req.url })
+
+    namespace.bindEmitter(req)
+    namespace.bindEmitter(res)
+    namespace.run(() => {
+      namespace.set('requestId', requestId)
+      next()
+    })
   })
 }
 
@@ -65,8 +74,10 @@ const expressHealth = (express) => {
 
   if (process.env.NODE_ENV == 'production') {
     express.get(`${_basePath}/health`, health)
+
   } else {
     express.get(`${_basePath}/health`, cors(), health)
+
   }
 }
 
@@ -128,7 +139,7 @@ const express = () => {
 
   express.use(responseTime())
 
-  expressLog(express)
+  expressLogRequests(express)
   expressHealth(express)
   expressDocumentation(express)
 
@@ -146,6 +157,7 @@ const mongodb = (callback) => {
 
 const listen = (express) => {
   log.info(`Listening on port ${C.service.port}`)
+
   express.listen(C.service.port)
 }
 
@@ -168,20 +180,6 @@ const expressSwagger = (express, callback) => {
   })
 }
 
-const trackRequests = express => {
-  express.use((req, res, next) => {
-    const requestId = req.headers['x-request-id']
-    log.info({ requestId: requestId , method: req.method, url: req.url })
-
-    namespace.bindEmitter(req)
-    namespace.bindEmitter(res)
-    namespace.run(() => {
-      namespace.set('requestId', requestId)
-      next()
-    })
-  })
-}
-
 const swagger = (callback) => {
   initialize()
   redis()
@@ -198,8 +196,6 @@ const swagger = (callback) => {
     expressSwagger(service, callback)
   }
 
-  trackRequests(service)
-
   return service
 }
 
@@ -207,7 +203,7 @@ module.exports = {
   initialize:           initialize,
   redis:                redis,
   swaggerServices:      swaggerServices,
-  expressLog:           expressLog,
+  expressLogRequests:   expressLogRequests,
   expressHealth:        expressHealth,
   expressDocumentation: expressDocumentation,
   expressAdmin:         expressAdmin,
