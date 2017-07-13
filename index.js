@@ -1,12 +1,5 @@
 'use strict'
-
-const cls             = require('continuation-local-storage')
-const createNamespace = cls.createNamespace
-const namespace       = createNamespace('requestNamespace')
-const bluebird        = require('bluebird')
-
-global.Promise = bluebird
-require('cls-bluebird')(namespace)
+let namespace
 
 const initialize = () => {
   global._         = require('lodash')
