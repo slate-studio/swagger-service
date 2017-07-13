@@ -1,12 +1,5 @@
 'use strict'
-
-const cls             = require('continuation-local-storage')
-const createNamespace = cls.createNamespace
-const namespace       = createNamespace('requestNamespace')
-const bluebird        = require('bluebird')
-
-global.Promise = bluebird
-require('cls-bluebird')(namespace)
+const cls    = require('continuation-local-storage')
 
 const initialize = () => {
   global._         = require('lodash')
@@ -58,7 +51,7 @@ const expressLogRequests = express => {
     const requestId = req.headers['x-request-id']
 
     log.info({ requestId: requestId , method: req.method, url: req.url })
-
+    const namespace = cls.getNamespace('loggerNamespace')
     namespace.bindEmitter(req)
     namespace.bindEmitter(res)
     namespace.run(() => {
