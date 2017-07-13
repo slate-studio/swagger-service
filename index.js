@@ -1,5 +1,4 @@
 'use strict'
-const cls       = require('continuation-local-storage')
 let namespace
 
 const initialize = () => {
@@ -9,13 +8,6 @@ const initialize = () => {
 
   require('./lib/config')
   require('./lib/logger')
-
-  // NOTE: logger has to be required here firs. loggerNamespace is created there.
-  namespace = cls.getNamespace('loggerNamespace')
-  const bluebird  = require('bluebird')
-
-  global.Promise = bluebird
-  require('cls-bluebird')(namespace)
 
   global._basePath    = C.service.basePath
   global._serviceName = C.service.name
