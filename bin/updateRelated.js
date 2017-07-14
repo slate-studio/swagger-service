@@ -18,7 +18,7 @@ const services = [
   'he-census',
   'he-schedule',
   'he-schedule-snapshots',
-  'he-schedule-payload',
+  'he-schedule-payloads',
   'he-accounts',
   'he-permissions',
   'he-auth-gate',
