@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.4.4",
+  "version": "0.4.5",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -42,10 +42,12 @@
     "bunyan-logstash": "^0.3.4",
     "chai": "^3.5.0",
     "cls-bluebird": "^2.0.1",
+    "columnify": "^1.5.4",
     "config": "^1.26.1",
     "continuation-local-storage": "^3.2.0",
     "cors": "^2.8.3",
     "database-cleaner": "^1.2.0",
+    "david": "^11.0.0",
     "eslint": "^3.19.0",
     "express": "^4.15.2",
     "factory-girl": "^4.2.2",
@@ -72,5 +74,13 @@
     "swagger-ui-dist": "^3.0.14",
     "yamljs": "^0.2.10"
   },
-  "license": "ISC"
+  "david": {
+    "ignore": []
+  },
+  "devDependencies": {},
+  "license": "ISC",
+  "scripts": {
+    "test": "node bin/davidTest.js",
+    "update": "david update"
+  }
 }
