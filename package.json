@@ -80,7 +80,6 @@
   "devDependencies": {},
   "license": "ISC",
   "scripts": {
-    "test": "node bin/davidTest.js",
     "update": "david update"
   }
 }
