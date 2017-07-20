@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.4.6",
+  "version": "0.4.7",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -34,6 +34,7 @@
   ],
   "main": "./index",
   "dependencies": {
+    "@astronomer/bunyan-udp": "^2.0.0",
     "agentkeepalive": "^3.3.0",
     "amqplib": "^0.5.1",
     "app-root-path": "^2.0.1",
@@ -57,21 +58,21 @@
     "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
     "mocha": "^3.4.1",
-    "mongoose": "^4.9.9",
+    "mongoose": "^4.11.3",
     "mongoose-auto-increment": "^5.0.1",
     "mongoose-timestamp": "^0.6.0",
-    "nock": "^9.0.13",
+    "nock": "^9.0.14",
     "nsp": "^2.6.3",
-    "pm2": "^2.4.6",
+    "pm2": "^2.6.0",
     "redis": "^2.7.1",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
     "response-time": "^2.3.2",
     "supertest": "^3.0.0",
     "swagger-admin": "^0.0.5",
-    "swagger-client": "^3.0.13",
+    "swagger-client": "^3.0.18",
     "swagger-express-mw": "^0.7.0",
-    "swagger-ui-dist": "^3.0.14",
+    "swagger-ui-dist": "^3.0.19",
     "yamljs": "^0.2.10"
   },
   "david": {
