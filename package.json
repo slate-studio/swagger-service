@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.5.3",
+  "version": "0.5.4",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -30,7 +30,7 @@
     "url": "http://github.com/slate-studio/swagger-service/issues"
   },
   "engines": [
-    "node >= 4.0"
+    "node >= 8.0"
   ],
   "main": "./index",
   "dependencies": {
