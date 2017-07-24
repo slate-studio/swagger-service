@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.5.4",
+  "version": "0.5.5",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -20,6 +20,14 @@
     {
       "name": "Artem Simonenkov",
       "email": "artem@slatestudio.com"
+    },
+    {
+      "name": "Sergey Oprya",
+      "email": "sergey@slatestudio.com"
+    },
+    {
+      "name": "Andrey Pospelov",
+      "email": "andrey@slatestudio.com"
     }
   ],
   "repository": {
