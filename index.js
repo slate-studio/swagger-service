@@ -49,8 +49,10 @@ const swaggerServices = () => {
 const expressLogRequests = express => {
   express.use((req, res, next) => {
     const requestId = req.headers['x-request-id']
+    const method    = req.method
+    const path      = req.url
 
-    log.info({ requestId: requestId , method: req.method, url: req.url })
+    log.info({ requestId: requestId }, `${method} ${path}`)
 
     const namespace = cls.getNamespace('loggerNamespace')
 
