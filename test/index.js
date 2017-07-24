@@ -1,27 +1,30 @@
-'use strict'
+"use strict";
+var bunyanUdp   = require('@astronomer/bunyan-udp');
+var Logger      = require('bunyan');
+var _           = require('lodash');
 
-global.Promise = require('bluebird')
-global._       = require('lodash')
+const C={
+  logstash: {
+    host:"192.168.99.100",
+    port: 5959
+  },
+  service : {
+    name: "test"
+  }
+}
 
-const cls       = require('continuation-local-storage')
-const namespace = cls.createNamespace('loggerNamespace')
-require('cls-bluebird')(namespace)
-
-const Logger                   = require('bunyan')
-const bunyanUdp                = require('@astronomer/bunyan-udp')
-const unhandledErrorsTracking  = require('./unhandledProcessErrors')
 
 const udpStream = bunyanUdp.createStream({
   host: C.logstash.host,
-  port: C.logstash.port || 5959
+  port: C.logstash.port
 })
 
 const bunyan = new Logger({
   name: C.service.name,
   streams: [
     {
-      type: 'stream',
-      level: 'debug',
+      type: "stream",
+      level: "debug",
       stream: udpStream
     },
     {
@@ -30,11 +33,10 @@ const bunyan = new Logger({
     }
   ],
 })
-
-bunyan.level('debug')
+bunyan.level("debug")
 
 const extendObjectWithRequestId = (...args) => {
-  const requestId = namespace.get('requestId')
+  const requestId = "abcd-1234-wsxc-rfvb"
 
   if (args[0] && requestId) {
     if (_.isObject(args[0])) {
@@ -69,4 +71,11 @@ log.fatal = (...args) => bunyan.fatal(...extendObjectWithRequestId(...args))
 
 global.log = log
 
-unhandledErrorsTracking.start()
+const obj = { time: new Date(), msg: 'Test1', testField: 1 }
+
+//log.info({abcd:"efgh1"},JSON.stringify(obj));
+require('./unhandledProcessErrors')
+//log.debug({abcd:"efgh2"},JSON.stringify(obj));
+
+
+setTimeout(() => {console.log('exiting')}, 5000);
