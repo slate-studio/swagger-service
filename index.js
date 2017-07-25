@@ -46,21 +46,6 @@ const swaggerServices = () => {
   }
 }
 
-const expressErrorHandler =  (err, req, res) => {
-  log.error(err)
-  const error = {
-    message: 'Internal application error',
-    errors: [
-      {
-        message: err.message,
-        name: err.name,
-        stack: err.stack
-      }
-    ]
-  }
-  res.status(500).json(error)
-}
-
 const expressLogRequests = express => {
   express.use((req, res, next) => {
     const requestId = req.headers['x-request-id']
@@ -144,6 +129,25 @@ const expressAdmin = (express) => {
   })
 }
 
+const expressErrorHandler = express => {
+  express.use((err, req, res) => {
+    log.error(err)
+
+    const errorPlainObject = {
+      message: err.message,
+      name:    err.name,
+      stack:   err.stack
+    }
+
+    const response = {
+      message: 'Internal application error',
+      errors:  [ errorPlainObject ]
+    }
+
+    res.status(500).json(response)
+  })
+}
+
 const express = () => {
   global._crud = require('./lib/express/crud')
 
@@ -185,7 +189,9 @@ const expressSwagger = (express, callback) => {
     }
 
     swagger.register(express)
-    express.use(expressErrorHandler)
+
+    expressErrorHandler(express)
+
     listen(express)
 
     if (callback) {
@@ -221,6 +227,7 @@ module.exports = {
   expressHealth:        expressHealth,
   expressDocumentation: expressDocumentation,
   expressAdmin:         expressAdmin,
+  expressErrorHandler:  expressErrorHandler,
   express:              express,
   mongodb:              mongodb,
   listen:               listen,
