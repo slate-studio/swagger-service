@@ -130,7 +130,7 @@ const expressAdmin = (express) => {
 }
 
 const expressErrorHandler = express => {
-  express.use((err, req, res) => {
+  express.use((err, req, res, next) => {
     log.error(err)
 
     const errorPlainObject = {
