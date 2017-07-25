@@ -46,6 +46,21 @@ const swaggerServices = () => {
   }
 }
 
+const expressErrorHandler =  (err, req, res) => {
+  log.error(err)
+  const error = {
+    message: 'Internal application error',
+    errors: [
+      {
+        message: err.message,
+        name: err.name,
+        stack: err.stack
+      }
+    ]
+  }
+  res.status(500).json(error)
+}
+
 const expressLogRequests = express => {
   express.use((req, res, next) => {
     const requestId = req.headers['x-request-id']
@@ -170,6 +185,7 @@ const expressSwagger = (express, callback) => {
     }
 
     swagger.register(express)
+    express.use(expressErrorHandler)
     listen(express)
 
     if (callback) {
