@@ -67,7 +67,6 @@
     "lodash": "^4.17.4",
     "mocha": "^3.4.1",
     "mongoose": "^4.11.3",
-    "mongoose-auto-increment": "^5.0.1",
     "mongoose-timestamp": "^0.6.0",
     "nock": "^9.0.14",
     "nsp": "^2.6.3",
@@ -89,6 +88,8 @@
   "devDependencies": {},
   "license": "ISC",
   "scripts": {
-    "update": "david update"
+    "update": "david update",
+    "mocha": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "test": "NODE_ENV=test && NODE_ENV=test npm run mocha"
   }
 }

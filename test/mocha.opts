@@ -1,0 +1,3 @@
+recursive
+--require ./test/index.js
+--timeout 2000
