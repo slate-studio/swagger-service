@@ -167,14 +167,14 @@ const express = () => {
   return express
 }
 
-const mongodb = (callback, initModel = true) => {
+const mongodb = (callback, initializeModels = true) => {
   const mongoose  = require('mongoose')
   const plugins   = require('./lib/mongoose/plugins')
   const database  = require('./lib/mongoose')
 
   mongoose.plugin(plugins.simulateUnhandledError)
 
-  if (initModel) {
+  if (initializeModels) {
     global.Models = require(`${_rootPath}/src/models`)
   }
 
@@ -228,19 +228,6 @@ const swagger = (callback) => {
   return service
 }
 
-const test = (callback) => {
-  initialize()
-  redis()
-
-  if (C.mongodb) {
-    mongodb(callback, false)
-  } else {
-    if (callback) {
-      callback()
-    }
-  }
-}
-
 module.exports = {
   initialize:           initialize,
   redis:                redis,
@@ -254,6 +241,5 @@ module.exports = {
   mongodb:              mongodb,
   listen:               listen,
   expressSwagger:       expressSwagger,
-  swagger:              swagger,
-  test:                 test
+  swagger:              swagger
 }

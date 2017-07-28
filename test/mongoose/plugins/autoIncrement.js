@@ -1,3 +1,5 @@
+'use strict'
+
 const mongoose      = require('mongoose')
 const async         = require('async')
 const should        = require('chai').should()

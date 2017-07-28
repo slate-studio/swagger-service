@@ -10,7 +10,7 @@
     "api",
     "redis"
   ],
-  "version": "0.5.7",
+  "version": "0.5.8",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -70,7 +70,7 @@
     "mongoose-timestamp": "^0.6.0",
     "nock": "^9.0.14",
     "nsp": "^2.6.3",
-    "pm2": "^2.6.0",
+    "pm2": "^2.6.1",
     "redis": "^2.7.1",
     "request": "^2.81.0",
     "request-promise-native": "^1.0.4",
@@ -90,6 +90,6 @@
   "scripts": {
     "update": "david update",
     "mocha": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
-    "test": "NODE_ENV=test && NODE_ENV=test npm run mocha"
+    "test": "NODE_ENV=test npm run mocha"
   }
 }
