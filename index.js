@@ -15,7 +15,8 @@ const initialize = () => {
 
 const redis = () => {
   if (C.redis) {
-    require('./lib/redis')
+    const redis = require('./lib/redis')
+    redis.connect()
   }
 }
 
