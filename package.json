@@ -40,6 +40,11 @@
     "node >= 8.0"
   ],
   "main": "./index",
+  "bin": {
+    "buildSwagger":   "./bin/buildSwagger.js",
+    "dropDatabase":   "./bin/dropDatabase.js",
+    "updateServices": "./bin/updateServices.js"
+  },
   "dependencies": {
     "@astronomer/bunyan-udp": "^2.0.0",
     "agentkeepalive": "^3.3.0",
