@@ -2,18 +2,16 @@
 
 global.C = {
   service: {
-    name: 'test',
+    name: 'test'
   },
   mongodb: {
-    uri: 'mongodb://localhost:27017/swagger-service-test'
-  },
-  logstash: {
-    host: '127.0.0.1',
-    port: 5959
+    uri: 'mongodb://localhost:27017/service-test'
   }
 }
 
-require('../lib/logger')
+global.Promise = require('bluebird')
+global._       = require('lodash')
+global.log     = require('../src/log')
+const mongodb  = require('../src/mongodb')
 
-const connectMongo = require('../lib/mongoose/connect')
-connectMongo()
+mongodb()
