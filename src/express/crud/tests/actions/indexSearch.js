@@ -4,8 +4,9 @@ const actionPath = require('../helpers/actionPath')
 const destroyAll = require('../helpers/destroyAll')
 
 module.exports = (done, modelName) => {
-  destroyAll(modelName).then(() => {
-    factory.createMany(modelName, 3).then(() => {
+  destroyAll(modelName)
+    .then(() => factory.createMany(modelName, 3))
+    .then(() => {
       const path = actionPath(modelName, null, 'search=test')
 
       request(service)
@@ -15,5 +16,4 @@ module.exports = (done, modelName) => {
           done(err)
         })
     })
-  })
 }

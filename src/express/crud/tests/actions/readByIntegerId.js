@@ -11,8 +11,7 @@ module.exports = (done, modelName, attributes={}) => {
         .get(path)
         .expect(200)
         .end((err, res) => {
-          const doc = res.body
-          expect(doc.integerId).to.equal(object.integerId)
+          expect(res.body.integerId).to.equal(object.integerId)
 
           done(err)
         })

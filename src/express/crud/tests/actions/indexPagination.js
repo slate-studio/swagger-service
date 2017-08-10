@@ -4,8 +4,9 @@ const actionPath = require('../helpers/actionPath')
 const destroyAll = require('../helpers/destroyAll')
 
 module.exports = (done, modelName, params='') => {
-  destroyAll(modelName).then(() => {
-    factory.createMany(modelName, 3).then(() => {
+  destroyAll(modelName)
+    .then(() => factory.createMany(modelName, 3))
+    .then(() => {
       const perPage = 2
       const path    = actionPath(modelName, null, `page=1&perPage=${perPage}&${params}`)
 
@@ -19,5 +20,4 @@ module.exports = (done, modelName, params='') => {
           done(err)
         })
     })
-  })
 }
