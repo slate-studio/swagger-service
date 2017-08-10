@@ -12,19 +12,17 @@ module.exports = (done, modelName, params={}, attributes={}) => {
 
     request(service)
       .put(path)
-        .set('Accept', 'application/json')
-        .send(params)
-          .expect('Content-Type', /json/)
-          .end((err, res) => {
-            expect(res.status).to.equal(200)
+      .send(params)
+      .expect(200)
+      .end((err, res) => {
+        const doc = res.body
+        expect(doc[firstParamName]).to.equal(params[firstParamName])
 
-            const doc = res.body
-            expect(doc[firstParamName]).to.equal(params[firstParamName])
-
-            modelClass.findOne({ integerId: objectIntegerId }, (err1, obj) => {
-              expect(obj[firstParamName]).to.equal(params[firstParamName])
-              done(err)
-            })
+        modelClass.findOne({ integerId: objectIntegerId }).exec()
+          .then(obj => {
+            expect(obj[firstParamName]).to.equal(params[firstParamName])
+            done(err)
           })
+      })
   })
 }

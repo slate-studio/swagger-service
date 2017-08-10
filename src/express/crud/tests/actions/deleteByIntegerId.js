@@ -12,13 +12,13 @@ module.exports = (done, modelName, attributes={}) => {
 
       request(service)
         .delete(path)
-          .expect(204)
-          .end((err, res) => {
-            model.findOne({ integerId: integerId}).exec()
-              .then(obj => {
-                expect(obj._deleted).to.eql(true)
-                done(err)
-              })
-          })
+        .expect(204)
+        .end((err, res) => {
+          model.findOne({ integerId: integerId}).exec()
+            .then(obj => {
+              expect(obj._deleted).to.eql(true)
+              done(err)
+            })
+        })
     })
 }

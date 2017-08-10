@@ -12,16 +12,13 @@ module.exports = (done, modelName) => {
 
       request(service)
         .get(path)
-        .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .end((err, res) => {
-            expect(res.status).to.equal(200)
+        .expect(200)
+        .end((err, res) => {
+          const docs = res.body
+          expect(docs.length).to.equal(defaultPerPage)
 
-            const docs = res.body
-            expect(docs.length).to.equal(defaultPerPage)
-
-            done(err)
-          })
+          done(err)
+        })
     })
   })
 }

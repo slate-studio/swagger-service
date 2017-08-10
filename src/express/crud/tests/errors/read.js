@@ -2,13 +2,12 @@
 
 const destroyAll = require('../helpers/destroyAll')
 
-module.exports = (done, modelName) => {
+module.exports = (done, modelName, id='1') => {
   destroyAll(modelName).then(() => {
-    const path = actionPath(modelName, 'BadMongoDocumentId')
+    const path = actionPath(modelName, id)
 
     request(service)
       .get(path)
-        .expect(400, done)
-
+      .expect(500, done)
   })
 }

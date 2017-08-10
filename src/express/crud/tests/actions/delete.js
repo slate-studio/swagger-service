@@ -3,7 +3,7 @@
 const actionPath = require('../helpers/actionPath')
 
 module.exports = (done, modelName, attributes={}) => {
-  const modelClass = Models[modelName]
+  const model = Models[modelName]
 
   factory.create(modelName, attributes)
     .then(object => {
@@ -12,12 +12,13 @@ module.exports = (done, modelName, attributes={}) => {
 
       request(service)
         .delete(path)
-          .end((err, res) => {
-            expect(res.status).to.equal(204)
-
-            modelClass.findOne({ _id: objectId}).exec()
-              .then(obj => expect(obj._deleted).to.eql(true))
-              .then(() => done(err))
-          })
+        .expect(204)
+        .end((err, res) => {
+          model.findOne({ _id: objectId}).exec()
+            .then(obj => {
+              expect(obj._deleted).to.eql(true)
+              done(err)
+            })
+        })
     })
 }

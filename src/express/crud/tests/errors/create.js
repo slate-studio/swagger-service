@@ -2,7 +2,7 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (done, modelName, attributes) => {
+module.exports = (done, modelName, attributes={}) => {
   factory.attrs(modelName).then((params) => {
     _.extend(params, attributes)
 
@@ -11,6 +11,6 @@ module.exports = (done, modelName, attributes) => {
     request(service)
       .post(path)
       .send(params)
-        .expect(422, done)
+      .expect(422, done)
   })
 }

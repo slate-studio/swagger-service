@@ -3,7 +3,7 @@
 const actionPath = require('../helpers/actionPath')
 
 module.exports = (done, modelName, params={}, attributes={}) => {
-  const modelClass = Models[modelName]
+  const model = Models[modelName]
 
   const firstParamName = _.keys(params)[0]
 
@@ -13,19 +13,17 @@ module.exports = (done, modelName, params={}, attributes={}) => {
 
     request(service)
       .put(path)
-        .set('Accept', 'application/json')
-        .send(params)
-          .expect('Content-Type', /json/)
-          .end((err, res) => {
-            expect(res.status).to.equal(200)
+      .send(params)
+      .expect(200)
+      .end((err, res) => {
+        const doc = res.body
+        expect(doc[firstParamName]).to.equal(params[firstParamName])
 
-            const doc = res.body
-            expect(doc[firstParamName]).to.equal(params[firstParamName])
-
-            modelClass.findOne({ _id: objectId }, (err, obj) => {
-              expect(obj[firstParamName]).to.equal(params[firstParamName])
-              done(err)
-            })
+        model.findOne({ _id: objectId }).exec()
+          .then(obj => {
+            expect(obj[firstParamName]).to.equal(params[firstParamName])
+            done(err)
           })
+      })
   })
 }

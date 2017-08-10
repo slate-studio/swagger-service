@@ -10,11 +10,10 @@ module.exports = (done, modelName) => {
 
       request(service)
         .get(path)
-        .set('Accept', 'application/json')
-          .end((err, res) => {
-            expect(res.status).to.equal(200)
-            done(err)
-          })
+        .expect(200)
+        .end((err, res) => {
+          done(err)
+        })
     })
   })
 }

@@ -10,14 +10,12 @@ module.exports = (done, modelName, attributes={}) => {
 
       request(service)
         .get(path)
-          .expect('Content-Type', /json/)
-          .end((err, res) => {
-            expect(res.status).to.equal(200)
+        .expect(200)
+        .end((err, res) => {
+          const doc = res.body
+          expect(doc._id).to.equal(objectId)
 
-            const doc = res.body
-            expect(doc._id).to.equal(objectId)
-
-            done(err)
-          })
+          done(err)
+        })
     })
 }

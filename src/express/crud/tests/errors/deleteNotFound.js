@@ -2,13 +2,12 @@
 
 const destroyAll = require('../helpers/destroyAll')
 
-module.exports = (done, modelName) => {
+module.exports = (done, modelName, id='1') => {
   destroyAll(modelName).then(() => {
-    const path = actionPath(modelName, 1)
+    const path = actionPath(modelName, id)
 
     request(service)
       .delete(path)
-        .expect(404, done)
-
+      .expect(404, done)
   })
 }
