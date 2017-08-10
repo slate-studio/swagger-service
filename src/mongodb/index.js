@@ -14,6 +14,7 @@ if (C.mongodb.uri) {
   mongoose.plugin(timestamp)
   mongoose.autoIncrement = plugins.autoIncrement
   mongoose.neverDestroy  = plugins.neverDestroy
+  mongoose.export        = plugins.export
   mongoose.callbacks     = helpers.callbacks
 
   global.Models = helpers.models()

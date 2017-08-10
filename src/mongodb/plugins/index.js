@@ -4,5 +4,6 @@ module.exports = {
   simulateUnhandledError: require('./simulateUnhandledError'),
   autoIncrement: require('./autoIncrement'),
   neverDestroy:  require('./neverDestroy'),
-  userstamp:     require('./userstamp')
+  userstamp:     require('./userstamp'),
+  export:        require('./export')
 }
