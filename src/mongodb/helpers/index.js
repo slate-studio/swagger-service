@@ -6,5 +6,6 @@ module.exports = {
   insert:    require('./insert'),
   models:    require('./models'),
   connect:   require('./connect'),
-  seed:      require('./seed')
+  seed:      require('./seed'),
+  drop:      require('./drop')
 }

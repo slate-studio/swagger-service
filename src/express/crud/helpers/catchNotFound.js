@@ -2,12 +2,20 @@
 
 const documentNotFound = require('./../../../errors/documentNotFound')
 
-module.exports = (document) => {
-  if (document) {
-    return document
+module.exports = (model) =>{
+  let name = 'Document'
 
-  } else {
-    throw new documentNotFound()
+  if (model) {
+    name = _.upperFirst(model.modelName)
+  }
 
+  return (document) => {
+    if (document) {
+      return document
+
+    } else {
+      throw new documentNotFound(`${name} is not found`)
+
+    }
   }
 }

@@ -1,18 +1,16 @@
 'use strict'
 
-module.exports = (done, modelName, uniqueParams) => {
-  factory.create(modelName, uniqueParams).then(() => {
-    factory.attrs(modelName).then((params) => {
-      _.extend(params, uniqueParams)
+const actionPath = require('../helpers/actionPath')
 
-      const path = actionPath(modelName)
+module.exports = (done, modelName, attributes) => {
+  factory.attrs(modelName).then((params) => {
+    _.extend(params, attributes)
 
-      request(service)
-        .post(path)
-        .set('Accept', 'application/json')
-        .send(params)
-          .expect('Content-Type', /json/)
-          .expect(400, done)
-    })
+    const path = actionPath(modelName)
+
+    request(service)
+      .post(path)
+      .send(params)
+        .expect(422, done)
   })
 }

@@ -2,8 +2,8 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (done, modelName) => {
-  factory.create(modelName)
+module.exports = (done, modelName, attributes={}) => {
+  factory.create(modelName, attributes)
     .then(object => {
       const path = actionPath(modelName, object.integerId)
 

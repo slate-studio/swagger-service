@@ -10,7 +10,7 @@ swagger:
       name: swagger_router
       mockMode: false
       mockControllersDirs: [ src/mocks ]
-      controllersDirs: [ src/controllers ]
+      controllersDirs: [ src/api ]
     _swagger_validate:
       name: swagger_validator
       validateResponse: true

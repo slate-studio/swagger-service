@@ -17,7 +17,7 @@ module.exports = (model, options={}) => {
 
     req.beforeAction(query)
       .then(() => model.findOneAndUpdate(query, params, { new: true }).exec())
-      .then(helpers.catchNotFound)
+      .then(helpers.catchNotFound(model))
       .then(() => req.afterAction(query))
       .then(() => responses.noContentResponse(req, res))
       .catch(error => {

@@ -2,10 +2,10 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (done, modelName) => {
+module.exports = (done, modelName, attributes={}) => {
   const modelClass = Models[modelName]
 
-  factory.attrs(modelName)
+  factory.attrs(modelName, attributes)
     .then(params => {
       const firstParamName = _.keys(params)[0]
       const path           = actionPath(modelName)

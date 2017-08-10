@@ -28,3 +28,4 @@ exports = module.exports = helpers.connect
 
 exports.insert = helpers.insert
 exports.seed   = helpers.seed
+exports.drop   = helpers.drop

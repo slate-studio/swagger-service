@@ -16,7 +16,7 @@ module.exports = (model, options={}) => {
 
     req.beforeAction(query)
       .then(() => model.findOne(query).exec())
-      .then(helpers.catchNotFound)
+      .then(helpers.catchNotFound(model))
       .then(object => req.afterAction(object))
       .then(object => responses.successResponse(req, res, object))
       .catch(error => {

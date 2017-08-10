@@ -2,23 +2,23 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (done, modelName) => {
-  const modelClass = Models[modelName]
+module.exports = (done, modelName, attributes={}) => {
+  const model = Models[modelName]
 
-  factory.create(modelName)
+  factory.create(modelName, attributes)
     .then(object => {
-      const objectIntegerId = object.integerId
-      const path            = actionPath(modelName, objectIntegerId)
+      const integerId = object.integerId
+      const path      = actionPath(modelName, integerId)
 
       request(service)
         .delete(path)
+          .expect(204)
           .end((err, res) => {
-            expect(res.status).to.equal(204)
-
-            modelClass.findOne({ integerId: objectIntegerId}).exec((err1, obj) => {
-              expect(obj._deleted).to.eql(true)
-              done(err)
-            })
+            model.findOne({ integerId: integerId}).exec()
+              .then(obj => {
+                expect(obj._deleted).to.eql(true)
+                done(err)
+              })
           })
     })
 }

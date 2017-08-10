@@ -19,7 +19,7 @@ module.exports = (model, options={}) => {
     //       e.g uniq emails. So maybe we should use find + save.
     req.beforeAction(query, params)
       .then(() => model.findOneAndUpdate(query, params, { new: true }).exec())
-      .then(helpers.catchNotFound)
+      .then(helpers.catchNotFound(model))
       .then(object => req.afterAction(object))
       .then(object => responses.successResponse(req, res, object))
       .catch(error => {
