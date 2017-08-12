@@ -4,8 +4,13 @@ const connect = (service) => {
   if (C.service.port) {
     const port = C.service.port
 
+    const cors         = require('cors')
     const responseTime = require('response-time')
     const middleware   = require('./middleware')
+
+    if (process.env.NODE_ENV !== 'production') {
+      service.use(cors())
+    }
 
     service.use(responseTime())
     service.use(middleware.namespace)
