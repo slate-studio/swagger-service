@@ -21,7 +21,7 @@ const buildCallbacks = (schema, callbacks) => {
   // USE: beforeUpdate: (updateQuery, next) =>
   //      To make changes to query you need to modify `updateQuery`.
   schema.pre('findOneAndUpdate', function(next) {
-    const isDeleted = this._update._deleted
+    const isDeleted = _.get(this, '_update.$set._deleted', null)
 
     if (isDeleted) {
       if (callbacks.beforeDelete) {
