@@ -15,12 +15,14 @@ const redis    = require('./src/redis')
 const mongodb  = require('./src/mongodb')
 const express  = require('./src/express')
 const rabbitmq = require('./src/rabbitmq')
+const utils    = require('./src/utils')
 
 exports = module.exports = () => {
   const service  = require('express')()
   const buildApi = require('./src/swagger/client')
 
   Promise.resolve()
+    .then(utils.getCloudEnvironment)
     .then(buildApi)
     .then(redis)
     .then(mongodb)
