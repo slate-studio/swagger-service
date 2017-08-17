@@ -40,7 +40,7 @@ const bunyan = new Bunyan({
 const bunyanRequestIdChild = () => {
   const requestId    = namespace.get('requestId') || ''
   const userId       = namespace.get('userId')    || ''
-  const environment  = process.env.RANCHER_ENV    || 'Development'
+  const environment  = process.env.RANCHER_ENV    || 'null'
 
   return bunyan.child({ requestId, userId, version, environment })
 }
