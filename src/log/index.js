@@ -38,10 +38,11 @@ const bunyan = new Bunyan({
 })
 
 const bunyanRequestIdChild = () => {
-  const requestId = namespace.get('requestId') || ''
-  const userId    = namespace.get('userId')    || ''
+  const requestId    = namespace.get('requestId') || ''
+  const userId       = namespace.get('userId')    || ''
+  const environment  = process.env.RANCHER_ENV    || 'null'
 
-  return bunyan.child({ requestId, userId, version })
+  return bunyan.child({ requestId, userId, version, environment })
 }
 
 const log = {
@@ -54,7 +55,7 @@ const log = {
 }
 
 process.on('uncaughtException', err => {
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     log.fatal('Uncaught exception:', err)
     resolve()
   }).then(res => process.exit(1))

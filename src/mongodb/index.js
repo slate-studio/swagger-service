@@ -18,11 +18,6 @@ if (C.mongodb.uri) {
   mongoose.callbacks     = helpers.callbacks
 
   global.Models = helpers.models()
-
-  const modelNames = _.keys(Models)
-  if (modelNames.length > 0) {
-    log.info('Models initialized:', modelNames)
-  }
 }
 
 exports = module.exports = helpers.connect
