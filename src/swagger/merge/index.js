@@ -1,10 +1,11 @@
 'use strict'
 
 const buildTags = require('./buildTags')
+const rootPath  = require('app-root-path')
 
 const mergeVersions = () => {
   const numbers =
-    _.map(C.services, s => require(`${_rootPath}/${s.spec}`).info
+    _.map(C.services, s => require(`${rootPath}/${s.spec}`).info
                                                             .version
                                                             .split('.')
                                                             .map(n => parseInt(n)))
@@ -25,7 +26,7 @@ module.exports = () => {
   const paths = {}
   _.forEach(C.services, service => {
     const name  = service.name
-    const sspec = _.cloneDeep(require(`${_rootPath}/${service.spec}`))
+    const sspec = _.cloneDeep(require(`${rootPath}/${service.spec}`))
 
     _.forEach(sspec.paths, (methods, path) => {
       const newPath = `/${name}${path}`
