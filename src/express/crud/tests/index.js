@@ -18,5 +18,6 @@ module.exports = {
   readNotFoundError:   require('./errors/readNotFound'),
   updateNotFoundError: require('./errors/updateNotFound'),
   actionPath:          require('./helpers/actionPath'),
-  destroyAll:          require('./helpers/destroyAll')
+  destroyAll:          require('./helpers/destroyAll'),
+  mockNamespace:       require('./helpers/mockNamespace')
 }

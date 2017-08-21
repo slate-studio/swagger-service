@@ -1,11 +1,72 @@
 'use strict'
 
-module.exports = () => {
-  const rootPath = require('app-root-path')
-  const fs       = require('fs')
-  const path     = `${rootPath}/src/models`
+const errors         = require('../../errors')
+const rootPath       = require('app-root-path')
+const fs             = require('fs')
+const cls            = require('continuation-local-storage')
 
-  const models         = {}
+const schemas        = {}
+const models         = {}
+const mockNamespaces = {}
+
+const initialize = () => {
+  _initSchemas()
+  _initModels()
+}
+
+const getInstance = modelName => {
+  if (!schemas[modelName]) {
+    throw new errors.Base(`Model '${modelName}' is not found`)
+  }
+
+  const schema = schemas[modelName]
+
+  if (isSchemaWithCustomCollection(schema)) {
+    const namespace = cls.getNamespace('requestNamespace')
+    modelName       = schema.getCustomCollectionName(
+      _getMockNamespace(modelName) || namespace
+    )
+
+    if (!models[modelName]) {
+      models[modelName] = mongoose.model(modelName, schema, modelName)
+    }
+  }
+
+  return models[modelName]
+}
+
+const isSchemaWithCustomCollection = schema => {
+  return _.isFunction(schema.getCustomCollectionName)
+}
+
+const mockNamespace = (modelName, namespace, times) => {
+  mockNamespaces[modelName] = {
+    namespace:  namespace,
+    times:      parseInt(times)
+  }
+}
+
+const _getMockNamespace = modelName => {
+  const mock = mockNamespaces[modelName]
+
+  if (mock && mock.times > 0) {
+    mock.times--
+    return mock.namespace
+  }
+
+  return null
+}
+
+const _initModels = () => {
+  _.forEach(schemas, (schema, name) => {
+    if (!isSchemaWithCustomCollection(schema)) {
+      models[name]    = mongoose.model(name, schema)
+    }
+  })
+}
+
+const _initSchemas = () => {
+  const path           = `${rootPath}/src/models`
   const isExistingPath = fs.existsSync(path)
 
   if (isExistingPath) {
@@ -18,13 +79,19 @@ module.exports = () => {
       .map(f => f.replace('.js', ''))
       .value()
 
-    _.forEach(sources, (source) => {
-      const name  = _.upperFirst(source)
-      const model = mongoose.model(name, require(`${path}/${source}`))
-
-      models[name] = model
+    _.forEach(sources, source => {
+      const name          = _.upperFirst(source)
+      schemas[name] = require(`${path}/${source}`)
     })
-  }
 
-  return models
+  }
+}
+
+module.exports = () => {
+  initialize()
+  return {
+    getInstance,
+    isSchemaWithCustomCollection,
+    mockNamespace
+  }
 }

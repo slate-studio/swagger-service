@@ -5,7 +5,7 @@ module.exports = (modelName, data) => {
 
   log.info(`${modelName}:`, counter)
 
-  const model   = Models[modelName]
+  const model   = Model.getInstance(modelName)
   const inserts = _.map(data, (document, index) => {
     document.integerId = document.integerId || index + 1
 

@@ -1,14 +1,15 @@
 'use strict'
 
-const actions = require('./actions')
+const actions   = require('./actions')
+const pluralize = require('../../utils/pluralize')
 
-const buildCrudActions = (model, options = {}) => {
+const buildCrudActions = (modelName, options = {}) => {
   const sortBy       = options.sort   || { createdAt: -1 }
   const params       = options.params || []
   const searchFields = options.search
 
-  const modelName      = _.upperFirst(model.modelName)
-  const collectionName = _.upperFirst(_.camelCase(model.collection.name))
+  const model          = Model.getInstance(modelName)
+  const collectionName = pluralize(modelName)
 
   const crud = {}
 

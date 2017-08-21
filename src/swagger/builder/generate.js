@@ -27,8 +27,8 @@ const restrictedFields = [
   'createdAt'
 ]
 
-const models = require(`../../../src/models`)
-const schema = models[modelName].schema
+const models = require('../../../src/models')
+const schema = models().getInstance(modelName).schema
 
 const tagPath = `./api/swagger/src/${tag}`
 const definitionsPath = `${tagPath}/definitions`
