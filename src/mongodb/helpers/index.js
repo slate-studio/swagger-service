@@ -4,7 +4,7 @@ module.exports = {
   callbacks: require('./callbacks'),
   debug:     require('./debug'),
   insert:    require('./insert'),
-  models:    require('./models'),
+  model:     require('./model'),
   connect:   require('./connect'),
   seed:      require('./seed'),
   drop:      require('./drop')

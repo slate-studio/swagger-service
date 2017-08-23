@@ -17,7 +17,7 @@ if (C.mongodb.uri) {
   mongoose.export        = plugins.export
   mongoose.callbacks     = helpers.callbacks
 
-  global.Model = helpers.models()
+  global.Model = helpers.model()
 }
 
 exports = module.exports = helpers.connect

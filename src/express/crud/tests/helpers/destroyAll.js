@@ -1,9 +1,8 @@
 'use strict'
 
-const testRequestNamespace = require('./testRequestNamespace')
+module.exports = (modelName, options = {}) => {
 
-module.exports = modelName => {
-  const namespace = testRequestNamespace.getNamespace()
-  const model = Model(modelName, namespace)
+  const model = Model(modelName, options)
+
   return model.find({}).remove().exec()
 }

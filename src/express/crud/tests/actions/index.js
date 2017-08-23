@@ -5,11 +5,11 @@ const destroyAll = require('../helpers/destroyAll')
 
 module.exports = (modelName, options = {}) => {
 
-  const headers    = options.headers || {}
+  const headers = options.headers || {}
 
   const defaultPerPage = 10
 
-  return destroyAll(modelName)
+  return destroyAll(modelName, headers)
     .then(() => factory.createMany(modelName, 20))
     .then(() => {
       const path = actionPath(modelName)

@@ -8,7 +8,7 @@ module.exports = (modelName, options = {}) => {
   const params     = options.params || ''
   const headers    = options.headers || {}
 
-  return destroyAll(modelName)
+  return destroyAll(modelName, headers)
     .then(() => factory.createMany(modelName, 3))
     .then(() => {
       const perPage = 2

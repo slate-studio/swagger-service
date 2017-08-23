@@ -6,9 +6,7 @@ module.exports = (modelName, options = {}) => {
 
   const attributes = options.attributes || {}
   const headers    = options.headers || {}
-
-  const namespace = testRequestNamespace.getNamespace()
-  const model     = Model(modelName, namespace)
+  const model      = Model(modelName, headers)
 
   return factory.create(modelName, attributes)
     .then(object => {

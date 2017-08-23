@@ -4,12 +4,10 @@ const actionPath = require('../helpers/actionPath')
 
 module.exports = (modelName, options = {}) => {
 
-  const params     = options.params || {}
-  const attributes = options.attributes || {}
-  const headers    = options.headers || {}
-
-  const namespace      = testRequestNamespace.getNamespace()
-  const modelClass     = Model(modelName, namespace)
+  const params         = options.params || {}
+  const attributes     = options.attributes || {}
+  const headers        = options.headers || {}
+  const model          = Model(modelName, headers)
   const firstParamName = _.keys(params)[0]
 
   return factory.create(modelName, attributes)
@@ -26,7 +24,7 @@ module.exports = (modelName, options = {}) => {
           const doc = res.body
           expect(doc[firstParamName]).to.equal(params[firstParamName])
         })
-        .then(() => modelClass.findOne({ integerId: objectIntegerId }).exec())
+        .then(() => model.findOne({ integerId: objectIntegerId }).exec())
         .then(obj => {
           expect(obj[firstParamName]).to.equal(params[firstParamName])
         })

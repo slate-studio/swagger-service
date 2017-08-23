@@ -7,7 +7,7 @@ module.exports = (modelName, options = {}) => {
 
   const headers = options.headers || {}
 
-  return destroyAll(modelName)
+  return destroyAll(modelName, headers)
     .then(() => factory.createMany(modelName, 3))
     .then(() => {
       const path = actionPath(modelName, null, 'search=test')
