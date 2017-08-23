@@ -4,7 +4,7 @@ const errors        = require('../../errors')
 const rootPath      = require('app-root-path')
 const fs            = require('fs')
 const cls           = require('continuation-local-storage')
-const errorHandler  = require('../plugins/customCollectionErrorHandler')
+//const errorHandler  = require('../plugins/customCollectionErrorHandler')
 
 const schemas        = {}
 const models         = {}
@@ -90,7 +90,7 @@ exports = module.exports = () => {
       const name    = _.upperFirst(source)
       const schema  = require(`${path}/${source}`)
       if (isSchemaWithCustomCollection(schema)) {
-        schema.plugin(errorHandler)
+        //schema.plugin(errorHandler)
       }
       schemas[name] = schema
     })
