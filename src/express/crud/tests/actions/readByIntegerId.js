@@ -1,25 +1,22 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
 const actionPath = require('../helpers/actionPath')
 
-class ReadByIntegerId extends ActionAbstract {
-  run(done, attributes = {}) {
-    factory.create(this.factoryName || this.modelName, attributes)
-      .then(object => {
-        const path = actionPath(this.modelName, object.integerId)
+module.exports = (modelName, options = {}) => {
 
-        request(service)
-          .get(path)
-          .set(this.headers)
-          .expect(200)
-          .end((err, res) => {
-            expect(res.body.integerId).to.equal(object.integerId)
-            super.clear()
-            done(err)
-          })
-      })
-  }
+  const attributes = options.attributes || {}
+  const headers    = options.headers || {}
+
+  return factory.create(modelName, attributes)
+    .then(object => {
+      const path = actionPath(modelName, object.integerId)
+
+      return request(service)
+        .get(path)
+        .set(headers)
+        .expect(200)
+        .then(res => {
+          expect(res.body.integerId).to.equal(object.integerId)
+        })
+    })
 }
-
-module.exports = new ReadByIntegerId()

@@ -1,26 +1,21 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
 const actionPath = require('../helpers/actionPath')
 const destroyAll = require('../helpers/destroyAll')
 
-class indexSearch extends ActionAbstract {
-  run(done) {
-    destroyAll(this.modelName)
-      .then(() => factory.createMany(this.factoryName || this.modelName, 3))
-      .then(() => {
-        const path = actionPath(this.modelName, null, 'search=test')
+module.exports = (modelName, options = {}) => {
 
-        request(service)
-          .get(path)
-          .set(this.headers)
-          .expect(200)
-          .end(err => {
-            super.clear()
-            done(err)
-          })
-      })
-  }
+  const headers = options.headers || {}
+
+  return destroyAll(modelName)
+    .then(() => factory.createMany(modelName, 3))
+    .then(() => {
+      const path = actionPath(modelName, null, 'search=test')
+
+      return request(service)
+        .get(path)
+        .set(headers)
+        .expect(200)
+        .then(() => null)
+    })
 }
-
-module.exports = new indexSearch()

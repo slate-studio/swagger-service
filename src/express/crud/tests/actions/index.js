@@ -1,29 +1,25 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
-const actionPath     = require('../helpers/actionPath')
-const destroyAll     = require('../helpers/destroyAll')
+const actionPath = require('../helpers/actionPath')
+const destroyAll = require('../helpers/destroyAll')
 
-class Index extends ActionAbstract {
-  run(done) {
-    const defaultPerPage = 10
+module.exports = (modelName, options = {}) => {
 
-    destroyAll(this.modelName)
-      .then(() => factory.createMany(this.factoryName || this.modelName, 20))
-      .then(() => {
-        const path = actionPath(this.modelName)
+  const headers    = options.headers || {}
 
-        request(service)
-          .get(path)
-          .set(this.headers)
-          .expect(200)
-          .end((err, res) => {
-            expect(res.body.length).to.equal(defaultPerPage)
-            super.clear()
-            done(err)
-          })
-      })
-  }
+  const defaultPerPage = 10
+
+  return destroyAll(modelName)
+    .then(() => factory.createMany(modelName, 20))
+    .then(() => {
+      const path = actionPath(modelName)
+
+      return request(service)
+        .get(path)
+        .set(headers)
+        .expect(200)
+        .then(res => {
+          expect(res.body.length).to.equal(defaultPerPage)
+        })
+    })
 }
-
-module.exports = new Index()

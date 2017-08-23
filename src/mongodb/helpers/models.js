@@ -7,14 +7,13 @@ const cls            = require('continuation-local-storage')
 
 const schemas        = {}
 const models         = {}
-const mockNamespaces = {}
 
 const initialize = () => {
   _initSchemas()
   _initModels()
 }
 
-const getInstance = modelName => {
+const getModel = (modelName, namespace = null) => {
   if (!schemas[modelName]) {
     throw new errors.Base(`Model '${modelName}' is not found`)
   }
@@ -22,10 +21,11 @@ const getInstance = modelName => {
   const schema = schemas[modelName]
 
   if (isSchemaWithCustomCollection(schema)) {
-    const namespace = cls.getNamespace('requestNamespace')
-    modelName       = schema.getCustomCollectionName(
-      _getMockNamespace(modelName) || namespace
-    )
+    if (!namespace) {
+      namespace = cls.getNamespace('requestNamespace')
+    }
+
+    modelName = schema.getCustomCollectionName(namespace)
 
     if (!models[modelName]) {
       models[modelName] = mongoose.model(modelName, schema, modelName)
@@ -37,24 +37,6 @@ const getInstance = modelName => {
 
 const isSchemaWithCustomCollection = schema => {
   return _.isFunction(schema.getCustomCollectionName)
-}
-
-const mockNamespace = (modelName, namespace, times) => {
-  mockNamespaces[modelName] = {
-    namespace:  namespace,
-    times:      parseInt(times)
-  }
-}
-
-const _getMockNamespace = modelName => {
-  const mock = mockNamespaces[modelName]
-
-  if (mock && mock.times > 0) {
-    mock.times--
-    return mock.namespace
-  }
-
-  return null
 }
 
 const _initModels = () => {
@@ -80,7 +62,7 @@ const _initSchemas = () => {
       .value()
 
     _.forEach(sources, source => {
-      const name          = _.upperFirst(source)
+      const name    = _.upperFirst(source)
       schemas[name] = require(`${path}/${source}`)
     })
 
@@ -89,9 +71,5 @@ const _initSchemas = () => {
 
 module.exports = () => {
   initialize()
-  return {
-    getInstance,
-    isSchemaWithCustomCollection,
-    mockNamespace
-  }
+  return getModel
 }

@@ -1,35 +1,33 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
-const actionPath     = require('../helpers/actionPath')
+const actionPath = require('../helpers/actionPath')
 
-class Create extends ActionAbstract {
-  run(done, attributes = {}) {
-    const model = Model.getInstance(this.modelName)
+module.exports = (modelName, options = {}) => {
 
-    factory.attrs(this.factoryName || this.modelName, attributes)
-      .then(params => {
-        const firstParamName = _.keys(params)[0]
-        const path           = actionPath(this.modelName)
+  const attributes = options.attributes || {}
+  const headers    = options.headers || {}
 
-        request(service)
-          .post(path)
-          .set(this.headers)
-          .send(params)
-          .expect(201)
-          .end((err, res) => {
-            const doc = res.body
-            expect(doc[firstParamName]).to.equal(params[firstParamName])
+  const namespace = testRequestNamespace.getNamespace()
+  const model     = Model(modelName, namespace)
 
-            model.findOne({ integerId: doc.integerId }).exec()
-              .then(object => {
-                expect(object[firstParamName]).to.equal(params[firstParamName])
-                super.clear()
-                done(err)
-              })
-          })
-      })
-  }
+  return factory.attrs(modelName, attributes)
+    .then(params => {
+      const firstParamName = _.keys(params)[0]
+      const path           = actionPath(modelName)
+
+      return request(service)
+        .post(path)
+        .set(headers)
+        .send(params)
+        .expect(201)
+        .then(res => {
+          const doc = res.body
+          expect(doc[firstParamName]).to.equal(params[firstParamName])
+          return doc.integerId
+        })
+        .then((integerId) => model.findOne({ integerId: integerId }).exec())
+        .then(object => {
+          expect(object[firstParamName]).to.equal(params[firstParamName])
+        })
+    })
 }
-
-module.exports = new Create()

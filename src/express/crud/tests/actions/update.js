@@ -1,37 +1,35 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
-const actionPath     = require('../helpers/actionPath')
+const actionPath = require('../helpers/actionPath')
 
-class Update extends ActionAbstract {
-  run(done, params = {}, attributes = {}) {
-    const model = Model.getInstance(this.modelName)
+module.exports = (modelName, options = {}) => {
 
-    const firstParamName = _.keys(params)[0]
+  const params     = options.params || {}
+  const attributes = options.attributes || {}
+  const headers    = options.headers || {}
 
-    factory.create(this.factoryName || this.modelName, attributes)
-      .then(object => {
-        const objectId = String(object._id)
-        const path     = actionPath(this.modelName, objectId)
+  const namespace = testRequestNamespace.getNamespace()
+  const model     = Model(modelName, namespace)
 
-        request(service)
-          .put(path)
-          .set(this.headers)
-          .send(params)
-          .expect(200)
-          .end((err, res) => {
-            const doc = res.body
-            expect(doc[firstParamName]).to.equal(params[firstParamName])
+  const firstParamName = _.keys(params)[0]
 
-            model.findOne({ _id: objectId }).exec()
-              .then(obj => {
-                expect(obj[firstParamName]).to.equal(params[firstParamName])
-                super.clear()
-                done(err)
-              })
-          })
-      })
-  }
+  return factory.create(modelName, attributes)
+    .then(object => {
+      const objectId = String(object._id)
+      const path     = actionPath(modelName, objectId)
+
+      return request(service)
+        .put(path)
+        .set(headers)
+        .send(params)
+        .expect(200)
+        .then(res => {
+          const doc = res.body
+          expect(doc[firstParamName]).to.equal(params[firstParamName])
+        })
+        .then(() => model.findOne({ _id: objectId }).exec())
+        .then(obj => {
+          expect(obj[firstParamName]).to.equal(params[firstParamName])
+        })
+    })
 }
-
-module.exports = new Update()

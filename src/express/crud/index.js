@@ -8,7 +8,7 @@ const buildCrudActions = (modelName, options = {}) => {
   const params       = options.params || []
   const searchFields = options.search
 
-  const model          = Model.getInstance(modelName)
+  const model          = Model(modelName)
   const collectionName = pluralize(modelName)
 
   const crud = {}

@@ -1,31 +1,27 @@
 'use strict'
 
-const ActionAbstract = require('./actionAbstract')
-const actionPath     = require('../helpers/actionPath')
+const actionPath = require('../helpers/actionPath')
 
-class Delete extends ActionAbstract {
-  run(done, attributes = {}) {
-    const model = Model.getInstance(this.modelName)
+module.exports = (modelName, options = {}) => {
 
-    factory.create(this.factoryName || this.modelName, attributes)
-      .then(object => {
-        const objectId = String(object._id)
-        const path     = actionPath(this.modelName, objectId)
+  const attributes = options.attributes || {}
+  const headers    = options.headers || {}
 
-        request(service)
-          .delete(path)
-          .set(this.headers)
-          .expect(204)
-          .end(err => {
-            model.findOne({ _id: objectId}).exec()
-              .then(obj => {
-                expect(obj._deleted).to.eql(true)
-                super.clear()
-                done(err)
-              })
-          })
-      })
-  }
+  const namespace = testRequestNamespace.getNamespace()
+  const model     = Model(modelName, namespace)
+
+  return factory.create(modelName, attributes)
+    .then(object => {
+      const objectId = String(object._id)
+      const path     = actionPath(modelName, objectId)
+
+      return request(service)
+        .delete(path)
+        .set(headers)
+        .expect(204)
+        .then(() => model.findOne({ _id: objectId}).exec())
+        .then(obj => {
+          expect(obj._deleted).to.eql(true)
+        })
+    })
 }
-
-module.exports = new Delete()
