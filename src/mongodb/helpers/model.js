@@ -1,13 +1,12 @@
 'use strict'
 
-const errors        = require('../../errors')
-const rootPath      = require('app-root-path')
-const fs            = require('fs')
-const cls           = require('continuation-local-storage')
-//const errorHandler  = require('../plugins/customCollectionErrorHandler')
+const errors    = require('../../errors')
+const rootPath  = require('app-root-path')
+const fs        = require('fs')
+const cls       = require('continuation-local-storage')
 
-const schemas        = {}
-const models         = {}
+const schemas   = {}
+const models    = {}
 
 class CustomRequestNamespace {
 
@@ -58,15 +57,21 @@ const model = (modelName, options = {}) => {
     }
 
     modelName = schema.getCustomCollectionName(namespace)
+
   }
 
   if (!models[modelName]) {
+
+    const collectionName = 
+      (isSchemaWithCustomCollection(schema) ? modelName : null)
+
     const model = mongoose.model(
       modelName,
       schema,
-      (isSchemaWithCustomCollection(schema) ? modelName : null)
+      collectionName
     )
     models[modelName] = model
+
   }
 
   return models[modelName]
@@ -89,9 +94,7 @@ exports = module.exports = () => {
     _.forEach(sources, source => {
       const name    = _.upperFirst(source)
       const schema  = require(`${path}/${source}`)
-      if (isSchemaWithCustomCollection(schema)) {
-        //schema.plugin(errorHandler)
-      }
+
       schemas[name] = schema
     })
 
