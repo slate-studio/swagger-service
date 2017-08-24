@@ -2,10 +2,10 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (modelName, options={}) => {
-  const params         = options.params     || {}
-  const attributes     = options.attributes || {}
-  const headers        = options.headers    || {}
+module.exports = (modelName, options = {}) => {
+  const params     = options.params     || {}
+  const attributes = options.attributes || {}
+  const headers    = options.headers    || {}
 
   const model = Model(modelName, headers)
 

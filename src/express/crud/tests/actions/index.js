@@ -5,7 +5,7 @@ const destroyAll = require('../helpers/destroyAll')
 
 const DEFAULT_PER_PAGE = 10
 
-module.exports = (modelName, options={}) => {
+module.exports = (modelName, options = {}) => {
   const headers = options.headers || {}
 
   return destroyAll(modelName, headers)
