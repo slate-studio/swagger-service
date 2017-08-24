@@ -2,8 +2,7 @@
 
 const request = require('./request')
 
-module.exports = () =>
-{
+module.exports = () => {
   return new Promise((resolve) => {
     if (process.env.RANCHER_ENV) {
       return resolve(process.env.RANCHER_ENV)
@@ -18,11 +17,11 @@ module.exports = () =>
       hostname: 'rancher-metadata',
       path: '/2015-12-19/self/stack/environment_name',
       method: 'GET',
-      headers: {'Content-Type': 'application/json'}
+      headers: { 'Accept': 'application/json',}
     }
 
     request(options).then(res => {
-      process.env.RANCHER_ENV = res
+      process.env.RANCHER_ENV = res.object
       return resolve(res)
     })
     .catch(err => {
