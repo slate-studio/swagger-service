@@ -4,15 +4,17 @@ const responses = require('../../responses')
 const errors    = require('../../../errors')
 const helpers   = require('../helpers')
 
-module.exports = (model, options={}) => {
+module.exports = (modelName, options={}) => {
   return (req, res) => {
-    helpers.setActionCallbacks(req, options)
+    helpers.setActionFilters(req, options)
 
     const id          = req.swagger.params.id.value
     const query       = helpers.buildFindOneQuery(req.defaultScope, id)
     const operationId = req.swagger.operation.operationId
 
     log.info(operationId, query)
+
+    const model = Model(modelName)
 
     req.beforeAction(query)
       .then(() => model.findOne(query).exec())

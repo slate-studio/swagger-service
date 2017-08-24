@@ -7,17 +7,16 @@ const buildCrudActions = (modelName, options = {}) => {
   const sortBy       = options.sort   || { createdAt: -1 }
   const params       = options.params || []
   const searchFields = options.search
-
-  const model          = Model(modelName)
-  const collectionName = pluralize(modelName)
+  const singularName = modelName
+  const pluralName   = pluralize(modelName)
 
   const crud = {}
 
-  crud[`index${collectionName}`] = actions.index(model, params, sortBy, searchFields)
-  crud[`read${modelName}`]       = actions.read(model)
-  crud[`create${modelName}`]     = actions.create(model)
-  crud[`update${modelName}`]     = actions.update(model)
-  crud[`delete${modelName}`]     = actions.delete(model)
+  crud[`index${pluralName}`]    = actions.index(modelName, params, sortBy, searchFields)
+  crud[`read${singularName}`]   = actions.read(modelName)
+  crud[`create${singularName}`] = actions.create(modelName)
+  crud[`update${singularName}`] = actions.update(modelName)
+  crud[`delete${singularName}`] = actions.delete(modelName)
 
   return crud
 }

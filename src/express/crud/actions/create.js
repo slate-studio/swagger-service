@@ -3,16 +3,17 @@
 const responses = require('../../responses')
 const helpers   = require('../helpers')
 
-module.exports = (model, options={}) => {
+module.exports = (modelName, options={}) => {
   return (req, res) => {
-    helpers.setActionCallbacks(req, options)
+    helpers.setActionFilters(req, options)
 
     const params      = req.body
     const operationId = req.swagger.operation.operationId
 
     log.info(operationId, params)
 
-    let object
+    const model = Model(modelName)
+    let   object
 
     req.beforeAction(params)
       .then(() => {
