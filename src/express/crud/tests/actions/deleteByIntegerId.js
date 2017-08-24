@@ -18,6 +18,8 @@ module.exports = (modelName, options = {}) => {
         .set(headers)
         .expect(204)
         .then(()  => model.findOne({ integerId }).exec())
-        .then(obj => expect(obj._deleted).to.eql(true))
+        .then(obj => {
+          expect(obj._deleted).to.eql(true)
+        })
     })
 }

@@ -17,6 +17,8 @@ module.exports = (modelName, options = {}) => {
         .get(path)
         .set(headers)
         .expect(200)
-        .then(res => expect(res.body.length).to.equal(DEFAULT_PER_PAGE))
+        .then(res => {
+          expect(res.body.length).to.equal(DEFAULT_PER_PAGE)
+        })
     })
 }

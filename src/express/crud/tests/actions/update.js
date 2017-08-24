@@ -24,6 +24,8 @@ module.exports = (modelName, options = {}) => {
         .expect(200)
         .then(res => expect(res.body[firstParamName]).to.equal(firstParam))
         .then(()  => model.findOne({ _id }).exec())
-        .then(obj => expect(obj[firstParamName]).to.equal(firstParam))
+        .then(obj => {
+          expect(obj[firstParamName]).to.equal(firstParam)
+        })
     })
 }

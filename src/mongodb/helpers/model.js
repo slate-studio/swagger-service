@@ -73,22 +73,22 @@ const Model = (modelName, options = {}) => {
   return model
 }
 
-const initializeSchemas = () {
+const initializeSchemas = () => {
   const isExistingPath = fs.existsSync(MODELS_PATH)
 
   if (isExistingPath) {
-    const files = fs.readdirSync(path)
+    const files = fs.readdirSync(MODELS_PATH)
 
     const sources = _.chain(files)
       .filter(f => _.endsWith(f, '.js'))
       .filter(f => !_.startsWith(f, '_'))
-      .filter(f => fs.statSync(`${path}/${f}`).isFile())
+      .filter(f => fs.statSync(`${MODELS_PATH}/${f}`).isFile())
       .map(f    => f.replace('.js', ''))
       .value()
 
     _.forEach(sources, source => {
       const name   = _.upperFirst(source)
-      const schema = require(`${path}/${source}`)
+      const schema = require(`${MODELS_PATH}/${source}`)
 
       schemas[name] = schema
     })
@@ -96,4 +96,4 @@ const initializeSchemas = () {
 }
 
 exports = module.exports = Model
-exports.initializeSchemas
+exports.initializeSchemas = initializeSchemas

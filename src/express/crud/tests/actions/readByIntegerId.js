@@ -15,6 +15,8 @@ module.exports = (modelName, options = {}) => {
         .get(path)
         .set(headers)
         .expect(200)
-        .then(res => expect(res.body.integerId).to.equal(integerId))
+        .then(res => {
+          expect(res.body.integerId).to.equal(integerId)
+        })
     })
 }

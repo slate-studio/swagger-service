@@ -8,12 +8,11 @@ module.exports = (modelName, options = {}) => {
 
   const model = Model(modelName, headers)
 
-  const firstParamName = _.keys(params)[0]
-  const firstParam     = params[firstParamName]
-
   return factory.attrs(modelName, attributes)
     .then(params => {
-      const path = actionPath(modelName)
+      const firstParamName = _.keys(params)[0]
+      const firstParam     = params[firstParamName]
+      const path           = actionPath(modelName)
 
       return request(service)
         .post(path)
@@ -22,9 +21,11 @@ module.exports = (modelName, options = {}) => {
         .expect(201)
         .then(res => {
           expect(res.body[firstParamName]).to.equal(firstParam)
-          return doc.integerId
+          return res.body.integerId
         })
         .then(integerId => model.findOne({ integerId }).exec())
-        .then(obj => expect(obj[firstParamName]).to.equal(firstParam))
+        .then(obj => {
+          expect(obj[firstParamName]).to.equal(firstParam)
+        })
     })
 }
