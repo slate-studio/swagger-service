@@ -3,8 +3,7 @@
 const actionPath = require('../helpers/actionPath')
 const destroyAll = require('../helpers/destroyAll')
 
-module.exports = (modelName, options = {}) => {
-
+module.exports = (modelName, options={}) => {
   const headers = options.headers || {}
 
   return destroyAll(modelName, headers)

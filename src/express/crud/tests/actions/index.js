@@ -3,11 +3,10 @@
 const actionPath = require('../helpers/actionPath')
 const destroyAll = require('../helpers/destroyAll')
 
-module.exports = (modelName, options = {}) => {
+const DEFAULT_PER_PAGE = 10
 
+module.exports = (modelName, options={}) => {
   const headers = options.headers || {}
-
-  const defaultPerPage = 10
 
   return destroyAll(modelName, headers)
     .then(() => factory.createMany(modelName, 20))
@@ -18,8 +17,6 @@ module.exports = (modelName, options = {}) => {
         .get(path)
         .set(headers)
         .expect(200)
-        .then(res => {
-          expect(res.body.length).to.equal(defaultPerPage)
-        })
+        .then(res => expect(res.body.length).to.equal(DEFAULT_PER_PAGE))
     })
 }

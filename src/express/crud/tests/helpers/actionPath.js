@@ -3,9 +3,9 @@
 const pluralize = require('../../../../utils/pluralize')
 
 module.exports = (modelName, id, params) => {
-  const collectionName = pluralize(_.kebabCase(modelName))
+  const pluralName = pluralize(_.kebabCase(modelName))
 
-  let path = `/${collectionName}`
+  let path = `/${pluralName}`
 
   if (id) {
     path += `/${id}`
