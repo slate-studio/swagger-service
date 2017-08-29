@@ -1,6 +1,7 @@
 'use strict'
 
 module.exports = {
-  request: require('./request'),
+  pluralize:           require('./pluralize'),
+  request:             require('./request'),
   getCloudEnvironment: require('./getCloudEnvironment')
 }

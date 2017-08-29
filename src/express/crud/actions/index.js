@@ -9,9 +9,9 @@ exports.delete = require('./delete')
 const responses = require('../../responses')
 const helpers   = require('../helpers')
 
-exports.index = (model, params, sortBy, searchFields, options={}) => {
+exports.index = (modelName, params, sortBy, searchFields, options={}) => {
   return (req, res) => {
-    helpers.setActionCallbacks(req, options)
+    helpers.setActionFilters(req, options)
 
     let page = req.query.page || 1
     page = Number(page)
@@ -65,6 +65,8 @@ exports.index = (model, params, sortBy, searchFields, options={}) => {
 
     const operationId = req.swagger.operation.operationId
     log.info(operationId, query)
+
+    const model = Model(modelName)
 
     req.beforeAction(query)
       .then(() => model.count(query).exec())

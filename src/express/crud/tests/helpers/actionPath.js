@@ -1,10 +1,11 @@
 'use strict'
 
-module.exports = (modelName, id, params) => {
-  const model          = Models[modelName]
-  const collectionName = _.kebabCase(model.collection.name)
+const pluralize = require('../../../../utils/pluralize')
 
-  let path = `/${collectionName}`
+module.exports = (modelName, id, params) => {
+  const pluralName = pluralize(_.kebabCase(modelName))
+
+  let path = `/${pluralName}`
 
   if (id) {
     path += `/${id}`

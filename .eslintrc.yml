@@ -15,7 +15,7 @@ globals:
   api: true
   redis: true
   mongoose: true
-  Models: true
+  Model: true
   Services: true
   request: true
   expect: true

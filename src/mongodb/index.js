@@ -3,6 +3,7 @@
 const helpers = require('./helpers')
 
 if (C.mongodb.uri) {
+  global.Model     = helpers.Model
   global.mongoose  = require('mongoose')
   mongoose.Promise = Promise
 
@@ -17,7 +18,7 @@ if (C.mongodb.uri) {
   mongoose.export        = plugins.export
   mongoose.callbacks     = helpers.callbacks
 
-  global.Models = helpers.models()
+  Model.initializeSchemas()
 }
 
 exports = module.exports = helpers.connect

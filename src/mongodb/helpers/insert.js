@@ -1,11 +1,12 @@
 'use strict'
 
-module.exports = (modelName, data) => {
+module.exports = (modelName, options, data) => {
   const counter = data.length
 
-  log.info(`${modelName}:`, counter)
+  log.info(`${modelName}`, options, counter)
 
-  const model   = Models[modelName]
+  const model = Model(modelName, options)
+
   const inserts = _.map(data, (document, index) => {
     document.integerId = document.integerId || index + 1
 

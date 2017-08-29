@@ -2,29 +2,30 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (done, modelName, params={}, attributes={}) => {
-  const model = Models[modelName]
+module.exports = (modelName, options = {}) => {
+  const params     = options.params     || {}
+  const attributes = options.attributes || {}
+  const headers    = options.headers    || {}
+
+  const model = Model(modelName, headers)
 
   const firstParamName = _.keys(params)[0]
+  const firstParam     = params[firstParamName]
 
-  factory.create(modelName, attributes)
+  return factory.create(modelName, attributes)
     .then(object => {
-      const objectId = String(object._id)
-      const path     = actionPath(modelName, objectId)
+      const _id  = String(object._id)
+      const path = actionPath(modelName, _id)
 
-      request(service)
+      return request(service)
         .put(path)
+        .set(headers)
         .send(params)
         .expect(200)
-        .end((err, res) => {
-          const doc = res.body
-          expect(doc[firstParamName]).to.equal(params[firstParamName])
-
-          model.findOne({ _id: objectId }).exec()
-            .then(obj => {
-              expect(obj[firstParamName]).to.equal(params[firstParamName])
-              done(err)
-            })
+        .then(res => expect(res.body[firstParamName]).to.equal(firstParam))
+        .then(()  => model.findOne({ _id }).exec())
+        .then(obj => {
+          expect(obj[firstParamName]).to.equal(firstParam)
         })
     })
 }

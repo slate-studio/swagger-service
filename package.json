@@ -9,7 +9,7 @@
     "rabbitmq",
     "redis"
   ],
-  "version": "0.6.5",
+  "version": "0.7.0",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {

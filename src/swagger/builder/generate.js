@@ -27,8 +27,10 @@ const restrictedFields = [
   'createdAt'
 ]
 
-const models = require(`../../../src/models`)
-const schema = models[modelName].schema
+// TODO: This has to be updated, would not work. Don't need model here, only
+//       schema.
+// const models = require('../../../src/models')
+// const schema = models()(modelName).schema
 
 const tagPath = `./api/swagger/src/${tag}`
 const definitionsPath = `${tagPath}/definitions`

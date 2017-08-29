@@ -1,6 +1,8 @@
 'use strict'
 
-module.exports = (modelName) => {
-  const model = Models[modelName]
+module.exports = (modelName, options = {}) => {
+
+  const model = Model(modelName, options)
+
   return model.find({}).remove().exec()
 }
