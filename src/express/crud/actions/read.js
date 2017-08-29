@@ -8,7 +8,7 @@ module.exports = (modelName, options={}) => {
   return (req, res) => {
     helpers.setActionFilters(req, options)
 
-    const id          = req.swagger.params.id.value
+    const id          = _.get(req, 'swagger.params.id.value', 0)
     const query       = helpers.buildFindOneQuery(req.defaultScope, id)
     const operationId = req.swagger.operation.operationId
 
