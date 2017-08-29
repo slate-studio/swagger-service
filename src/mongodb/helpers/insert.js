@@ -1,13 +1,16 @@
 'use strict'
 
-module.exports = (modelName, options, data) => {
+module.exports = (modelName, data) => {
   const counter = data.length
 
-  log.info(`${modelName}`, options, counter)
+  let model
 
-  const model = Model(modelName, options)
+  const inserts = _.map(data, (item, index) => {
 
-  const inserts = _.map(data, (document, index) => {
+    const document = item.document || item
+    const options  = item.options  || {}
+    model          = Model(modelName, options)
+
     document.integerId = document.integerId || index + 1
 
     const timestamp = new Date()
@@ -20,5 +23,10 @@ module.exports = (modelName, options, data) => {
   })
 
   return Promise.all(inserts)
-    .then(() => model.setCustomIncrementCounter(counter + 1))
+    .then(() => {
+      if (model) {
+        return model.setCustomIncrementCounter(counter)
+      }
+    })
+    .then(() => log.info(`${modelName}`, counter))
 }
