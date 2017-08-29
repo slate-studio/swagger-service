@@ -1,23 +1,26 @@
 'use strict'
 
-const cls = require('continuation-local-storage')
+const getNamespace = require('continuation-local-storage').getNamespace
 
 module.exports = (req, res, next) => {
-  const requestId  = req.headers['x-request-id']
-  const userId     = req.headers['x-user-id']
-  const idnId      = req.headers['x-idn-id']      || null
-  const facilityId = req.headers['x-facility-id'] || null
-
-  const namespace = cls.getNamespace('requestNamespace')
+  const namespace = getNamespace('requestNamespace')
 
   namespace.bindEmitter(req)
   namespace.bindEmitter(res)
 
   namespace.run(() => {
-    namespace.set('requestId',  requestId)
-    namespace.set('userId',     userId)
-    namespace.set('idnId',      idnId)
-    namespace.set('facilityId', facilityId)
+    const headers = _.get(C, 'service.requestNamespace.headers')
+
+    _.forEach(headers, headerName => {
+      const value = req.headers[headerName] || null
+
+      if (_.toLower(headerName).substr(0, 2) === 'x-') {
+        headerName = _.toLower(headerName).replace('x-', '')
+        headerName = _.camelCase(headerName)
+      }
+
+      namespace.set(headerName, value)
+    })
 
     next()
   })
