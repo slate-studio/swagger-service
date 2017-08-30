@@ -9,7 +9,7 @@ module.exports = (req, res, next) => {
   namespace.bindEmitter(res)
 
   namespace.run(() => {
-    const headers = _.get(C, 'service.requestNamespace.headers')
+    const headers = _.get(C, 'service.requestNamespace.headers', [])
 
     _.forEach(headers, headerName => {
       const value = req.headers[headerName] || null
