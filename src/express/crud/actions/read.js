@@ -12,11 +12,10 @@ module.exports = (modelName, options={}) => {
     const query       = helpers.buildFindOneQuery(req.defaultScope, id)
     const operationId = req.swagger.operation.operationId
 
-    log.info(operationId, query)
-
     const model = Model(modelName)
 
     req.beforeAction(query)
+      .then(() => log.info(operationId, query))
       .then(() => model.findOne(query).exec())
       .then(helpers.catchNotFound(model))
       .then(object => req.afterAction(object))
