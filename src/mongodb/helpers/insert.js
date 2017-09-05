@@ -19,5 +19,5 @@ module.exports = (modelName, data) => {
   })
 
   return Promise.all(inserts)
-    .then(() => model.setCustomIncrementCounter(counter + 1))
+    .then(() => model.setCustomIncrementCounter(counter))
 }
