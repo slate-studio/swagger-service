@@ -115,7 +115,7 @@ const proc = (message, options={}) => {
       const responseJson = JSON.stringify({
         jobId: object.jobId,
         service: {
-          name:   serviceName,
+          name:   C.service.name,
           status: 'error',
           error:  err.toString()
         }
