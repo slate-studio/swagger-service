@@ -5,7 +5,7 @@ const amqp = require('amqplib')
 
 // TODO: When no connection this fails and doesn't retry sending the message.
 module.exports = (queueName, message, logMessage = true) => {
-  amqp.connect(uri)
+  return amqp.connect(uri)
     .then((conn) => {
       return conn.createChannel()
         .then((ch) => {
