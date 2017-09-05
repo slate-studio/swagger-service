@@ -133,7 +133,7 @@ const listen = (topic=RESET_REQUESTS_TOPIC, callback=proc) => {
       channel.bindQueue(q.queue, topic, '#')
       channel.consume(q.queue, callback, { noAck: true })
 
-      log.info(`Listening '${topic}' topic`)
+      log.info(`Listening topic:${topic}`)
     })
   })
 }
