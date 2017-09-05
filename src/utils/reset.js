@@ -110,6 +110,8 @@ const proc = (message, options={}) => {
       process.exit(0)
     })
     .catch(err => {
+      log.error(err)
+
       const responseJson = JSON.stringify({
         jobId: object.jobId,
         service: {
