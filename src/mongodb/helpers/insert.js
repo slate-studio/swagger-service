@@ -1,9 +1,8 @@
 'use strict'
 
 module.exports = (modelName, data) => {
-  const counter = data.length
-
-  let model
+  let model   = null
+  let counter = 0
 
   const inserts = _.map(data, (item, index) => {
 
@@ -25,7 +24,11 @@ module.exports = (modelName, data) => {
   return Promise.all(inserts)
     .then(() => {
       if (model) {
-        return model.setCustomIncrementCounter(counter)
+        return model.nextCount()
+          .then(currentCounter => {
+            return counter = (currentCounter - 1) + data.length
+          })
+          .then(model.setCustomIncrementCounter)
       }
     })
     .then(() => log.info(`${modelName}`, counter))

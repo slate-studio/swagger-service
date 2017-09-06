@@ -80,34 +80,32 @@ module.exports = (schema, options) => {
       return doc
     })
 
-  const nextCount = (callback) => {
-    IdentityCounter.findOne(
-      { model: settings.model, field: settings.field },
-      (err, counter) => {
-        if (err) {
-          return callback(err)
-        }
-
+  const nextCount = () => {
+    return initializedIdentityCounter
+      .then(() => {
+        return IdentityCounter.findOne({
+          model: settings.model,
+          field: settings.field
+        })
+      })
+      .then(counter => {
         counter = ((counter === null) ? settings.startAt : counter.count + settings.incrementBy)
-        callback(null, counter)
-      }
-    )
+        return counter
+      })
   }
   schema.method('nextCount', nextCount)
   schema.static('nextCount', nextCount)
 
   const resetCount = function (callback) {
-    IdentityCounter.findOneAndUpdate(
-      { model: settings.model, field: settings.field },
-      { count: settings.startAt - settings.incrementBy },
-      { new: true },
-      (err) => {
-        if (err) {
-          return callback(err)
-        }
-        callback(null, settings.startAt)
-      }
-    )
+    return initializedIdentityCounter
+      .then(() => {
+        return IdentityCounter.findOneAndUpdate(
+          { model: settings.model, field: settings.field },
+          { count: settings.startAt - settings.incrementBy },
+          { new: true }
+        )
+      })
+      .then(() => settings.startAt)
   }
   schema.method('resetCount', resetCount)
   schema.static('resetCount', resetCount)
