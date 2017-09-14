@@ -10,9 +10,10 @@ const request   = require('../../utils').request
 const path      = '/health'
 
 const checkService = config => {
-  const spec     = require(`${rootPath}/${config.spec}`)
-  const name     = config.name
-  const version  = spec.info.version
+  const spec              = require(`${rootPath}/${config.spec}`)
+  const name              = config.name
+  const localVersion      = spec.info.version
+  const localVersionMajor = localVersion.split('.')[0]
 
   const [hostname, port] = config.host.split(':')
 
@@ -25,14 +26,14 @@ const checkService = config => {
 
   return request(options)
     .then(res => {
-      const remoteVersion = res.object.info.version
+      const remoteVersion      = res.object.info.version
+      const remoteVersionMajor = remoteVersion.split('.')[0]
 
-      if (version != remoteVersion) {
-        const message = `Specification version mismatch, expected: v${version}, \
-                         returned: v${remoteVersion}`
+      if (localVersionMajor !== remoteVersionMajor) {
+        const message = `Specification version mismatch, expected: v${localVersion}, \
+returned: v${remoteVersion}`
 
         return { name: name, message: message }
-
       }
 
       return null
