@@ -3,11 +3,12 @@
 const actionPath = require('../helpers/actionPath')
 
 module.exports = (modelName, options = {}) => {
-  const params     = options.params     || {}
-  const attributes = options.attributes || {}
-  const headers    = options.headers    || {}
+  const params       = options.params       || {}
+  const attributes   = options.attributes   || {}
+  const headers      = options.headers      || {}
+  const modelOptions = options.modelOptions || null
 
-  const model = Model(modelName, headers)
+  const model = Model(modelName, modelOptions)
 
   const firstParamName = _.keys(params)[0]
   const firstParam     = params[firstParamName]

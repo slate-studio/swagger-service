@@ -1,6 +1,7 @@
 'use strict'
 
-const getNamespace = require('continuation-local-storage').getNamespace
+const utils         = require('../../utils')
+const getNamespace  = require('continuation-local-storage').getNamespace
 
 module.exports = (req, res, next) => {
   const namespace = getNamespace('requestNamespace')
@@ -9,18 +10,27 @@ module.exports = (req, res, next) => {
   namespace.bindEmitter(res)
 
   namespace.run(() => {
-    const headers = _.get(C, 'service.requestNamespace.headers', [])
+    const availableParams 
+      = _.get(C, 'service.requestNamespace.params', [])
 
-    _.forEach(headers, headerName => {
-      const value = req.headers[headerName] || null
+    const tokenBase64
+      = _.get(req, 'headers.x-authentication-token', null)
 
-      if (_.toLower(headerName).substr(0, 2) === 'x-') {
-        headerName = _.toLower(headerName).replace('x-', '')
-        headerName = _.camelCase(headerName)
-      }
+    if (tokenBase64) {
+      const authenticationParams = JSON.parse(
+        utils.base64.decode(tokenBase64)
+      )
 
-      namespace.set(headerName, value)
-    })
+      req.requestNamespace = authenticationParams
+
+      namespace.set('authenticationToken', tokenBase64)
+
+      _.forEach(availableParams, name => {
+        const value = authenticationParams[name] || null
+
+        namespace.set(name, value)
+      })
+    }
 
     next()
   })

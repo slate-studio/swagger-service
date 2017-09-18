@@ -2,8 +2,12 @@
 
 const destroyAll = require('../helpers/destroyAll')
 
-module.exports = (done, modelName, id='1', headers={}) => {
-  destroyAll(modelName).then(() => {
+module.exports = (done, modelName, options={}) => {
+  const id           = options.id           || '1'
+  const headers      = options.headers      || {}
+  const modelOptions = options.modelOptions || null
+
+  destroyAll(modelName, modelOptions).then(() => {
     const path = actionPath(modelName, id)
 
     request(service)

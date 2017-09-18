@@ -1,8 +1,10 @@
 'use strict'
 
 module.exports = {
-  pluralize:           require('./pluralize'),
-  request:             require('./request'),
-  getCloudEnvironment: require('./getCloudEnvironment'),
-  reset:               require('./reset')
+  pluralize:              require('./pluralize'),
+  request:                require('./request'),
+  getCloudEnvironment:    require('./getCloudEnvironment'),
+  reset:                  require('./reset'),
+  base64:                 require('./base64'),
+  CustomRequestNamespace: require('./customRequestNamespace')
 }

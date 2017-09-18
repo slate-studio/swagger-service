@@ -6,9 +6,10 @@ const destroyAll = require('../helpers/destroyAll')
 const DEFAULT_PER_PAGE = 10
 
 module.exports = (modelName, options = {}) => {
-  const headers = options.headers || {}
+  const headers      = options.headers      || {}
+  const modelOptions = options.modelOptions || null
 
-  return destroyAll(modelName, headers)
+  return destroyAll(modelName, modelOptions)
     .then(() => factory.createMany(modelName, 20))
     .then(() => {
       const path = actionPath(modelName)

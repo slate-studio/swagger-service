@@ -4,36 +4,12 @@ const errors   = require('../../errors')
 const rootPath = require('app-root-path')
 const fs       = require('fs')
 const cls      = require('continuation-local-storage')
+const utils    = require('../../utils')
 
 const MODELS_PATH = `${rootPath}/src/models`
 
 const schemas = {}
 const models  = {}
-
-class CustomRequestNamespace {
-
-  constructor(options) {
-    this.namespace = {}
-
-    _.forEach(options, (value, name) => {
-      if (_.toLower(name).substr(0, 2) === 'x-') {
-        name = _.toLower(name).replace('x-', '')
-        name = _.camelCase(name)
-      }
-
-      this.set(name, value)
-    })
-  }
-
-  get(name) {
-    return this.namespace[name] || null
-  }
-
-  set(key, value) {
-    this.namespace[key] = value
-  }
-
-}
 
 const isSchemaWithCustomCollection = schema => {
   return _.isFunction(schema.getCustomCollectionName)
@@ -53,7 +29,7 @@ const Model = (modelName, options = {}) => {
       namespace = cls.getNamespace('requestNamespace')
 
     } else {
-      namespace = new CustomRequestNamespace(options)
+      namespace = new utils.CustomRequestNamespace(options)
 
     }
 
