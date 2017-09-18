@@ -2,12 +2,11 @@
 
 const actionPath = require('../helpers/actionPath')
 
-module.exports = (modelName, options = {}) => {
-  const attributes   = options.attributes   || {}
-  const headers      = options.headers      || {}
-  const modelOptions = options.modelOptions || null
+module.exports = (modelName, options={}) => {
+  const attributes = options.attributes || {}
+  const headers    = options.headers    || {}
 
-  const model = Model(modelName, modelOptions)
+  const model = Model(modelName, headers)
 
   return factory.attrs(modelName, attributes)
     .then(params => {

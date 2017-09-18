@@ -15,7 +15,7 @@ const isSchemaWithCustomCollection = schema => {
   return _.isFunction(schema.getCustomCollectionName)
 }
 
-const Model = (modelName, options = {}) => {
+const Model = (modelName, headers) => {
   const schema = schemas[modelName]
 
   if (!schema) {
@@ -23,17 +23,25 @@ const Model = (modelName, options = {}) => {
   }
 
   if (isSchemaWithCustomCollection(schema)) {
-    let namespace = {}
+    if (headers) {
+      const requestNamespace = new RequestNamespace(headers) // DO not read from CLS
 
-    if (_.isEmpty(options)) {
-      namespace = cls.getNamespace('requestNamespace')
-
-    } else {
-      namespace = new utils.CustomRequestNamespace(options)
+    } else
+      const requestNamespace = new RequestNamespace() // READ from CLS
 
     }
 
-    modelName = schema.getCustomCollectionName(namespace)
+    // let namespace = {}
+
+    // if (_.isEmpty(options)) {
+    //   namespace = cls.getNamespace('requestNamespace')
+
+    // } else {
+    //   namespace = new utils.CustomRequestNamespace(options)
+
+    // }
+
+    modelName = schema.getCustomCollectionName(requestNamespace)
   }
 
   let model = models[modelName]

@@ -33,22 +33,20 @@ module.exports = (service) => {
 
       middleware.register(service)
 
-      var options = {
-        authenticationToken: (req, spec, authenticationToken, callback) => {
-          // TODO add authentication if required
+      const authenticationToken = (req, spec, authenticationToken, callback) => {
 
-          let error = null
-          if (!authenticationToken) {
-            error = new Error(
-              'Invalid header (x-authentication-token): Value is required but was not provided'
-            )
-          }
-
-          callback(error) 
+        // TODO: Add authentication when requirements are defined.
+        if (authenticationToken) {
+          return callback()
         }
+
+        const msg = 'X-Authentication-Token header is not provided.'
+        const error = new Error(msg)
+
+        return callback(error)
       }
 
-      middleware.runner.securityHandlers = options
+      middleware.runner.securityHandlers = { authenticationToken }
 
       return resolve(service)
     })

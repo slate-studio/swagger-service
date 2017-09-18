@@ -1,42 +1,45 @@
 'use strict'
 
-const uri   = C.rabbitmq.uri
-const amqp  = require('amqplib')
-const cls   = require('continuation-local-storage')
+const uri  = C.rabbitmq.uri
+const amqp = require('amqplib')
+const cls  = require('continuation-local-storage')
+const CustomRequestNamespace = require('../../utils/customRequestNamespace')
 
 // TODO: When no connection this fails and doesn't retry sending the message.
-module.exports = (queueName, message, options = {}, logMessage = true) => {
-  let namespace = {}
+// TODO: Get rid of requestNamespace={} param, create a separate method for
+//       tests.
+module.exports = (queueName, object, requestNamespace={}) => {
+  if (_.isEmpty(requestNamespace)) {
+    requestNamespace = cls.getNamespace('requestNamespace')
 
-  if (_.isEmpty(options)) {
-    namespace = cls.getNamespace('requestNamespace')
   } else {
-    const utils = require('../../utils')
-    namespace   = new utils.CustomRequestNamespace(options)
+    requestNamespace = new CustomRequestNamespace(requestNamespace)
+
   }
-  const authenticationToken = namespace.get('authenticationToken')
+
+  const authenticationToken = requestNamespace.get('authenticationToken')
+
+  let connection
+  let channel
 
   return amqp.connect(uri)
-    .then((conn) => {
-      return conn.createChannel()
-        .then((ch) => {
-          const ok = ch.assertQueue(queueName, { durable: false })
+    .then(conn => {
+      connection = conn
+      return connection.createChannel()
+    })
+    .then(ch => {
+      channel = ch
+      return channel.assertQueue(queueName, { durable: false })
+    })
+    .then(() => {
+      const json    = JSON.stringify(object)
+      const buffer  = new Buffer(json)
+      const options = { headers: { authenticationToken } }
 
-          return ok.then(() => {
-            const buffer = new Buffer(message)
-            const options = {
-              headers: { authenticationToken }
-            }
-            ch.sendToQueue(queueName, buffer, options)
-
-            if (logMessage) {
-              log.info('[AMQP] Send', queueName, message)
-            } else {
-              const length = message.length
-              log.info('[AMQP] Send', queueName, length)
-            }
-            return ch.close()
-          })
-        }).finally(() => { conn.close() })
-    }).catch(log.warning)
+      log.info(`[AMQP] Send to ${queueName}: ${object}`)
+      return channel.sendToQueue(queueName, buffer, options)
+    })
+    .then(channel.close)
+    .finally(connection.close)
+    .catch(log.error)
 }

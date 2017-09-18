@@ -4,34 +4,36 @@ const utils         = require('../../utils')
 const getNamespace  = require('continuation-local-storage').getNamespace
 
 module.exports = (req, res, next) => {
-  const namespace = getNamespace('requestNamespace')
+  req.requestNamespace = new RequestNamespace(req.headers)
+  req.requestNamespace.save()
+    .then(next)
 
-  namespace.bindEmitter(req)
-  namespace.bindEmitter(res)
+  const cslNamespace = getNamespace('requestNamespace')
 
-  namespace.run(() => {
-    const availableParams 
-      = _.get(C, 'service.requestNamespace.params', [])
+  cslNamespace.bindEmitter(req)
+  cslNamespace.bindEmitter(res)
 
-    const tokenBase64
-      = _.get(req, 'headers.x-authentication-token', null)
+  cslNamespace.run(() => {
+    const requestNamespaceAttributeNames = _
+      .get(C, 'service.requestNamespace', [])
 
-    if (tokenBase64) {
-      const authenticationParams = JSON.parse(
-        utils.base64.decode(tokenBase64)
-      )
+    const authenticationToken = _
+      .get(req, 'headers.x-authentication-token', null)
 
-      req.requestNamespace = authenticationParams
+    if (authenticationToken) {
+      const authenticationTokenJSON = utils.base64.decode(authenticationToken)
+      const requestNamespace        = JSON.parse(authenticationTokenJSON)
 
-      namespace.set('authenticationToken', tokenBase64)
+      req.requestNamespace = requestNamespace
 
-      _.forEach(availableParams, name => {
-        const value = authenticationParams[name] || null
+      cslNamespace.set('authenticationToken', authenticationToken)
 
-        namespace.set(name, value)
+      _.forEach(requestNamespaceAttributeNames, name => {
+        const value = requestNamespace[name] || null
+        cslNamespace.set(name, value)
       })
     }
 
-    next()
+    return next()
   })
 }
