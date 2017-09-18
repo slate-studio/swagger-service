@@ -8,9 +8,11 @@ module.exports = (ch, conn, queue, callback) => {
 
         const authenticationToken 
           = _.get(msg, 'properties.headers.authenticationToken', null)
-        
+
         if (authenticationToken) {
-          authData = utils.base64.decode(authenticationToken)
+          const authData = JSON.parse(
+            utils.base64.decode(authenticationToken)
+          )
           _.assign(msg.properties.headers, authData)
         }
 
