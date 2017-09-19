@@ -6,5 +6,5 @@ module.exports = {
   getCloudEnvironment: require('./getCloudEnvironment'),
   reset:               require('./reset'),
   base64:              require('./base64'),
-  requestNamespace:    require('./requestNamespace'),
+  RequestNamespace:    require('./requestNamespace'),
 }

@@ -1,6 +1,6 @@
 'use strict'
 
-const requestNamespaceUtility = require('../../utils/requestNamespace')
+const RequestNamespace = require('../../utils/requestNamespace')
 
 module.exports = (channel, connection, queue, callback) => {
   channel.assertQueue(queue, { durable: false }, error => {
@@ -22,10 +22,8 @@ module.exports = (channel, connection, queue, callback) => {
 
       const headers = { 'x-authentication-token': authenticationToken }
 
-      requestNamespaceUtility.initializeRequestNamespace(headers, {}, () => {
-        msg.requestNamespace = requestNamespaceUtility.getRequestNamespace()
-        callback(msg)
-      })
+      msg.requestNamespace = new RequestNamespace(headers)
+      msg.requestNamespace.save({}, () => callback(msg))
     })
   })
 }

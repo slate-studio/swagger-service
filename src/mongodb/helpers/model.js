@@ -1,10 +1,9 @@
 'use strict'
 
-const errors   = require('../../errors')
-const rootPath = require('app-root-path')
-const fs       = require('fs')
-const cls      = require('continuation-local-storage')
-const requestNamespaceUtility = require('../../utils/requestNamespace')
+const errors           = require('../../errors')
+const rootPath         = require('app-root-path')
+const fs               = require('fs')
+const RequestNamespace = require('../../utils/requestNamespace')
 
 const MODELS_PATH = `${rootPath}/src/models`
 
@@ -23,7 +22,7 @@ const Model = (modelName, headers) => {
   }
 
   if (isSchemaWithCustomCollection(schema)) {
-    const requestNamespace = requestNamespaceUtility.getRequestNamespace(headers)
+    const requestNamespace = new RequestNamespace(headers)
     modelName = schema.getCustomCollectionName(requestNamespace)
   }
 

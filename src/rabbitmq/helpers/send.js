@@ -1,8 +1,8 @@
 'use strict'
 
-const uri                     = C.rabbitmq.uri
-const amqp                    = require('amqplib')
-const requestNamespaceUtility = require('../../utils/requestNamespace')
+const uri              = C.rabbitmq.uri
+const amqp             = require('amqplib')
+const RequestNamespace = require('../../utils/requestNamespace')
 
 const send = (queueName, object, authenticationToken) => {
   let connection
@@ -33,7 +33,7 @@ const send = (queueName, object, authenticationToken) => {
 
 // TODO: When no connection this fails and doesn't retry sending the message.
 module.exports = exports = (queueName, object) => {
-  const requestNamespace    = requestNamespaceUtility.getRequestNamespace()
+  const requestNamespace    = new RequestNamespace()
   const authenticationToken = requestNamespace.get('authenticationToken')
 
   return send(queueName, object, authenticationToken)
