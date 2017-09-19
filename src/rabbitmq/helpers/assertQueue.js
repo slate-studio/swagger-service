@@ -1,9 +1,9 @@
 'use strict'
 
-const base64 = require('../../utils/base64')
+const requestNamespaceUtility = require('../../utils/requestNamespace')
 
 module.exports = (channel, connection, queue, callback) => {
-  ch.assertQueue(queue, { durable: false }, error => {
+  channel.assertQueue(queue, { durable: false }, error => {
     if (error) {
       log.error('[AMQP]', error)
       return connection.close()
@@ -20,16 +20,12 @@ module.exports = (channel, connection, queue, callback) => {
         return channel.ack(msg)
       }
 
-      // TODO: Add CSL here.
-      // const authData = JSON.parse(
-      //   base64.decode(authenticationToken)
-      // )
-      // _.assign(msg.properties.headers, authData)
       const headers = { 'x-authentication-token': authenticationToken }
 
-      msg.requestNamespace = new RequestNamespace(headers)
-      msg.requestNamespace.save()
-        .then(() => callback(msg))
+      requestNamespaceUtility.initializeRequestNamespace(headers, {}, () => {
+        msg.requestNamespace = requestNamespaceUtility.getRequestNamespace()
+        callback(msg)
+      })
     })
   })
 }

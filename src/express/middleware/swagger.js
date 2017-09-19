@@ -1,6 +1,7 @@
 'use strict'
 
 const swaggerMiddleware = require('swagger-express-mw')
+const errors            = require('../../errors')
 
 const fs       = require('fs')
 const yaml     = require('js-yaml')
@@ -40,8 +41,9 @@ module.exports = (service) => {
           return callback()
         }
 
-        const msg = 'X-Authentication-Token header is not provided.'
-        const error = new Error(msg)
+        const error = new errors.Http.Http403()
+        error.errors = []
+        error.errors.push(new errors.AuthenticationTokenNotProvided())
 
         return callback(error)
       }

@@ -1,24 +1,10 @@
 'use strict'
 
-const uri  = C.rabbitmq.uri
-const amqp = require('amqplib')
-const cls  = require('continuation-local-storage')
-const CustomRequestNamespace = require('../../utils/customRequestNamespace')
+const uri                     = C.rabbitmq.uri
+const amqp                    = require('amqplib')
+const requestNamespaceUtility = require('../../utils/requestNamespace')
 
-// TODO: When no connection this fails and doesn't retry sending the message.
-// TODO: Get rid of requestNamespace={} param, create a separate method for
-//       tests.
-module.exports = (queueName, object, requestNamespace={}) => {
-  if (_.isEmpty(requestNamespace)) {
-    requestNamespace = cls.getNamespace('requestNamespace')
-
-  } else {
-    requestNamespace = new CustomRequestNamespace(requestNamespace)
-
-  }
-
-  const authenticationToken = requestNamespace.get('authenticationToken')
-
+const send = (queueName, object, authenticationToken) => {
   let connection
   let channel
 
@@ -39,7 +25,17 @@ module.exports = (queueName, object, requestNamespace={}) => {
       log.info(`[AMQP] Send to ${queueName}: ${object}`)
       return channel.sendToQueue(queueName, buffer, options)
     })
-    .then(channel.close)
-    .finally(connection.close)
+    .then(() => channel.close())
+    .finally(() => connection.close())
     .catch(log.error)
+
 }
+
+// TODO: When no connection this fails and doesn't retry sending the message.
+module.exports = exports = (queueName, object) => {
+  const requestNamespace    = requestNamespaceUtility.getRequestNamespace()
+  const authenticationToken = requestNamespace.get('authenticationToken')
+
+  return send(queueName, object, authenticationToken)
+}
+exports.send = send

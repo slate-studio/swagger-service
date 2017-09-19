@@ -1,39 +1,42 @@
 'use strict'
 
-const uri   = C.rabbitmq.uri
-const amqp  = require('amqplib')
-const cls   = require('continuation-local-storage')
+const uri                     = C.rabbitmq.uri
+const amqp                    = require('amqplib')
+const requestNamespaceUtility = require('../../utils/requestNamespace')
+
+const publish = (topicName, key, object, authenticationToken) => {
+  let connection
+  let channel
+
+  return amqp.connect(uri)
+    .then(conn => {
+      connection = conn
+      return connection.createChannel()
+    })
+    .then(ch => {
+      channel = ch
+      return channel.assertExchange(topicName, 'topic', { durable: false })
+    })
+    .then(() => {
+      const json   = JSON.stringify(object)
+      const buffer = new Buffer(json)
+      const options = { headers: { authenticationToken } }
+
+      log.info('[AMQP] Publish', `${topicName}.${key}: ${object}`)
+      channel.publish(topicName, key, buffer, options)
+
+      return channel.close()
+    })
+    .then(() => channel.close())
+    .finally(() => connection.close())
+    .catch(log.error)
+}
 
 // TODO: When no connection this fails and doesn't retry sending the message.
-module.exports = (topicName, key, message, options = {}) => {
-  let namespace = {}
+module.exports = exports = (topicName, key, object) => {
+  const requestNamespace    = requestNamespaceUtility.getRequestNamespace()
+  const authenticationToken = requestNamespace.get('authenticationToken')
 
-  if (_.isEmpty(options)) {
-    namespace = cls.getNamespace('requestNamespace')
-  } else {
-    const utils = require('../../utils')
-    namespace   = new utils.CustomRequestNamespace(options)
-  }
-  const authenticationToken = namespace.get('authenticationToken')
-
-  amqp.connect(uri)
-    .then((conn) => {
-      return conn.createChannel()
-        .then((ch) => {
-          const ok = ch.assertExchange(topicName, 'topic', { durable: false })
-          return ok.then(() => {
-            log.info('[AMQP] Publish', `${topicName}.${key}`, message)
-
-            const json   = JSON.stringify(message)
-            const buffer = new Buffer(json)
-            const options = {
-              headers: { authenticationToken }
-            }
-            ch.publish(topicName, key, buffer, options)
-
-            return ch.close()
-          })
-
-        }).finally(() => { conn.close() })
-    }).catch(log.warning)
+  return publish(topicName, key, object, authenticationToken)
 }
+exports.publish = publish

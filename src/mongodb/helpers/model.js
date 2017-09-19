@@ -4,7 +4,7 @@ const errors   = require('../../errors')
 const rootPath = require('app-root-path')
 const fs       = require('fs')
 const cls      = require('continuation-local-storage')
-const utils    = require('../../utils')
+const requestNamespaceUtility = require('../../utils/requestNamespace')
 
 const MODELS_PATH = `${rootPath}/src/models`
 
@@ -23,24 +23,7 @@ const Model = (modelName, headers) => {
   }
 
   if (isSchemaWithCustomCollection(schema)) {
-    if (headers) {
-      const requestNamespace = new RequestNamespace(headers) // DO not read from CLS
-
-    } else
-      const requestNamespace = new RequestNamespace() // READ from CLS
-
-    }
-
-    // let namespace = {}
-
-    // if (_.isEmpty(options)) {
-    //   namespace = cls.getNamespace('requestNamespace')
-
-    // } else {
-    //   namespace = new utils.CustomRequestNamespace(options)
-
-    // }
-
+    const requestNamespace = requestNamespaceUtility.getRequestNamespace(headers)
     modelName = schema.getCustomCollectionName(requestNamespace)
   }
 

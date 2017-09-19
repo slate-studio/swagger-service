@@ -5,6 +5,7 @@ const errors = [
   'http',
   'documentNotFound',
   'userSessionNotFound',
+  'authenticationTokenNotProvided',
 ]
 
 errors.forEach(name => {
