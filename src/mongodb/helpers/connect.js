@@ -1,22 +1,21 @@
 'use strict'
 
 module.exports = () => {
-  // TODO: Here we should have a support for replicas.
-  const uri = C.mongodb.uri
-  // const uri = C.mongodb.uri + '?autoReconnect=false'
-
-  const options = {
-    useMongoClient: true,
-    keepAlive:      1
-  }
   // TODO: Need to update a connection fail strategy with Mongodb and put a link
   //       with description here:
   //   autoReconnect:    false,
   //   bufferMaxEntries: 0
   // }
 
+  // const uri = C.mongodb.uri + '?autoReconnect=false'
+  const uri = _.get(C, 'mongodb.uri')
+
   if (uri) {
-    const debug = require('./debug')
+    const debug   = require('./debug')
+    const options = {
+      useMongoClient: true,
+      keepAlive:      1
+    }
 
     return mongoose.connect(uri, options)
       .then(connection => {

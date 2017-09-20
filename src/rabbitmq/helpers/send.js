@@ -1,10 +1,11 @@
 'use strict'
 
-const uri              = C.rabbitmq.uri
 const amqp             = require('amqplib')
 const RequestNamespace = require('../../utils/requestNamespace')
 
 const send = (queueName, object, authenticationToken) => {
+  const uri = C.rabbitmq.uri
+
   let connection
   let channel
 

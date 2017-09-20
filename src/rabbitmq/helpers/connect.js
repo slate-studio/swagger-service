@@ -1,12 +1,13 @@
 'use strict'
 
 const amqp = require('amqplib/callback_api')
-const uri  = C.rabbitmq.uri
 
 const RECONNECT_MILLISECONDS = 1000
 let _callback = null
 
 const connect = (callback) => {
+  const uri = C.rabbitmq.uri
+
   _callback = _callback || callback
 
   amqp.connect(uri, (err, conn) => {

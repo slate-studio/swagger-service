@@ -2,7 +2,7 @@
 
 module.exports = () => {
   return new Promise((resolve, reject) => {
-    const uri = C.mongodb.uri
+    const uri = _.get(C, 'mongodb.uri')
 
     if (!uri) {
       const error = new Error('Mongodb URI is missing')

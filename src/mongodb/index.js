@@ -1,8 +1,9 @@
 'use strict'
 
 const helpers = require('./helpers')
+const uri     = _.get(C, 'mongodb.uri')
 
-if (C.mongodb.uri) {
+if (uri) {
   global.Model     = helpers.Model
   global.mongoose  = require('mongoose')
   mongoose.Promise = Promise
