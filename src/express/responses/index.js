@@ -22,19 +22,11 @@ const processErrorsToArrayOfPlainObjects = (errorsList) => {
     }
   }
 
-  let output = []
-
   if (_.isArray(errorsList)) {
-    output = _.map(errorsList, (error) => {
-      output.push(buildErrorPlainObject(error))
-    })
-
-  } else {
-    output.push(buildErrorPlainObject(errorsList))
-
+    return _.map(errorsList, (error) => buildErrorPlainObject(error))
   }
 
-  return output
+  return [ buildErrorPlainObject(errorsList) ]
 }
 
 const errorResponse = (req, res, httpError, errorsList) => {
