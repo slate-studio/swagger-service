@@ -13,7 +13,7 @@ module.exports = (req, res, next) => {
     })
   }
 
-  const sessionId = req.headers['x-session-id']
+  const sessionId = req.requestNamespace.get('sessionId')
 
   if (sessionId) {
     const key = `Session ${sessionId}`

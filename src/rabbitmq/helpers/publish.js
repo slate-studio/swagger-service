@@ -24,9 +24,7 @@ const publish = (topicName, key, object, authenticationToken) => {
       const options = { headers: { authenticationToken } }
 
       log.info('[AMQP] Publish', `${topicName}.${key}: ${object}`)
-      channel.publish(topicName, key, buffer, options)
-
-      return channel.close()
+      return channel.publish(topicName, key, buffer, options)
     })
     .then(() => channel.close())
     .finally(() => connection.close())
