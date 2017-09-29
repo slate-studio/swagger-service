@@ -9,7 +9,7 @@
     "rabbitmq",
     "redis"
   ],
-  "version": "1.0.9",
+  "version": "1.1.0",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -51,29 +51,32 @@
     "agentkeepalive": "^3.3.0",
     "amqplib": "^0.5.1",
     "app-root-path": "^2.0.1",
+    "aws-sdk": "^2.124.0",
     "bluebird": "^3.5.0",
+    "bunyan": "^1.8.12",
+    "bunyan-firehose": "git+https://github.com/slate-studio/bunyan-firehose.git#v0.0.4",
     "bunyan-logstash": "^0.3.4",
     "cls-bluebird": "^2.0.1",
-    "config": "^1.26.1",
+    "config": "^1.26.2",
     "continuation-local-storage": "^3.2.0",
     "cors": "^2.8.3",
     "database-cleaner": "^1.2.0",
-    "express": "^4.15.2",
-    "json2csv": "^3.11.0",
+    "express": "^4.15.5",
+    "faker": "^4.1.0",
+    "json2csv": "^3.11.2",
     "lodash": "^4.17.4",
-    "mongoose": "^4.11.3",
+    "mongoose": "^4.11.13",
     "mongoose-timestamp": "^0.6.0",
+    "nock": "^9.0.22",
     "redis": "^2.7.1",
     "response-time": "^2.3.2",
-    "swagger-client": "^3.0.18",
-    "swagger-express-mw": "^0.7.0",
-    "nock": "^9.0.14",
-    "faker": "^4.1.0"
+    "swagger-client": "^3.1.2",
+    "swagger-express-mw": "^0.7.0"
   },
   "devDependencies": {
-    "chai": "^4.1.1",
+    "chai": "^4.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.4.1"
+    "mocha": "^3.5.3"
   },
   "license": "ISC",
   "scripts": {

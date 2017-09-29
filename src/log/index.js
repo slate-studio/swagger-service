@@ -1,48 +1,49 @@
 'use strict'
 
-const rootPath = require('app-root-path')
-const pkg      = require(`${rootPath}/package.json`)
-const version  = pkg.version
-
+// TODO: This should probably move to RequestNamespace class.
 const cls       = require('continuation-local-storage')
 const namespace = cls.createNamespace('requestNamespace')
 require('cls-bluebird')(namespace)
 
-const Bunyan    = require('bunyan')
-const bunyanUdp = require('@astronomer/bunyan-udp')
+const rootPath = require('app-root-path')
+const pkg      = require(`${rootPath}/package.json`)
+const version  = pkg.version
+const Bunyan   = require('bunyan')
 
-const streams = [
-  {
-    level:  C.stdoutLogLevel || 'debug',
-    stream: process.stdout
-  }
-]
+// STREAMS ====================================================================
 
-if (C.logstash && !C.logstash.disabled) {
-  const udpStream = bunyanUdp.createStream({
-    host: C.logstash.host,
-    port: C.logstash.port || 5959
-  })
+const stdout = require('./_stdout')()
+let streams = [ stdout ]
 
-  streams.push({
-    type:   'stream',
-    level:  'debug',
-    stream: udpStream
-  })
+if (C.log.firehose) {
+  const firehose = require('./_firehose')()
+  streams.push(firehose)
 }
 
-const bunyan = new Bunyan({
-  name:    C.service.name,
-  streams: streams,
-  level:   'debug'
-})
+if (C.log.logstash) {
+  const logstash = require('./_logstash')()
+  streams.push(logstash)
+}
+
+streams = _.compact(streams)
+
+// LOGGER =====================================================================
+
+const name        = C.service.name
+const level       = _.get(C, 'log.level', 'info')
+const serializers = Bunyan.stdSerializers
+
+const bunyan = new Bunyan({ name, level, streams, serializers })
 
 const bunyanRequestIdChild = () => {
-  const requestId    = namespace.get('requestId') || ''
-  const userId       = namespace.get('userId')    || ''
-  const environment  = process.env.RANCHER_ENV    || 'null'
+  // TODO: namespace should be created here using new RequestNamespace class.
+  const requestId = namespace.get('requestId') || ''
+  const userId    = namespace.get('userId')    || ''
 
-  return bunyan.child({ requestId, userId, version, environment })
+  const metadata = _.get(C, 'log.metadata', {})
+  const config   = _.extend({ requestId, userId, version }, metadata)
+
+  return bunyan.child(config)
 }
 
 const log = {
@@ -66,4 +67,5 @@ process.on('unhandledRejection', (reason, p) => {
   setImmediate(() => process.exit(1))
 })
 
-module.exports = log
+exports = module.exports = log
+exports.setMetadata = require('./setMetadata')

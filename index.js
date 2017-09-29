@@ -22,13 +22,13 @@ exports = module.exports = () => {
   const buildApi = require('./src/swagger/client')
 
   Promise.resolve()
-    .then(utils.getCloudEnvironment)
+    .then(log.setMetadata)
     .then(buildApi)
     .then(redis)
     .then(mongodb)
     .then(() => express(service))
     .catch(error => {
-      log.error(error)
+      log.error('Service initialization error: ', error)
       process.exit(1)
     })
 
