@@ -36,7 +36,7 @@ const getAwsMetadata= () => {
     maxRetries: 1
   }
 
-  const meta = new AWS.MetadataService(options)
+  const meta = new aws.MetadataService(options)
 
   let metadata
 
