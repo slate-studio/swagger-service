@@ -47,13 +47,13 @@ const getAwsMetadata= () => {
       }
 
       const object = JSON.parse(data)
-      metadata = _.pick([ 'privateIp',
-                          'availabilityZone',
-                          'instanceId',
-                          'instanceType',
-                          'accountId',
-                          'amiId',
-                          'region' ])
+      metadata = _.pick(object, [ 'privateIp',
+                                  'availabilityZone',
+                                  'instanceId',
+                                  'instanceType',
+                                  'accountId',
+                                  'imageId',
+                                  'region' ])
 
       return resolve()
     })
@@ -77,7 +77,7 @@ const getAwsMetadata= () => {
       const name  = tag.Key.toLowerCase()
       const value = tag.Value
 
-      tags[name] = value
+      metadata.tags[name] = value
     })
 
     return metadata
@@ -92,7 +92,7 @@ const getAwsMetadata= () => {
 const setMetadata = () => {
   // NOTE: Here we consider non production environment to be local one. Do not
   //       make call to Rancher and AWS.
-  if (process.env.NODE_ENV != 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     C.log.metadata = { environment: os.hostname() }
     return Promise.resolve()
   }
