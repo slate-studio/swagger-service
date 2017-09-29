@@ -62,7 +62,7 @@ const getAwsMetadata= () => {
     const region     = object.region
     const instanceId = object.instanceId
 
-    const ec2 = new AWS.EC2({ region })
+    const ec2 = new aws.EC2({ region })
 
     const Name    = 'resource-id'
     const Values  = [ instanceId ]
