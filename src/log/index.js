@@ -15,12 +15,14 @@ const Bunyan   = require('bunyan')
 const stdout = require('./_stdout')()
 let streams = [ stdout ]
 
-if (C.log.firehose) {
+const isFirehoseEnabled = _.get(C, 'log.firehose')
+if (isFirehoseEnabled) {
   const firehose = require('./_firehose')()
   streams.push(firehose)
 }
 
-if (C.log.logstash) {
+const isLogstashEnabled = _.get(C, 'log.logstash')
+if (isLogstashEnabled) {
   const logstash = require('./_logstash')()
   streams.push(logstash)
 }
@@ -29,7 +31,7 @@ streams = _.compact(streams)
 
 // LOGGER =====================================================================
 
-const name        = C.service.name
+const name        = _.get(C, 'service.name', 'NO_NAME_DEFINED')
 const level       = _.get(C, 'log.level', 'info')
 const serializers = Bunyan.stdSerializers
 
