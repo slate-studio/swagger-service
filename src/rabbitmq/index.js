@@ -27,9 +27,9 @@ module.exports = {
   Listener,
   purge,
   publish: ({ uri, topic, key, object, headers, timeout }) => {
-    setRequestNamespaceHeaders({ uri, topic, key, object, headers, timeout }, publish)
+    return setRequestNamespaceHeaders({ uri, topic, key, object, headers, timeout }, publish)
   },
   send: ({ uri, queue, object, headers, timeout }) => {
-    setRequestNamespaceHeaders({ uri, queue, object, headers, timeout }, send)
+    return setRequestNamespaceHeaders({ uri, queue, object, headers, timeout }, send)
   }
 }

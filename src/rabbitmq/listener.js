@@ -92,7 +92,7 @@ class Listener {
           return this.connection.close()
         }
 
-        return this.channel.consume(queue, callback.bind(null, this.channel))
+        return this.channel.consume(queue, callback)
       })
     })
   }
