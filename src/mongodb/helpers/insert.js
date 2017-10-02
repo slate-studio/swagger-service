@@ -4,6 +4,10 @@ module.exports = (modelName, data) => {
   let model   = null
   let counter = 0
 
+  if (_.isEmpty(data)) {
+    return Promise.resolve()
+  }
+
   const inserts = _.map(data, (item, index) => {
 
     const document = item.document || item
@@ -22,14 +26,10 @@ module.exports = (modelName, data) => {
   })
 
   return Promise.all(inserts)
-    .then(() => {
-      if (model) {
-        return model.nextCount()
-          .then(currentCounter => {
-            return counter = (currentCounter - 1) + data.length
-          })
-          .then(model.setCustomIncrementCounter)
-      }
+    .then(model.nextCount)
+    .then(currentCounter => {
+      return counter = (currentCounter - 1) + data.length
     })
+    .then(model.setCustomIncrementCounter)
     .then(() => log.info(`${modelName}`, counter))
 }

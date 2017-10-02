@@ -128,16 +128,10 @@ const proc = (message, options={}) => {
 }
 
 const listen = (topic=RESET_REQUESTS_TOPIC, callback=proc) => {
-  rabbitmq.connect((channel, conn) => {
-    channel.assertExchange(topic, 'topic', { durable: false })
-    channel.assertQueue('', { exclusive: true }, (err, q) => {
-      // Receive all the messages in the topic
-      channel.bindQueue(q.queue, topic, '#')
-      channel.consume(q.queue, callback, { noAck: true })
-
-      log.info(`Listening topic:${topic}`)
-    })
-  })
+  const handlers = {}
+  handlers[`${topic}.#`] = callback
+  const listener = new rabbitmq.Listener({ handlers })
+  listener.listen()
 }
 
 module.exports = {

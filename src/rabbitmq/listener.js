@@ -81,6 +81,7 @@ class Listener {
 
     msg.requestNamespace = new RequestNamespace(headers)
     msg.requestNamespace.save({}, () => callback(msg, this.channel))
+    console.log('MESSAGE', msg)
   }
 
   _listenQueues() {
@@ -91,7 +92,7 @@ class Listener {
           return this.connection.close()
         }
 
-        return this.channel.consume(queue, callback)
+        return this.channel.consume(queue, callback.bind(null, this.channel))
       })
     })
   }

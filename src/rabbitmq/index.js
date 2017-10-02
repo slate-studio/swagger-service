@@ -17,7 +17,7 @@ const setRequestNamespaceHeaders = (options, method) => {
 
   if (options.timeout) {
     method(options)
-    return new Promise(resolve => setTimeout(resolve, timeout))
+    return new Promise(resolve => setTimeout(resolve, options.timeout))
   }
 
   return method(options)

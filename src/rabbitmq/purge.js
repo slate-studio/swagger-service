@@ -1,5 +1,7 @@
 'use strict'
 
+const amqp = require('amqplib')
+
 const purge = (queue) => {
   const uri = C.rabbitmq.uri
 

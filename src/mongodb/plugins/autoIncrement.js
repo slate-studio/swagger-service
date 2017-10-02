@@ -16,7 +16,7 @@ module.exports = (schema, options) => {
         count: { type: Number, default: 0 }
       })
 
-      counterSchema.index({ field: 1, model: 1 }, { unique: true, required: true, index: -1 })
+      counterSchema.index({ field: 1, model: 1 }, { unique: true })
 
       IdentityCounter = mongoose.model('IdentityCounter', counterSchema)
 
@@ -86,7 +86,7 @@ module.exports = (schema, options) => {
         return IdentityCounter.findOne({
           model: settings.model,
           field: settings.field
-        })
+        }).exec()
       })
       .then(counter => {
         counter = ((counter === null) ? settings.startAt : counter.count + settings.incrementBy)
@@ -111,21 +111,22 @@ module.exports = (schema, options) => {
   schema.static('resetCount', resetCount)
 
   const setCustomIncrementCounter = (customIncrementValue) => {
-    return initializedIdentityCounter.then(() => {
+    return initializedIdentityCounter
+      .then(() => {
+        customIncrementValue = parseInt(customIncrementValue)
 
-      customIncrementValue = parseInt(customIncrementValue)
-      if (customIncrementValue > 0) {
+        if (customIncrementValue <= 0) {
+          return Promise.resolve()
+        }
+
         const query = {
           model: settings.model,
           field: settings.field
         }
 
         const params = { count: customIncrementValue }
-
-        return IdentityCounter.update(query, params)
-      }
-
-    })
+        return IdentityCounter.findOneAndUpdate(query, params).exec()
+      })
   }
   schema.method('setCustomIncrementCounter', setCustomIncrementCounter)
   schema.static('setCustomIncrementCounter', setCustomIncrementCounter)

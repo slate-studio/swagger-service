@@ -10,6 +10,12 @@ module.exports = (hash) => {
 
       const inserts = _.map(hash, (data, name) => insert(name, data))
 
-      return Promise.all(inserts).then(() => connection.close())
+      return Promise.all(inserts)
+        .then(() => {
+          return new Promise(resolve => {
+            setTimeout(() => connection.close().then(resolve), 2000)
+          })
+        })
+        .catch(error => log.error('Seed error:', error))
     })
 }
