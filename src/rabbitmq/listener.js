@@ -81,7 +81,6 @@ class Listener {
 
     msg.requestNamespace = new RequestNamespace(headers)
     msg.requestNamespace.save({}, () => callback(msg, this.channel))
-    console.log('MESSAGE', msg)
   }
 
   _listenQueues() {
