@@ -9,7 +9,7 @@
     "rabbitmq",
     "redis"
   ],
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -65,7 +65,7 @@
     "faker": "^4.1.0",
     "json2csv": "^3.11.2",
     "lodash": "^4.17.4",
-    "mongoose": "^4.11.13",
+    "mongoose": "4.11.13",
     "mongoose-timestamp": "^0.6.0",
     "nock": "^9.0.22",
     "redis": "^2.7.1",
