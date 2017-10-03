@@ -65,9 +65,9 @@ const seedTestData = () => {
   return Promise.resolve()
 }
 
-const proc = (message, options={}) => {
-  const routingKey  = message.fields.routingKey
-  const messageJson = message.content.toString()
+const proc = (msg, options={}) => {
+  const routingKey  = msg.fields.routingKey
+  const messageJson = msg.content.toString()
   const message     = JSON.parse(messageJson)
   const queue       = RESET_RESPONSE_QUEUE
 
