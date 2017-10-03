@@ -68,9 +68,10 @@ const seedTestData = () => {
 const proc = (message, options={}) => {
   const routingKey  = message.fields.routingKey
   const messageJson = message.content.toString()
-  const object      = JSON.parse(messageJson)
+  const message     = JSON.parse(messageJson)
+  const queue       = RESET_RESPONSE_QUEUE
 
-  const isMentioned = _.includes(object.services, C.service.name)
+  const isMentioned = _.includes(message.services, C.service.name)
 
   if (!isMentioned) {
     return
@@ -82,8 +83,8 @@ const proc = (message, options={}) => {
   const _afterDrop  = options.afterDrop  || Promise.resolve
   const _afterStart = options.afterStart || Promise.resolve
 
-  const _seedData     = object.seed     ? seedData     : Promise.resolve
-  const _seedTestData = object.seedTest ? seedTestData : Promise.resolve
+  const _seedData     = message.seed     ? seedData     : Promise.resolve
+  const _seedTestData = message.seedTest ? seedTestData : Promise.resolve
 
   return Promise.resolve()
     .then(stopService)
@@ -95,18 +96,15 @@ const proc = (message, options={}) => {
     .then(startService)
     .then(_afterStart)
     .then(() => {
-      const responseJson = JSON.stringify({
+      const object = {
         jobId: object.jobId,
         service: {
           name:   C.service.name,
           status: 'complete'
         }
-      })
+      }
 
-      return rabbitmq.send({
-        queue:  RESET_RESPONSE_QUEUE,
-        object: responseJson
-      })
+      return rabbitmq.send({ queue, object })
     })
     .then(() => {
       log.info('Request successfully processed.')
@@ -115,19 +113,16 @@ const proc = (message, options={}) => {
     .catch(err => {
       log.error(err)
 
-      const responseJson = JSON.stringify({
+      const object = {
         jobId: object.jobId,
         service: {
           name:   C.service.name,
           status: 'error',
           error:  err.toString()
         }
-      })
+      }
 
-      return rabbitmq.send({
-        queue:  RESET_RESPONSE_QUEUE,
-        object: responseJson
-      })
+      return rabbitmq.send({ queue, object })
         .then(startService)
         .then(() => process.exit(1))
     })
@@ -136,8 +131,10 @@ const proc = (message, options={}) => {
 const listen = (topic=RESET_REQUESTS_TOPIC, callback=proc) => {
   const handlers = {}
   handlers[`${topic}.#`] = callback
+
   const listener = new rabbitmq.Listener({ handlers })
-  listener.listen()
+
+  return listener.listen()
 }
 
 module.exports = {
