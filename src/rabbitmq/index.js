@@ -5,7 +5,7 @@ const RequestNamespace = require('../utils/requestNamespace')
 const send     = require('./send')
 const publish  = require('./publish')
 const purge    = require('./purge')
-const Listener = require('./Listener')
+const Listener = require('./listener')
 
 const setRequestNamespaceHeaders = (options, method) => {
   options.uri = options.uri || C.rabbitmq.uri
