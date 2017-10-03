@@ -103,7 +103,10 @@ const proc = (message, options={}) => {
         }
       })
 
-      return rabbitmq.send(RESET_RESPONSE_QUEUE, responseJson)
+      return rabbitmq.send({
+        queue:  RESET_RESPONSE_QUEUE,
+        object: responseJson
+      })
     })
     .then(() => {
       log.info('Request successfully processed.')
@@ -121,7 +124,10 @@ const proc = (message, options={}) => {
         }
       })
 
-      return rabbitmq.send(RESET_RESPONSE_QUEUE, responseJson)
+      return rabbitmq.send({
+        queue:  RESET_RESPONSE_QUEUE,
+        object: responseJson
+      })
         .then(startService)
         .then(() => process.exit(1))
     })
