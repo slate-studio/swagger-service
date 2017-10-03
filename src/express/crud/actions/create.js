@@ -13,7 +13,9 @@ module.exports = (modelName, options={}) => {
     log.info(operationId, params)
 
     const model = Model(modelName)
-    let   object
+
+    // TODO: We should use this.object to make it assesible by filter.
+    let object
 
     req.beforeAction(params)
       .then(() => {
@@ -21,10 +23,7 @@ module.exports = (modelName, options={}) => {
         return object.save()
       })
       .then(() => req.afterAction(object))
-      .then((modifiedObject) => {
-        modifiedObject = modifiedObject || object
-        responses.createdResponse(req, res, modifiedObject)
-      })
+      .then(newObject => responses.createdResponse(req, res, newObject || object))
       .catch(error => responses.unprocessableEntityResponse(req, res, error))
   }
 }
