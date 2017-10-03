@@ -46,6 +46,7 @@ const request = (...args) => {
     .catch((err) => {
       const errCode = err.code
 
+      // TODO: Limit number of retries.
       if (isConnectionError(errCode)) {
         const timeout = requestTimeout()
 
