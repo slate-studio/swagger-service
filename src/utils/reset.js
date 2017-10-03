@@ -97,7 +97,7 @@ const proc = (msg, options={}) => {
     .then(_afterStart)
     .then(() => {
       const object = {
-        jobId: object.jobId,
+        jobId: message.jobId,
         service: {
           name:   C.service.name,
           status: 'complete'
@@ -114,7 +114,7 @@ const proc = (msg, options={}) => {
       log.error(err)
 
       const object = {
-        jobId: object.jobId,
+        jobId: message.jobId,
         service: {
           name:   C.service.name,
           status: 'error',
