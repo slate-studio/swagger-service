@@ -21,7 +21,10 @@ module.exports = (modelName, options={}) => {
         return object.save()
       })
       .then(() => req.afterAction(object))
-      .then(() => responses.createdResponse(req, res, object))
+      .then((modifiedObject) => {
+        modifiedObject = modifiedObject || object
+        responses.createdResponse(req, res, modifiedObject)
+      })
       .catch(error => responses.unprocessableEntityResponse(req, res, error))
   }
 }
