@@ -19,6 +19,12 @@ const connect = (service) => {
     service.use(middleware.scope)
     service.use('/', middleware.health)
 
+    if (!middleware.swagger.isEnabled()) {
+      log.info('No API specification found')
+      log.info(`Listening on port ${port}`)
+      return service.listen(port, callback => service.emit('started', callback))
+    }
+
     return middleware.swagger(service)
       .then(() => {
         service.use(middleware.errors)

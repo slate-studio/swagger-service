@@ -23,7 +23,7 @@ const buildConfig = () => {
   return config
 }
 
-module.exports = (service) => {
+exports = module.exports = (service) => {
   const config = buildConfig()
 
   return new Promise((resolve, reject) => {
@@ -53,4 +53,8 @@ module.exports = (service) => {
       return resolve(service)
     })
   })
+}
+
+exports.isEnabled = () => {
+  return fs.existsSync(`${rootPath}/api/swagger/swagger.yaml`)
 }
