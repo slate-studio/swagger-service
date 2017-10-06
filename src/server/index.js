@@ -9,10 +9,12 @@ exports = module.exports = service => {
     return middleware(service)
       .then(() => {
         log.info(`Server is listening on port ${port}`)
-        return service.listen(port, callback => service.emit('started', callback))
+
+        service.listen(port, callback => service.emit('started', callback))
       })
       .catch(error => {
         log.error('Server middleware error:', error)
+
         process.exit(1)
       })
   }

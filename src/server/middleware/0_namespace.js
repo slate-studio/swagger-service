@@ -4,8 +4,8 @@ const base64 = require('../../utils/base64')
 const RequestNamespace = require('../../utils/requestNamespace')
 
 const getNamespace = authenticationToken => {
-  const json   = base64.decode(authenticationToken)
-  const object = JSON.parse(json)
+  const json      = base64.decode(authenticationToken)
+  const object    = JSON.parse(json)
   const namespace = _.extend({ authenticationToken }, object)
 
   return namespace
