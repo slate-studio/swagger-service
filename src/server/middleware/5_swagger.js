@@ -7,6 +7,10 @@ const fs       = require('fs')
 const yaml     = require('js-yaml')
 const rootPath = process.cwd()
 
+const isEnabled = () => {
+  return fs.existsSync(`${rootPath}/api/swagger/swagger.yaml`)
+}
+
 const buildConfig = () => {
   const path = `${rootPath}/api/swagger/swagger.yaml`
   const spec = yaml.safeLoad(fs.readFileSync(path, 'utf8'))
@@ -24,6 +28,12 @@ const buildConfig = () => {
 }
 
 exports = module.exports = (service) => {
+  if (!isEnabled()) {
+    log.info('No API specification found')
+
+    return Promise.resolve()
+  }
+
   const config = buildConfig()
 
   return new Promise((resolve, reject) => {
@@ -53,8 +63,4 @@ exports = module.exports = (service) => {
       return resolve(service)
     })
   })
-}
-
-exports.isEnabled = () => {
-  return fs.existsSync(`${rootPath}/api/swagger/swagger.yaml`)
 }

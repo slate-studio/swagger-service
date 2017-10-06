@@ -1,14 +1,10 @@
 'use strict'
 
-// TODO: This should probably move to RequestNamespace class.
-const cls       = require('continuation-local-storage')
-const namespace = cls.createNamespace('requestNamespace')
-require('cls-bluebird')(namespace)
-
-const rootPath = process.cwd()
-const pkg      = require(`${rootPath}/package.json`)
-const version  = pkg.version
-const Bunyan   = require('bunyan')
+const rootPath         = process.cwd()
+const pkg              = require(`${rootPath}/package.json`)
+const version          = pkg.version
+const Bunyan           = require('bunyan')
+const RequestNamespace = require('../utils/requestNamespace')
 
 // STREAMS ====================================================================
 
@@ -39,12 +35,11 @@ const serializers = Bunyan.stdSerializers
 const bunyan = new Bunyan({ name, level, streams, serializers })
 
 const bunyanRequestIdChild = () => {
-  // TODO: namespace should be created here using new RequestNamespace class.
-  const requestId = namespace.get('requestId') || ''
-  const userId    = namespace.get('userId')    || ''
+  const requestNamespace = new RequestNamespace()
 
-  const metadata = _.get(C, 'log.metadata', {})
-  const config   = _.extend({ requestId, userId, version }, metadata)
+  const namespace = requestNamespace.getAll()
+  const metadata  = _.get(C, 'log.metadata', {})
+  const config    = _.extend(namespace, metadata)
 
   return bunyan.child(config)
 }

@@ -1,62 +1,59 @@
 'use strict'
 
-const base64       = require('./base64')
-const getNamespace = require('continuation-local-storage').getNamespace
+const cls = require('continuation-local-storage')
+
+const NAMESPACE_NAME = 'requestNamespace'
+
+const clsNamespace = cls.createNamespace(NAMESPACE_NAME)
+require('cls-bluebird')(clsNamespace)
 
 class RequestNamespace {
-
-  constructor(headers) {
-    const authenticationToken = _
-      .get(headers, 'x-authentication-token', null)
-
-    if (authenticationToken) {
-      this.namespace = {
-        get: function (name) {
-          return this[name] || null
-        }
-      }
-
-      const requestNamespaceAttributeNames = _
-        .get(C, 'service.requestNamespace', [])
-
-      const authenticationTokenJSON = base64.decode(authenticationToken)
-      const requestNamespace        = JSON.parse(authenticationTokenJSON)
-
-      this.namespace.authenticationToken = authenticationToken
-
-      _.forEach(requestNamespaceAttributeNames, name => {
-        const value = requestNamespace[name] || null
-        this.namespace[name] = value
-      })
+  constructor(namespace) {
+    if (namespace) {
+      this.localNamespace = namespace
 
     } else {
-      this.namespace = getNamespace('requestNamespace')
-    }
+      this.clsNamespace = cls.getNamespace(NAMESPACE_NAME)
 
+    }
   }
 
-  save(emitters, callback) {
-    const clsNamespace = getNamespace('requestNamespace')
-
-    if (!_.isEmpty(emitters)) {
-      _.forEach(emitters, emitter => {
-        clsNamespace.bindEmitter(emitter)
-      })
+  save(emitters=[], callback=null) {
+    if (!this.localNamespace) {
+      throw new Error('RequestNamespace: localNamespace is not set')
     }
 
-    clsNamespace.run(() => {
-      _.forEach(this.namespace, (value, name) => {
-        if (!_.isFunction(value)) {
-          clsNamespace.set(name, value)
-        }
-      })
+    this.clsNamespace = cls.getNamespace('requestNamespace')
 
-      callback()
+    _.forEach(emitters, emitter => this.clsNamespace.bindEmitter(emitter))
+
+    this.clsNamespace.run(() => {
+      this.localNamespace._keys = _.keys(this.localNamespace)
+
+      _.forEach(this.localNamespace, (value, key) => this.clsNamespace.set(key, value))
+
+      delete this.localNamespace._keys
+
+      if (callback) {
+        callback()
+      }
     })
   }
 
-  get(name) {
-    return this.namespace.get(name)
+  get(key) {
+    return this.localNamespace[key] || this.clsNamespace.get(key)
+  }
+
+  getAll() {
+    if (this.localNamespace) {
+      return this.localNamespace
+    }
+
+    const keys      = this.clsNamespace.get('_keys')
+    const values    = _.map(keys, key => this.clsNamespace.get(key))
+    const namespace = _.zipObject(keys, values)
+
+    return namespace
   }
 }
 

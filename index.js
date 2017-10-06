@@ -13,7 +13,7 @@ global.Services = null
 const errors   = require('./src/errors')
 const redis    = require('./src/redis')
 const mongodb  = require('./src/mongodb')
-const express  = require('./src/express')
+const server   = require('./src/server')
 const rabbitmq = require('./src/rabbitmq')
 const utils    = require('./src/utils')
 
@@ -26,7 +26,7 @@ exports = module.exports = () => {
     .then(buildApi)
     .then(redis)
     .then(mongodb)
-    .then(() => express(service))
+    .then(() => server(service))
     .catch(error => {
       log.error('Service initialization error: ', error)
       process.exit(1)
@@ -38,6 +38,6 @@ exports = module.exports = () => {
 exports.errors   = errors
 exports.redis    = redis
 exports.mongodb  = mongodb
-exports.express  = express
+exports.server   = server
 exports.rabbitmq = rabbitmq
 exports.utils    = require('./src/utils')
