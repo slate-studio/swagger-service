@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const fs         = require('fs')
-const path       = require('path')
-const rootPath   = require('app-root-path')
+const fs       = require('fs')
+const path     = require('path')
+const rootPath = process.cwd()
+
 const sourcePath = `${rootPath}/api/swagger/src`
 
 const read = (dir) =>
