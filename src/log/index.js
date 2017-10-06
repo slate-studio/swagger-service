@@ -5,7 +5,7 @@ const cls       = require('continuation-local-storage')
 const namespace = cls.createNamespace('requestNamespace')
 require('cls-bluebird')(namespace)
 
-const rootPath = require('app-root-path')
+const rootPath = process.cwd()
 const pkg      = require(`${rootPath}/package.json`)
 const version  = pkg.version
 const Bunyan   = require('bunyan')
@@ -31,8 +31,9 @@ streams = _.compact(streams)
 
 // LOGGER =====================================================================
 
-const name        = _.get(C, 'service.name', 'NO_NAME_DEFINED')
-const level       = _.get(C, 'log.level', 'info')
+const name  = process.env.PROCESS_NAME || _.get(C, 'service.name', 'NO_NAME')
+const level = _.get(C, 'log.level', 'info')
+
 const serializers = Bunyan.stdSerializers
 
 const bunyan = new Bunyan({ name, level, streams, serializers })

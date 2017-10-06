@@ -5,7 +5,7 @@ const errors            = require('../../errors')
 
 const fs       = require('fs')
 const yaml     = require('js-yaml')
-const rootPath = require('app-root-path')
+const rootPath = process.cwd()
 
 const buildConfig = () => {
   const path = `${rootPath}/api/swagger/swagger.yaml`

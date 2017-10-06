@@ -1,9 +1,9 @@
 'use strict'
 
 const errors           = require('../../errors')
-const rootPath         = require('app-root-path')
 const fs               = require('fs')
 const RequestNamespace = require('../../utils/requestNamespace')
+const rootPath         = process.cwd()
 
 const MODELS_PATH = `${rootPath}/src/models`
 

@@ -1,8 +1,8 @@
 'use strict'
 
-module.exports = () => {
-  const rootPath = require('app-root-path')
+const rootPath = process.cwd()
 
+module.exports = () => {
   if (C.services) {
     const EventEmitter = require('events')
     const Service      = require('../service')

@@ -8,7 +8,7 @@ const mongodb  = require('../mongodb')
 const request  = require('./request')
 const spawn    = require('child_process').spawn
 const fs       = require('fs')
-const rootPath = require('app-root-path')
+const rootPath = process.cwd()
 
 const SEED_DATA_PATH = `${rootPath}/db/seed`
 const SEED_TEST_PATH = `${rootPath}/db/test`

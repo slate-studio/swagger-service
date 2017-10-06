@@ -2,7 +2,7 @@
 
 const service  = require('../index.js')
 const request  = service.utils.request
-const rootPath = require('app-root-path')
+const rootPath = process.cwd()
 const fs       = require('fs')
 
 const updateServiceSpec = (service) => {

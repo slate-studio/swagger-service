@@ -1,7 +1,7 @@
 'use strict'
 
 const buildTags = require('./buildTags')
-const rootPath  = require('app-root-path')
+const rootPath  = process.cwd()
 
 const mergeVersions = () => {
   const numbers =

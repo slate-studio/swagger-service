@@ -2,7 +2,7 @@
 
 const router    = require('express').Router()
 const cors      = require('cors')
-const rootPath  = require('app-root-path')
+const rootPath  = process.cwd()
 const pkg       = require(`${rootPath}/package.json`)
 const version   = pkg.version
 const responses = require('../responses')
