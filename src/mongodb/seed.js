@@ -1,11 +1,11 @@
 'use strict'
 
-const connect = require('./connect')
+const connect = require('./')
 const insert  = require('./insert')
 
-module.exports = (hash) => {
+module.exports = hash => {
   return connect()
-    .then((connection) => {
+    .then(connection => {
       log.info('Seed:', _.keys(hash))
 
       const inserts = _.map(hash, (data, name) => insert(name, data))

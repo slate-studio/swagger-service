@@ -41,7 +41,11 @@ class RequestNamespace {
   }
 
   get(key) {
-    return this.localNamespace[key] || this.clsNamespace.get(key)
+    if (this.localNamespace) {
+      return this.localNamespace[key]
+    }
+
+    return this.clsNamespace.get(key)
   }
 
   getAll() {

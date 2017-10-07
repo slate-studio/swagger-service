@@ -5,5 +5,6 @@ module.exports = {
   autoIncrement: require('./autoIncrement'),
   neverDestroy:  require('./neverDestroy'),
   userstamp:     require('./userstamp'),
-  export:        require('./export')
+  export:        require('./export'),
+  destroyAll:    require('./destroyAll')
 }

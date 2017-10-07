@@ -1,9 +1,9 @@
 'use strict'
 
-const errors           = require('../../errors')
+const errors           = require('../errors')
 const fs               = require('fs')
-const RequestNamespace = require('../../utils/requestNamespace')
 const rootPath         = process.cwd()
+const RequestNamespace = require('../utils/requestNamespace')
 
 const MODELS_PATH = `${rootPath}/src/models`
 
@@ -14,7 +14,7 @@ const isSchemaWithCustomCollection = schema => {
   return _.isFunction(schema.getCustomCollectionName)
 }
 
-const Model = (modelName, headers) => {
+const Model = (modelName, customNamespace) => {
   const schema = schemas[modelName]
 
   if (!schema) {
@@ -22,7 +22,7 @@ const Model = (modelName, headers) => {
   }
 
   if (isSchemaWithCustomCollection(schema)) {
-    const requestNamespace = new RequestNamespace(headers)
+    const requestNamespace = new RequestNamespace(customNamespace)
     modelName = schema.getCustomCollectionName(requestNamespace)
   }
 
