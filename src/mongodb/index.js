@@ -3,22 +3,21 @@
 const uri = _.get(C, 'mongodb.uri')
 
 if (uri) {
-  global.Model     = require('./model')
-  global.mongoose  = require('mongoose')
+  global.mongoose = require('mongoose')
   mongoose.Promise = Promise
 
-  const timestamp = require('mongoose-timestamp')
-  const plugins   = require('./plugins')
-
+  const plugins = require('./plugins')
   mongoose.plugin(plugins.simulateUnhandledError)
+  mongoose.plugin(plugins.neverDestroy)
   mongoose.plugin(plugins.userstamp)
   mongoose.plugin(plugins.destroyAll)
-  mongoose.plugin(timestamp)
-  mongoose.autoIncrement = plugins.autoIncrement
-  mongoose.neverDestroy  = plugins.neverDestroy
-  mongoose.export        = plugins.export
+  mongoose.plugin(plugins.timestamp)
 
-  Model.initializeSchemas()
+  // TODO: Update
+  // mongoose.export = plugins.export
+
+  const schemas = require('./schema')
+  require('./model')(schemas)
 }
 
 exports = module.exports = () => {

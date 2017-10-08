@@ -1,7 +1,5 @@
 'use strict'
 
-const mongoose = require('mongoose')
-
 let IdentityCounter
 
 module.exports = (schema, options) => {
