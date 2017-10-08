@@ -12,7 +12,7 @@ class SchemaNotFound extends errors.Base {
 }
 
 const isSchemaWithDynamicCollectionName = schema => {
-  return _.isFunction(schema.getCollectionName)
+  return _.isFunction(schema.getDynamicCollectionName)
 }
 
 exports = module.exports = (schemas={}) => {
@@ -27,7 +27,7 @@ exports = module.exports = (schemas={}) => {
 
     if (isSchemaWithDynamicCollectionName(schema)) {
       const requestNamespace = new RequestNamespace(customNamespace)
-      modelName = schema.getCollectionName(modelName, requestNamespace)
+      modelName = schema.getDynamicCollectionName(modelName, requestNamespace)
     }
 
     let model = models[modelName]

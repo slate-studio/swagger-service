@@ -5,15 +5,21 @@ const fs       = require('fs')
 const plugins  = require('./plugins')
 
 const MODELS_PATH = `${rootPath}/src/models`
-const GCN_PATH    = `${MODELS_PATH}/_getCollectionName`
+const GCN_PATH    = `${MODELS_PATH}/_getCollectionName.js`
 
-const schemas = {}
+const isGetCollectionNameExist = fs.existsSync(GCN_PATH)
+
+let getCollectionName = null
+
+if (isGetCollectionNameExist) {
+  getCollectionName = require(GCN_PATH)
+}
 
 global.Schema = ({ model, collection, schema }) => {
   const mongooseSchema = new mongoose.Schema(schema)
 
-  if (Schema.getCollectionName && collection) {
-    mongooseSchema.getCollectionName = Schema.getCollectionName(collection)
+  if (getCollectionName && collection) {
+    mongooseSchema.getDynamicCollectionName = getCollectionName(collection)
   }
 
   mongooseSchema.plugin(plugins.autoIncrement, { model })
@@ -21,12 +27,7 @@ global.Schema = ({ model, collection, schema }) => {
   return mongooseSchema
 }
 
-const isGetCollectionNameExist = fs.existsSync(GCN_PATH)
-
-if (isGetCollectionNameExist) {
-  Schema.getCollectionName = require(GCN_PATH)
-}
-
+const schemas = {}
 const isModelsPathExist = fs.existsSync(MODELS_PATH)
 
 if (isModelsPathExist) {
