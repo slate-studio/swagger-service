@@ -3,13 +3,12 @@
   "description": "Swagger based node microservice",
   "tags": [
     "node",
-    "express",
     "swagger",
-    "mongoose",
+    "mongodb",
     "rabbitmq",
     "redis"
   ],
-  "version": "1.2.11",
+  "version": "2.0.0",
   "author": "Alexander Kravets <alex@slatestudio.com>",
   "contributors": [
     {
@@ -64,7 +63,7 @@
     "faker": "^4.1.0",
     "json2csv": "^3.11.2",
     "lodash": "^4.17.4",
-    "mongoose": "4.11.13",
+    "mongoose": "^4.12.0",
     "mongoose-timestamp": "^0.6.0",
     "nock": "^9.0.22",
     "redis": "^2.7.1",
@@ -75,11 +74,11 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.3"
+    "mocha": "^4.0.0"
   },
   "license": "ISC",
   "scripts": {
-    "mocha": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "mocha": "istanbul cover _mocha",
     "test": "NODE_ENV=test npm run mocha"
   }
 }

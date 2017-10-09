@@ -1,13 +1,44 @@
 'use strict'
 
-let IdentityCounter
+const defaults = {
+  field:       'integerId',
+  startAt:     1,
+  incrementBy: 1
+}
 
-module.exports = (schema, options) => {
+class MissingModelNameError extends Error {
+  constructor() {
+    super('Model name is not defined in options')
+    this.name = this.constructor.name
+  }
+}
+
+class BadAutoIncrementFieldValueError extends Error {
+  constructor() {
+    super('Auto incremented value is not a number')
+    this.name = this.constructor.name
+  }
+}
+
+class UpdateAutoIncrementFieldValueError extends Error {
+  constructor() {
+    super('Update of auto incremented value is forbidden')
+    this.name = this.constructor.name
+  }
+}
+
+module.exports = (schema, options={}) => {
+  if(!options.model) {
+    throw new MissingModelNameError()
+  }
+
+  let IdentityCounter
+
   try {
     IdentityCounter = mongoose.model('IdentityCounter')
 
-  } catch (ex) {
-    if (ex.name === 'MissingSchemaError') {
+  } catch (error) {
+    if (error.name === 'MissingSchemaError') {
       const counterSchema = new mongoose.Schema({
         model: { type: String, require: true },
         field: { type: String, require: true },
@@ -19,153 +50,124 @@ module.exports = (schema, options) => {
       IdentityCounter = mongoose.model('IdentityCounter', counterSchema)
 
     } else {
-      throw ex
+      throw error
 
     }
   }
 
-  const settings = {
-    model:        null,
-    field:        'integerId',
-    startAt:      1,
-    incrementBy:  1,
-    unique:       true
-  }
-
-  const fields = {}
-  const optionsType = typeof (options)
-
-  switch (optionsType) {
-    case 'string':
-      settings.model = options
-      break
-
-    case 'object':
-      _.assignIn(settings, options)
-      break
-  }
-
-  if (settings.model === null) {
-    throw new Error('model must be set')
-  }
+  const fields   = {}
+  const settings = _.assignIn({}, defaults, options)
 
   fields[settings.field] = {
     type:    Number,
-    require: true
-  }
-
-  if (settings.field !== '_id') {
-    fields[settings.field].unique = settings.unique
+    require: true,
+    unique:  true
   }
 
   schema.add(fields)
 
-  const params = { model: settings.model, field: settings.field }
-  const initializedIdentityCounter = IdentityCounter.findOne(params).exec()
-    .then(doc => {
-      if (!doc) {
-        const params = {
-          model: settings.model,
-          field: settings.field,
-          count: settings.startAt - settings.incrementBy
-        }
-
-        doc = new IdentityCounter(params)
-        return doc.save()
-
+  const query = _.pick(settings, [ 'model', 'field' ])
+  const initializeIdentityCounter = IdentityCounter.findOne(query).exec()
+    .then(counter => {
+      if (counter) {
+        return null
       }
 
-      return doc
+      const params = _.pick(settings, ['model', 'field'])
+      params.count = settings.startAt - settings.incrementBy
+
+      counter = new IdentityCounter(params)
+      return counter.save()
     })
 
+
   const nextCount = () => {
-    return initializedIdentityCounter
+    return initializeIdentityCounter
       .then(() => {
-        return IdentityCounter.findOne({
-          model: settings.model,
-          field: settings.field
-        }).exec()
+        const query = _.pick(settings, ['model', 'field'])
+        return IdentityCounter.findOne(query).exec()
       })
       .then(counter => {
-        counter = ((counter === null) ? settings.startAt : counter.count + settings.incrementBy)
-        return counter
+        if (counter === null) {
+          return settings.startAt
+        }
+
+        return counter.count + settings.incrementBy
       })
   }
   schema.method('nextCount', nextCount)
   schema.static('nextCount', nextCount)
 
-  const resetCount = function (callback) {
-    return initializedIdentityCounter
+
+  const resetCount = () => {
+    return initializeIdentityCounter
       .then(() => {
-        return IdentityCounter.findOneAndUpdate(
-          { model: settings.model, field: settings.field },
-          { count: settings.startAt - settings.incrementBy },
-          { new: true }
-        )
+        const query  = _.pick(settings, ['model', 'field'])
+        const params = { count: settings.startAt - settings.incrementBy }
+
+        return IdentityCounter.findOneAndUpdate(query, params, { new: true })
       })
       .then(() => settings.startAt)
   }
   schema.method('resetCount', resetCount)
   schema.static('resetCount', resetCount)
 
-  const setCustomIncrementCounter = (customIncrementValue) => {
-    return initializedIdentityCounter
+
+  const setCount = value => {
+    value = parseInt(value)
+
+    return initializeIdentityCounter
       .then(() => {
-        customIncrementValue = parseInt(customIncrementValue)
+        const query  = _.pick(settings, [ 'model', 'field' ])
+        const params = { count: value }
 
-        if (customIncrementValue <= 0) {
-          return Promise.resolve()
-        }
-
-        const query = {
-          model: settings.model,
-          field: settings.field
-        }
-
-        const params = { count: customIncrementValue }
         return IdentityCounter.findOneAndUpdate(query, params).exec()
       })
+      .then(() => value)
   }
-  schema.method('setCustomIncrementCounter', setCustomIncrementCounter)
-  schema.static('setCustomIncrementCounter', setCustomIncrementCounter)
+  schema.method('setCount', setCount)
+  schema.static('setCount', setCount)
+
 
   schema.pre('save', function (next) {
-    const doc = this
+    if (this.isNew) {
+      const count = this[settings.field]
 
-    if (doc.isNew) {
-      return initializedIdentityCounter
+      return initializeIdentityCounter
         .then(() => {
-          const customIncrementValue = doc[settings.field]
-          const isInteger            = _.isInteger(customIncrementValue)
+          const query = _.pick(settings, [ 'model', 'field' ])
 
-          if (isInteger) {
-            const query  = {
-              model: settings.model,
-              field: settings.field,
-              count: { $lt: customIncrementValue }
+          if (count) {
+            const isCountInteger = _.isInteger(count)
+
+            if (isCountInteger) {
+              query.count = { $lt: count }
+
+              // NOTE: This operation does nothing if count is less then value
+              //       stored in IdentityCounter and would raise exception if
+              //       count value is not unique.
+              return IdentityCounter.findOneAndUpdate(query, { count }).exec()
+
+            } else {
+              throw new BadAutoIncrementFieldValueError()
+
             }
-
-            const params = { count: customIncrementValue }
-
-            // NOTE: This operation does nothing if customIncrementValue is less
-            //       then value stored in IdentityCounter.
-            return IdentityCounter.findOneAndUpdate(query, params).exec()
           }
 
-          const query = {
-            model: settings.model,
-            field: settings.field
-          }
-
-          const params = {
-            $inc: { count: settings.incrementBy }
-          }
+          const params = { $inc: { count: settings.incrementBy } }
 
           return IdentityCounter.findOneAndUpdate(query, params, { new: true })
-            .then((identityCounter) => doc[settings.field] = identityCounter.count)
+            .then(identityCounter => this[settings.field] = identityCounter.count)
         })
         .then(next)
         .catch(next)
+
+    } else {
+      const isUpdateAutoIncrementField = _.includes(this.modifiedPaths(), settings.field)
+
+      if (isUpdateAutoIncrementField) {
+        return next(new UpdateAutoIncrementFieldValueError())
+      }
     }
 
     return next()
