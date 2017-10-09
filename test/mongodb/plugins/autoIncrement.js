@@ -1,6 +1,5 @@
 'use strict'
 
-const async         = require('async')
 const autoIncrement = require('../../../src/mongodb/plugins/autoIncrement')
 
 describe('autoIncrement', () => {
