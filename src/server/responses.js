@@ -19,8 +19,10 @@ module.exports = {
   },
 
   errorResponse: (req, res, error) => {
-    const status = _.get(error, 'status', 'Internal Server Error')
     const object = _.pick(error, [ 'code', 'message', 'stack' ])
+
+    let status = _.get(error, 'status', 'Internal Server Error')
+    status = statuses[status]
 
     const response = {
       message: error.message,
