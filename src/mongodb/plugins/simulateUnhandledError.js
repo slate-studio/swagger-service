@@ -12,15 +12,18 @@ const MONGOOSE_HOOKS = [ 'save',
 
 const checkUnhandledErrorFlag = (next, schema) => {
   if (schema.simulateUnhandledErrorFlag) {
-    schema.simulateUnhandledErrorFlag = false
+    if (schema.simulateUnhandledErrorSkip == 0) {
+      schema.simulateUnhandledErrorFlag = false
 
-    const err = new Error('SIMULATED_MONGOOSE_UNHANDLED_ERROR')
-    next(err)
+      const err = new Error('SIMULATED_MONGOOSE_UNHANDLED_ERROR')
+      return next(err)
 
-  } else {
-    next()
+    }
 
+    schema.simulateUnhandledErrorSkip -= 1
   }
+
+  return next()
 }
 
 module.exports = (schema) => {
@@ -32,7 +35,8 @@ module.exports = (schema) => {
     })
   })
 
-  schema.simulateUnhandledError = () => {
+  schema.simulateUnhandledError = (skip=0) => {
     schema.simulateUnhandledErrorFlag = true
+    schema.simulateUnhandledErrorSkip = skip
   }
 }

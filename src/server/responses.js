@@ -25,7 +25,7 @@ module.exports = {
       status = statuses[status]
     }
 
-    const { name, message, stack, httpErrors: errors } = error
+    const { name, message, stack, errors } = error
 
     return res.status(status).json({ name, message, stack, errors })
   }
