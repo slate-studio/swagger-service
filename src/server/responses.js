@@ -19,17 +19,15 @@ module.exports = {
   },
 
   errorResponse: (req, res, error) => {
-    const object = _.pick(error, [ 'code', 'message', 'stack' ])
+    let status = _.get(error, 'httpStatusCode', 'Internal Server Error')
 
-    let status = _.get(error, 'status', 'Internal Server Error')
-    status = statuses[status]
-
-    const response = {
-      message: error.message,
-      errors:  [ object ]
+    if (_.isString(status)) {
+      status = statuses[status]
     }
 
-    return res.status(status).json(object)
+    const { name, message, stack, httpErrors: errors } = error
+
+    return res.status(status).json({ name, message, stack, errors })
   }
 }
 
