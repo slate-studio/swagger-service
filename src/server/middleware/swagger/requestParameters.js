@@ -11,7 +11,10 @@ const parameters = (req, res, next) => {
 
     log.info({ operationId, parameters })
 
-    req.swaggerParameters = parameters
+    req.swaggerOperationId = operationId
+    req.swaggerParameters  = parameters
+
+    // TODO: This has to move to plugin
     req.defaultScope = { _deleted: false }
   }
 

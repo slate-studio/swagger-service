@@ -10,6 +10,7 @@ global.mongoose = null
 global.Models   = null
 global.Services = null
 
+const api      = require('./lib/api')
 const errors   = require('./src/errors')
 const redis    = require('./src/redis')
 const mongodb  = require('./src/mongodb')
@@ -41,3 +42,5 @@ exports.mongodb  = mongodb
 exports.server   = server
 exports.rabbitmq = rabbitmq
 exports.utils    = require('./src/utils')
+
+exports.api      = api

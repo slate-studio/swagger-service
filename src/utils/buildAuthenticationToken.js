@@ -1,10 +1,8 @@
 'use strict'
 
-const base64 = require('./base64')
-
 module.exports = namespace => {
-  namespace    = JSON.stringify(namespace)
-  const token  = base64.encode(namespace)
+  const json  = JSON.stringify(namespace)
+  const token = new Buffer(json).toString('base64')
 
   return token
 }
