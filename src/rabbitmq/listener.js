@@ -4,10 +4,11 @@ const RequestNamespace = require('../utils/requestNamespace')
 const amqp = require('amqplib/callback_api')
 
 class Listener {
-  constructor({ uri, handlers, timeout }) {
-    this.channel    = null
-    this.connection = null
-    this.timeout    = timeout || 500
+  constructor({ uri, handlers, timeout, skipAuthorization }) {
+    this.channel           = null
+    this.connection        = null
+    this.timeout           = timeout || 500
+    this.skipAuthorization = skipAuthorization || false
 
     this.uri    = uri || C.rabbitmq.uri
     this.queues = {}
@@ -67,6 +68,10 @@ class Listener {
   }
 
   _createRequestNamespace(msg, callback) {
+    if (this.skipAuthorization) {
+      return callback(msg, this.channel)
+    }
+
     const authenticationToken = _
       .get(msg, 'properties.headers.authenticationToken', null)
 
