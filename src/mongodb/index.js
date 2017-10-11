@@ -8,7 +8,7 @@ if (uri) {
 
   const plugins = require('./plugins')
   mongoose.plugin(plugins.simulateUnhandledError)
-  mongoose.plugin(plugins.neverDestroy)
+  mongoose.plugin(plugins.neverDelete)
   mongoose.plugin(plugins.userstamp)
   mongoose.plugin(plugins.destroyAll)
   mongoose.plugin(plugins.timestamp)
