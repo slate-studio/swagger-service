@@ -13,7 +13,7 @@ exports = module.exports = service => {
         service.listen(port, callback => service.emit('started', callback))
       })
       .catch(error => {
-        log.error('Server middleware error:', error)
+        log.fatal('Server middleware error:', error)
 
         process.exit(1)
       })

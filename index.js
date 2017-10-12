@@ -1,19 +1,19 @@
 'use strict'
 
-global.Promise  = require('bluebird')
-global._        = require('lodash')
-global.C        = require('config')
-global.log      = require('./src/log')
+global._   = require('lodash')
+global.C   = require('config')
+global.log = require('./lib/log')
+
 global.api      = null
 global.redis    = null
 global.mongoose = null
 global.Models   = null
 global.Services = null
 
-const api      = require('./lib/api')
+const api = require('./lib/api')
+const db  = require('./lib/db')
+
 const errors   = require('./src/errors')
-const redis    = require('./src/redis')
-const mongodb  = require('./src/mongodb')
 const server   = require('./src/server')
 const rabbitmq = require('./src/rabbitmq')
 const utils    = require('./src/utils')
@@ -25,11 +25,19 @@ exports = module.exports = () => {
   Promise.resolve()
     .then(log.setMetadata)
     .then(buildApi)
-    .then(redis)
-    .then(mongodb)
+    .then(() => {
+      if (db.redis) {
+        return db.redis().then(client => db.redis = client)
+      }
+    })
+    .then(() => {
+      if (db.mongodb) {
+        return db.mongodb()
+      }
+    })
     .then(() => server(service))
     .catch(error => {
-      log.error('Service initialization error: ', error)
+      log.fatal('Service initialization error: ', error)
       process.exit(1)
     })
 
@@ -37,10 +45,10 @@ exports = module.exports = () => {
 }
 
 exports.errors   = errors
-exports.redis    = redis
-exports.mongodb  = mongodb
 exports.server   = server
 exports.rabbitmq = rabbitmq
 exports.utils    = require('./src/utils')
 
-exports.api      = api
+exports.api = api
+exports.db  = db
+
