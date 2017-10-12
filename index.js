@@ -12,8 +12,9 @@ exports.api = api
 exports.utils = require('./src/utils')
 
 exports.listen = () => {
-  const server = require('express')()
-  const port   = _.get(C, 'service.port', 3000)
+  const server   = require('express')()
+  const port     = _.get(C, 'service.port', 3000)
+  const rootPath = process.cwd()
 
   const buildApiClient = require('./src/swagger/client')
 
@@ -31,6 +32,8 @@ exports.listen = () => {
     })
     .then(() => {
       server.use(api.responseTime())
+      server.use('/', api.health)
+      server.get('/swagger', (req, res) => res.sendFile(`${rootPath}/api/swagger.json`))
 
       server.use(api.namespace)
 
@@ -38,8 +41,6 @@ exports.listen = () => {
         log.info(req.method, req.url)
         next()
       })
-
-      server.use('/', api.health)
 
       return api.oas(server)
         .then(() => {
