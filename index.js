@@ -7,15 +7,14 @@ const logger = require('./lib/log')
 const db     = require('./lib/db')
 const api    = require('./lib/api')
 
-exports.db    = db
-exports.api   = api
+exports.db  = db
+exports.api = api
 exports.utils = require('./src/utils')
 
 exports.listen = () => {
   const server = require('express')()
   const port   = _.get(C, 'service.port', 3000)
 
-  const middleware     = require('./src/server/middleware')
   const buildApiClient = require('./src/swagger/client')
 
   logger()
@@ -30,7 +29,28 @@ exports.listen = () => {
         return db.mongodb()
       }
     })
-    .then(() => middleware(server))
+    .then(() => {
+      server.use(api.responseTime())
+
+      server.use(api.namespace)
+
+      server.use((req, res, next) => {
+        log.info(req.method, req.url)
+        next()
+      })
+
+      server.use('/', api.health)
+
+      return api.oas(server)
+        .then(() => {
+          server.use((error, req, res, next) => {
+            log.error(error)
+
+            const response = _.pick(error, [ 'name', 'message', 'stack' ])
+            res.status(500).json(response)
+          })
+        })
+    })
     .then(() => {
       log.info(`[api] Listening on port ${port}`)
       server.listen(port, callback => server.emit('started', callback))
