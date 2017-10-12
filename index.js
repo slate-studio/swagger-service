@@ -1,30 +1,25 @@
 'use strict'
 
-global._   = require('lodash')
-global.C   = require('config')
-global.log = require('./lib/log')
+global._ = require('lodash')
+global.C = require('config')
 
-global.api      = null
-global.redis    = null
-global.mongoose = null
-global.Models   = null
-global.Services = null
+const logger = require('./lib/log')
+const db     = require('./lib/db')
+const api    = require('./lib/api')
 
-const api = require('./lib/api')
-const db  = require('./lib/db')
+exports.db    = db
+exports.api   = api
+exports.utils = require('./src/utils')
 
-const errors   = require('./src/errors')
-const server   = require('./src/server')
-const rabbitmq = require('./src/rabbitmq')
-const utils    = require('./src/utils')
+exports.listen = () => {
+  const server = require('express')()
+  const port   = _.get(C, 'service.port', 3000)
 
-exports = module.exports = () => {
-  const service  = require('express')()
-  const buildApi = require('./src/swagger/client')
+  const middleware     = require('./src/server/middleware')
+  const buildApiClient = require('./src/swagger/client')
 
-  Promise.resolve()
-    .then(log.setMetadata)
-    .then(buildApi)
+  logger()
+    .then(() => buildApiClient())
     .then(() => {
       if (db.redis) {
         return db.redis().then(client => db.redis = client)
@@ -35,20 +30,15 @@ exports = module.exports = () => {
         return db.mongodb()
       }
     })
-    .then(() => server(service))
+    .then(() => middleware(server))
+    .then(() => {
+      log.info(`[api] Listening on port ${port}`)
+      server.listen(port, callback => server.emit('started', callback))
+    })
     .catch(error => {
-      log.fatal('Service initialization error: ', error)
+      log.fatal('[api] Initialization error: ', error)
       process.exit(1)
     })
 
-  return service
+  return server
 }
-
-exports.errors   = errors
-exports.server   = server
-exports.rabbitmq = rabbitmq
-exports.utils    = require('./src/utils')
-
-exports.api = api
-exports.db  = db
-
