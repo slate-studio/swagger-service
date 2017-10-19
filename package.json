@@ -40,7 +40,7 @@
   ],
   "main": "./index",
   "bin": {
-    "compose": "./lib/api/oas/compose.js",
+    "compose": "./lib/api/server/oas/compose.js",
     "dropDatabase": "./bin/dropDatabase.js",
     "updateServices": "./bin/updateServices.js",
     "resetListener": "./bin/resetListener.js"
