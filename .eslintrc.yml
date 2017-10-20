@@ -9,20 +9,9 @@ env:
 
 globals:
   Promise: true
-  _: true
-  C: true
   log: true
-  api: true
-  redis: true
-  mongoose: true
-  Model: true
-  Services: true
-  request: true
-  expect: true
-  factory: true
-  faker: true
-  destroyAll: true
-  service: true
+  # mongoose: true
+
 
 rules:
   comma-style: error
