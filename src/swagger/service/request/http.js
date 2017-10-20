@@ -1,5 +1,7 @@
 'use strict'
 
+const _ = require('lodash')
+
 const keepAliveAgent = require('agentkeepalive')
 const http           = require('http')
 const url            = require('url')
@@ -11,10 +13,9 @@ const defaultAgentSettings = {
   freeSocketKeepAliveTimeout: 300000
 }
 
-const agent = new keepAliveAgent(_.assign(
-  defaultAgentSettings,
-  _.get(C, 'swagger-client.keepAliveAgentSettings', {})
-))
+const agent = new keepAliveAgent(_.assign(defaultAgentSettings, {}))
+// _.get(C, 'swagger-client.keepAliveAgentSettings', {})
+// )
 
 const errorsMap = [ 400, 401, 403, 404, 422, 423, 500, 502 ]
 

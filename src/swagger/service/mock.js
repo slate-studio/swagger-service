@@ -1,5 +1,7 @@
 'use strict'
 
+const _ = require('lodash')
+
 const SwaggerClient = require('swagger-client')
 const faker         = require('faker')
 const nock          = require('nock')

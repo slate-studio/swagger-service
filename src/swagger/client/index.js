@@ -1,17 +1,18 @@
 'use strict'
 
+const _ = require('lodash')
 const rootPath = process.cwd()
 
-module.exports = () => {
-  if (C.services) {
+module.exports = config => {
+  if (config.services) {
     const EventEmitter = require('events')
     const Service      = require('../service')
 
     global.Services = new EventEmitter()
 
-    Services.servicesReadyCounter = _.keys(C.services).length
+    Services.servicesReadyCounter = _.keys(config.services).length
 
-    _.forEach(C.services, (config) => {
+    _.forEach(config.services, (config) => {
       const spec = require(`${rootPath}/${config.spec}`)
       const name = config.name
 
