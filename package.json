@@ -40,8 +40,8 @@
   ],
   "main": "./index",
   "bin": {
-    "compose": "./lib/api/server/oas/compose.js",
-    "dropDatabase": "./bin/dropDatabase.js",
+    "compose": "./lib/api/server/oas/bin/compose.js",
+    "drop": "./lib/db/mongodb/bin/drop.js",
     "updateServices": "./bin/updateServices.js",
     "resetListener": "./bin/resetListener.js"
   },
