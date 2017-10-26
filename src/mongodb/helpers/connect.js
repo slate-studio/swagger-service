@@ -14,7 +14,10 @@ module.exports = () => {
     const debug   = require('./debug')
     const options = {
       useMongoClient: true,
-      keepAlive:      1
+      keepAlive:      1,
+      reconnectTries: Number.MAX_VALUE,
+      reconnectInterval: 1000,
+      autoReconnect : true
     }
 
     return mongoose.connect(uri, options)
