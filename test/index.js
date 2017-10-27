@@ -25,5 +25,5 @@ before(go => {
     .then(() => go())
 })
 
-require('./mongodb')
-// require('./rabbitmq')
+require('./db/mongodb')
+require('./msg/rabbitmq')
