@@ -46,6 +46,10 @@ module.exports = request => {
     const req = http.request(options, (response) => {
       let result = ''
 
+      response.on('error', (error) => {
+        reject(error)
+      })
+
       response.on('data', (chunk) => {
         result += chunk
       })
