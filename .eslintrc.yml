@@ -10,8 +10,9 @@ env:
 globals:
   Promise: true
   log: true
-  # mongoose: true
-
+  Model: true
+  Listener: true
+  Message: true
 
 rules:
   comma-style: error
