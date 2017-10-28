@@ -26,8 +26,8 @@ describe('Redis Listener', () => {
   it('should listen topic', done => {
     const handlers = {
       'demo.topic': (msg, channel) => {
-        // TODO: Check message content and headers.
         channel.ack(msg)
+        expect(msg.object).to.equal('demo')
         done()
       }
     }
@@ -51,8 +51,8 @@ describe('Redis Listener', () => {
   it('should listen to queue', done => {
     const handlers = {
       'demoQueue': (msg, channel) => {
-        // TODO: Check message content and headers.
         channel.ack(msg)
+        expect(msg.object).to.equal('demo')
         done()
       }
     }
