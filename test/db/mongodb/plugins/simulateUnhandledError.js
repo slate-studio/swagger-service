@@ -1,7 +1,7 @@
 'use strict'
 
-const simulateUnhandledError = 
-  require('../../../lib/db/mongodb/plugins/simulateUnhandledError')
+const simulateUnhandledError =
+  require('../../../../lib/db/mongodb/plugins/simulateUnhandledError')
 
 describe('simulateUnhandledError', () => {
 
