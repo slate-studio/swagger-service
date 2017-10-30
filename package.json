@@ -70,6 +70,8 @@
     "nock": "^9.0.22",
     "redis": "^2.7.1",
     "response-time": "^2.3.2",
+    "rsmq-promise": "^1.0.1",
+    "rsmq-worker": "^0.5.2",
     "swagger-client": "^3.1.2",
     "swagger-express-mw": "^0.7.0"
   },
