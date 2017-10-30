@@ -20,6 +20,10 @@ module.exports = (options) => {
       })
     })
 
+    if (options.timeout) {
+      req.setTimeout(options.timeout, () => req.abort())
+    }
+
     req.on('error', reject)
 
     if (options.body) {

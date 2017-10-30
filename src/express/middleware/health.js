@@ -21,7 +21,8 @@ const checkService = config => {
     hostname: hostname,
     port:     parseInt(port),
     path:     '/swagger',
-    method:   'GET'
+    method:   'GET',
+    timeout:  1000
   }
 
   return request(options)
