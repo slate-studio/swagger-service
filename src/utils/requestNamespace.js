@@ -13,6 +13,10 @@ class RequestNamespace {
       this.namespace = {
         get: function (name) {
           return this[name] || null
+        },
+        set: function (name, value) {
+          this[name] = value
+          return this
         }
       }
 
@@ -57,6 +61,10 @@ class RequestNamespace {
 
   get(name) {
     return this.namespace.get(name)
+  }
+
+  set(name, value) {
+    return this.namespace.set(name, value)
   }
 }
 
