@@ -1,5 +1,6 @@
 'use strict'
 
+const amqp   = require('amqplib')
 const logger = require('../../lib/log')
 const msg    = require('../../lib/msg')
 const RequestNamespace = require('../../lib/requestNamespace')
@@ -11,7 +12,7 @@ const config = {
 
 let Message, Listener, listener
 
-describe('RabbitMQ Listener', () => {
+describe('Rabbitmq', () => {
 
   before(() => {
     return logger(config)
@@ -20,14 +21,12 @@ describe('RabbitMQ Listener', () => {
         Message  = msg.globals.Message
         Listener = msg.globals.Listener
       })
-      .then(() => log.debug('--- START TESTS ---'))
   })
 
   it('should listen topic', done => {
     const handlers = {
-      'demo.topic': (msg, channel) => {
-        // TODO: Check message content and headers.
-        channel.ack(msg)
+      'demo.topic': msg => {
+        expect(msg.object.demo).to.equal('data')
         done()
       }
     }
@@ -50,10 +49,10 @@ describe('RabbitMQ Listener', () => {
 
   it('should listen to queue', done => {
     const handlers = {
-      'demoQueue': (msg, channel) => {
-        // TODO: Check message content and headers.
-        channel.ack(msg)
-        done()
+      'demoQueue': (msg, next) => {
+        expect(msg.object.demo).to.equal('data')
+        next()
+        setTimeout(done, 500)
       }
     }
 

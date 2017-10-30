@@ -2,7 +2,7 @@
 
 describe('Msg:', () => {
 
+  require('./redis')
   require('./rmq')
-  // require('./redis')
 
 })
