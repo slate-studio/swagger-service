@@ -12,6 +12,11 @@ const config = {
 
 let Message, Listener, listener, redisClient
 
+const authenticationToken = new Buffer(JSON.stringify({
+  sessionId: 'UNIQ_SESSION',
+  userId:    'USER_ID'
+})).toString('base64')
+
 describe('Redis', () => {
 
   before(() => {
@@ -43,8 +48,8 @@ describe('Redis', () => {
       .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
       .then(() => {
         const namespace = {
-          authenticationToken: 'TOKEN',
-          requestId:           'REQUEST_ID'
+          authenticationToken,
+          requestId: 'REQUEST_ID'
         }
 
         const requestNamespace = new RequestNamespace(namespace)
@@ -73,8 +78,8 @@ describe('Redis', () => {
       .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
       .then(() => {
         const namespace = {
-          authenticationToken: 'TOKEN',
-          requestId:           'REQUEST_ID'
+          authenticationToken,
+          requestId: 'REQUEST_ID'
         }
 
         const requestNamespace = new RequestNamespace(namespace)

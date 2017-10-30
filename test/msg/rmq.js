@@ -12,6 +12,11 @@ const config = {
 
 let Message, Listener, listener
 
+const authenticationToken = new Buffer(JSON.stringify({
+  sessionId: 'UNIQ_SESSION',
+  userId:    'USER_ID'
+})).toString('base64')
+
 describe('Rabbitmq', () => {
 
   before(() => {
@@ -35,8 +40,8 @@ describe('Rabbitmq', () => {
     listener.listen()
       .then(() => {
         const namespace = {
-          authenticationToken: 'TOKEN',
-          requestId:           'REQUEST_ID'
+          authenticationToken,
+          requestId: 'REQUEST_ID'
         }
 
         const requestNamespace = new RequestNamespace(namespace)
@@ -60,8 +65,8 @@ describe('Rabbitmq', () => {
     listener.listen()
       .then(() => {
         const namespace = {
-          authenticationToken: 'TOKEN',
-          requestId:           'REQUEST_ID'
+          authenticationToken,
+          requestId: 'REQUEST_ID'
         }
 
         const requestNamespace = new RequestNamespace(namespace)
