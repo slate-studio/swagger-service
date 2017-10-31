@@ -1,7 +1,8 @@
 'use strict'
 
 const amqp = require('amqplib')
-const RequestNamespace = require('../../requestNamespace')
+const RequestNamespace  = require('../../requestNamespace')
+const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 const splitOnce = (s, delimiter) => {
   const i = s.indexOf(delimiter) ; return [ s.slice(0, i), s.slice(i + 1) ]
@@ -9,14 +10,19 @@ const splitOnce = (s, delimiter) => {
 
 class Message {
   constructor(config, object) {
-    const requestNamespace = new RequestNamespace()
+    // const requestNamespace = new RequestNamespace()
     const json = JSON.stringify(object)
 
     this.object = object
     this.config = config
     this.buffer = new Buffer(json)
 
-    const { authenticationToken, requestId } = requestNamespace.getAll()
+    // const { authenticationToken, requestId } = requestNamespace.getAll()
+
+    const requestNamespace    = new RequestNamespace2()
+    const authenticationToken = requestNamespace.get('authenticationToken')
+    const requestId           = requestNamespace.get('requestId')
+
     const headers = { authenticationToken, requestId }
     this.options  = { headers }
   }

@@ -3,14 +3,16 @@
 const _ = require('lodash')
 
 const RSMQPromise = require('rsmq-promise')
-const connect = require('../../db/redis')
-const RequestNamespace = require('../../requestNamespace')
+const connect     = require('../../db/redis')
+const RequestNamespace  = require('../../requestNamespace')
+const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 class Message {
   constructor(config, object) {
-    const requestNamespace = new RequestNamespace()
+    const requestNamespace    = new RequestNamespace2()
+    const authenticationToken = requestNamespace.get('authenticationToken')
+    const requestId           = requestNamespace.get('requestId')
 
-    const { authenticationToken, requestId } = requestNamespace.getAll()
     const headers = { authenticationToken, requestId }
 
     this.config = config

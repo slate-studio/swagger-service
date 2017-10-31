@@ -27,7 +27,12 @@ class Msg {
 
     if (!authenticationToken) {
       log.error('[msg] AuthenticationToken header is not defined, skiping message')
-      return next()
+
+      if (next) {
+        next()
+      }
+
+      return
     }
 
     _.extend(namespace, getRequestNamespace(authenticationToken))

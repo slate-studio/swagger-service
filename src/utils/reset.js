@@ -3,7 +3,7 @@
 const RESET_REQUESTS_TOPIC = 'resetRequests'
 const RESET_RESPONSE_QUEUE = 'resetResponses'
 
-const rabbitmq = require('../rabbitmq')
+const { Msg }  = require('../../future/lib/msg')
 const mongodb  = require('../mongodb')
 const request  = require('./request')
 const spawn    = require('child_process').spawn
@@ -66,25 +66,23 @@ const seedTestData = () => {
 }
 
 const proc = (msg, options={}) => {
-  const routingKey  = msg.fields.routingKey
-  const messageJson = msg.content.toString()
-  const message     = JSON.parse(messageJson)
-  const queue       = RESET_RESPONSE_QUEUE
+  const obj   = msg.object
+  const queue = RESET_RESPONSE_QUEUE
 
-  const isMentioned = _.includes(message.services, C.service.name)
+  const isMentioned = _.includes(obj.services, C.service.name)
 
   if (!isMentioned) {
     return
   }
 
-  log.info('resetRequest', messageJson)
+  log.info('resetRequest', obj)
 
   const _afterStop  = options.afterStop  || Promise.resolve
   const _afterDrop  = options.afterDrop  || Promise.resolve
   const _afterStart = options.afterStart || Promise.resolve
 
-  const _seedData     = message.seed     ? seedData     : Promise.resolve
-  const _seedTestData = message.seedTest ? seedTestData : Promise.resolve
+  const _seedData     = obj.seed     ? seedData     : Promise.resolve
+  const _seedTestData = obj.seedTest ? seedTestData : Promise.resolve
 
   return Promise.resolve()
     .then(stopService)
@@ -97,14 +95,15 @@ const proc = (msg, options={}) => {
     .then(_afterStart)
     .then(() => {
       const object = {
-        jobId: message.jobId,
+        jobId: obj.jobId,
         service: {
           name:   C.service.name,
           status: 'complete'
         }
       }
 
-      return rabbitmq.send({ queue, object })
+      const message = Message(object)
+      return message.send(queue)
     })
     .then(() => {
       log.info('Request successfully processed.')
@@ -114,7 +113,7 @@ const proc = (msg, options={}) => {
       log.error(err)
 
       const object = {
-        jobId: message.jobId,
+        jobId: obj.jobId,
         service: {
           name:   C.service.name,
           status: 'error',
@@ -122,7 +121,8 @@ const proc = (msg, options={}) => {
         }
       }
 
-      return rabbitmq.send({ queue, object })
+      const message = Message(object)
+      return message.send(queue)
         .then(startService)
         .then(() => process.exit(1))
     })
@@ -130,11 +130,23 @@ const proc = (msg, options={}) => {
 
 const listen = (topic=RESET_REQUESTS_TOPIC, callback=proc) => {
   const handlers = {}
-  handlers[`${topic}.#`] = callback
+  handlers[`${topic}.resetRequest`] = callback
 
-  const listener = new rabbitmq.Listener({ handlers })
-
-  return listener.listen()
+  Promise.resolve()
+    .then(log.setMetadata)
+    .then(() => {
+      const msg = new Msg(C)
+      return msg.connect()
+    })
+    .then(({ globals }) => {
+      global.Message  = globals.Message
+      global.Listener = globals.Listener
+    })
+    .then(() => {
+      const listener = Listener(handlers)
+      return listener.listen()
+    })
+    .then(() => log.info('Reset listener started'))
 }
 
 module.exports = {
