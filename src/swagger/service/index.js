@@ -23,9 +23,14 @@ const request = (...args) => {
 
   const addRequestHeaders = req => {
     const authenticationToken = namespace.get('authenticationToken')
+    const requestId           = namespace.get('requestId')
 
     if (authenticationToken) {
       req.headers['x-authentication-token'] = authenticationToken
+    }
+
+    if (requestId) {
+      req.headers['x-request-id'] = requestId
     }
 
     req.serviceName = service.name

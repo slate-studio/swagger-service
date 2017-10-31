@@ -9,29 +9,34 @@ class RequestNamespace {
     const authenticationToken = _
       .get(headers, 'x-authentication-token', null)
 
-    if (authenticationToken) {
+    const requestId = _
+      .get(headers, 'x-request-id', null)
+
+    if (authenticationToken || requestId) {
       this.namespace = {
         get: function (name) {
           return this[name] || null
-        },
-        set: function (name, value) {
-          this[name] = value
-          return this
         }
       }
 
-      const requestNamespaceAttributeNames = _
-        .get(C, 'service.requestNamespace', [])
+      if (requestId) {
+        this.namespace.requestId = requestId
+      }
 
-      const authenticationTokenJSON = base64.decode(authenticationToken)
-      const requestNamespace        = JSON.parse(authenticationTokenJSON)
+      if (authenticationToken) {
+        const requestNamespaceAttributeNames = _
+          .get(C, 'service.requestNamespace', [])
 
-      this.namespace.authenticationToken = authenticationToken
+        const authenticationTokenJSON = base64.decode(authenticationToken)
+        const requestNamespace        = JSON.parse(authenticationTokenJSON)
 
-      _.forEach(requestNamespaceAttributeNames, name => {
-        const value = requestNamespace[name] || null
-        this.namespace[name] = value
-      })
+        this.namespace.authenticationToken = authenticationToken
+
+        _.forEach(requestNamespaceAttributeNames, name => {
+          const value = requestNamespace[name] || null
+          this.namespace[name] = value
+        })
+      }
 
     } else {
       this.namespace = getNamespace('requestNamespace')
@@ -61,10 +66,6 @@ class RequestNamespace {
 
   get(name) {
     return this.namespace.get(name)
-  }
-
-  set(name, value) {
-    return this.namespace.set(name, value)
   }
 }
 
