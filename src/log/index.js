@@ -10,6 +10,8 @@ const pkg      = require(`${rootPath}/package.json`)
 const version  = pkg.version
 const Bunyan   = require('bunyan')
 
+const RequestNamespace = require('../utils/requestNamespace')
+
 // STREAMS ====================================================================
 
 const stdout = require('./_stdout')()
@@ -38,14 +40,18 @@ const serializers = Bunyan.stdSerializers
 const bunyan = new Bunyan({ name, level, streams, serializers })
 
 const bunyanRequestIdChild = () => {
-  // TODO: namespace should be created here using new RequestNamespace class.
-  const requestId = namespace.get('requestId') || ''
-  const userId    = namespace.get('userId')    || ''
+  const requestNamespace = new RequestNamespace()
+  const metadata         = _.get(C, 'log.metadata', {})
+  const keys             = _.get(C, 'log.requestNamespaceKeys', [])
+  let namespace          = {}
 
-  const metadata = _.get(C, 'log.metadata', {})
-  const config   = _.extend({ requestId, userId, version }, metadata)
+  _.forEach(keys, key => {
+    namespace[key] = requestNamespace.get(key) || ''
+  })
 
-  return bunyan.child(config)
+  namespace = _.assign(namespace, metadata)
+  namespace.version = version
+  return bunyan.child(namespace)
 }
 
 const log = {
