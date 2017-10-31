@@ -26,16 +26,12 @@ class RequestNamespace {
       }
 
       if (authenticationToken) {
-        const requestNamespaceAttributeNames = _
-          .get(C, 'service.requestNamespace', [])
-
         const authenticationTokenJSON = base64.decode(authenticationToken)
         const requestNamespace        = JSON.parse(authenticationTokenJSON)
 
         this.namespace.authenticationToken = authenticationToken
 
-        _.forEach(requestNamespaceAttributeNames, name => {
-          const value = requestNamespace[name] || null
+        _.forEach(requestNamespace, (value, name) => {
           this.namespace[name] = value
         })
       }

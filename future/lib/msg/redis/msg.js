@@ -2,8 +2,9 @@
 
 const _ = require('lodash')
 
-const RequestNamespace    = require('../../requestNamespace')
-const getRequestNamespace = require('../../getRequestNamespace')
+// const RequestNamespace    = require('../../requestNamespace')
+// const getRequestNamespace = require('../../getRequestNamespace')
+const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 class Msg {
   constructor(channel, json) {
@@ -17,7 +18,12 @@ class Msg {
   exec(callback, next) {
     const requestId           = _.get(this.headers, 'requestId', null)
     const authenticationToken = _.get(this.headers, 'authenticationToken', null)
-    const namespace           = { requestId }
+    // const namespace           = { requestId }
+
+    const headers = {
+      'x-authentication-token': authenticationToken,
+      'x-request-id':           requestId
+    }
 
     // TODO: Implement support for authentication method.
 
@@ -31,9 +37,11 @@ class Msg {
       return
     }
 
-    _.extend(namespace, getRequestNamespace(authenticationToken))
+    // _.extend(namespace, getRequestNamespace(authenticationToken))
 
-    this.requestNamespace = new RequestNamespace(namespace)
+    // this.requestNamespace = new RequestNamespace(namespace)
+
+    this.requestNamespace = new RequestNamespace2(headers)
     this.requestNamespace.save([], () => callback(this, next))
   }
 }
