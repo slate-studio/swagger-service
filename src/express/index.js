@@ -12,6 +12,7 @@ const connect = (service) => {
       service.use(cors())
     }
 
+    service.use(middleware.timeout)
     service.use(responseTime())
     service.use(middleware.namespace)
     service.use(middleware.logger)

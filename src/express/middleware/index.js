@@ -7,5 +7,6 @@ module.exports = {
   session:   require('./session'),
   swagger:   require('./swagger'),
   scope:     require('./scope'),
-  namespace: require('./namespace')
+  namespace: require('./namespace'),
+  timeout:   require('./timeout')
 }
