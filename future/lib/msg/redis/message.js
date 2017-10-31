@@ -4,7 +4,7 @@ const _ = require('lodash')
 
 const RSMQPromise = require('rsmq-promise')
 const connect     = require('../../db/redis')
-const RequestNamespace  = require('../../requestNamespace')
+// const RequestNamespace  = require('../../requestNamespace')
 const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 class Message {

@@ -1,7 +1,7 @@
 'use strict'
 
 const amqp = require('amqplib')
-const RequestNamespace  = require('../../requestNamespace')
+// const RequestNamespace  = require('../../requestNamespace')
 const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 const splitOnce = (s, delimiter) => {
