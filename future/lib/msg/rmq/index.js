@@ -2,5 +2,6 @@
 
 module.exports = {
   Message:  require('./message'),
-  Listener: require('./listener')
+  Listener: require('./listener'),
+  Msg:      require('./msg')
 }

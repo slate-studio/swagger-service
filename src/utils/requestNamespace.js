@@ -1,5 +1,7 @@
 'use strict'
 
+const _ = require('lodash')
+
 const base64       = require('./base64')
 const getNamespace = require('continuation-local-storage').getNamespace
 

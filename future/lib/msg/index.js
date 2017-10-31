@@ -28,7 +28,7 @@ class Msg {
       log.info('[msg] Use rabbitmq:', this.config)
       const Message  = (object, headers) => new rmq.Message(this.config, object, headers)
       const Listener = (handlers, timeout) => new rmq.Listener(this.config, handlers, timeout)
-      this.globals = { Message, Listener }
+      this.globals = { Message, Listener, Msg: rmq.Msg }
     }
   }
 
@@ -39,7 +39,7 @@ class Msg {
       log.info('[msg] Use redis: ', this.config)
       const Message  = (object, headers) => new redis.Message(this.config, object, headers)
       const Listener = (handlers, timeout) => new redis.Listener(this.config, handlers, timeout)
-      this.globals = { Message, Listener }
+      this.globals = { Message, Listener, Msg: redis.Msg }
     }
   }
 
