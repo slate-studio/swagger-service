@@ -9,6 +9,18 @@ bluebird.promisifyAll(redis.Multi.prototype)
 
 const connect = config => {
   const { host, port } = config
+  const options = {
+    host,
+    port,
+    enable_offline_queue: false,
+    retry_strategy: (options) => {
+
+      if (options.total_retry_time > 1000 * 60 * 60) {
+        return new Error('Retry time exhausted');
+      }
+      return Math.min(options.attempt * 100, 3000);
+    }
+  }
 
   return new Promise(resolve => {
     const client = redis.createClient(port, host)
@@ -24,3 +36,4 @@ exports = module.exports = config => {
 
   return connect(config)
 }
+exports.connect = connect

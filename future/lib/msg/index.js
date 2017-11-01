@@ -7,45 +7,55 @@ const redis = require('./redis')
 
 class Msg {
   constructor(config) {
-    this.rmqSetup(config)
-    if (this.globals) {
-      return
-    }
-
-    this.redisSetup(config)
-    if (this.globals) {
-      return
-    }
-
+    this._config = config
     this.globals = {}
-    log.warn('[msg] No configuration defined, messaging is not supported')
-  }
-
-  rmqSetup(config) {
-    this.config = _.get(config, 'rabbitmq')
-
-    if (this.config) {
-      log.info('[msg] Use rabbitmq:', this.config)
-      const Message  = (object, headers) => new rmq.Message(this.config, object, headers)
-      const Listener = (handlers, timeout) => new rmq.Listener(this.config, handlers, timeout)
-      this.globals = { Message, Listener, Msg: rmq.Msg }
-    }
-  }
-
-  redisSetup(config) {
-    this.config = _.get(config, 'redis')
-
-    if (this.config) {
-      log.info('[msg] Use redis: ', this.config)
-      const Message  = (object, headers) => new redis.Message(this.config, object, headers)
-      const Listener = (handlers, timeout) => new redis.Listener(this.config, handlers, timeout)
-      this.globals = { Message, Listener, Msg: redis.Msg }
-    }
   }
 
   connect() {
-    return Promise.resolve()
-      .then(() => this)
+    const rmqConfig = _.get(this._config, 'rabbitmq', null)
+    if (rmqConfig != null) {
+      return rmqSetup(rmqConfig)
+    }
+
+    const redisConfig = _.get(this._config, 'redis', null)
+    if (redisConfig != null) {
+      return redisSetup(redisConfig)
+    }
+
+    log.warn('[msg] No configuration defined, messaging is not supported')
+
+    return Promise.resolve(this)
+  }
+
+  rmqSetup(config) {
+    log.info('[msg] Use rabbitmq:', config)
+
+    const connect = require('../rabbitmq')
+    return connect(config, 500)
+      .then(({ connection, channel }) => {
+        const Message  = (object, headers) => {
+          return new rmq.Message(connection, channel, object, headers)
+        }
+        const Listener = (handlers, timeout) => {
+          return new rmq.Listener(connection, channel, handlers)
+        }
+        this.globals = { Message, Listener, Msg: rmq.Msg }
+        return this
+      })
+
+  }
+
+  redisSetup(config) {
+    log.info('[msg] Use redis:', config)
+
+    const connect = require('../db/redis').connect
+    return connect(config)
+      .then(client => {
+        const Message  = (object, headers) => new redis.Message(client, object, headers)
+        const Listener = (handlers, timeout) => new redis.Listener(client, handlers)
+        this.globals = { Message, Listener, Msg: redis.Msg }
+        return this
+      })
   }
 }
 

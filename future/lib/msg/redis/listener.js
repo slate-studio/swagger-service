@@ -1,15 +1,13 @@
 'use strict'
 
-const _ = require('lodash')
+const _   = require('lodash')
+const Msg = require('./msg')
 
-const Msg        = require('./msg')
-const RSMQWorker = require('rsmq-worker')
-const connect    = require('../../db/redis')
+const BRPOP_DELAY_IN_SECONDS = 1
 
 class Listener {
-  constructor(config, handlers, timeout) {
-    this.timeout  = timeout || 500
-    this.config   = config
+  constructor(client, handlers) {
+    this.client   = client
     this.queues   = []
     this.topics   = []
     this.handlers = handlers
@@ -28,9 +26,13 @@ class Listener {
   }
 
   _listenTopics() {
-    this.topicsClient = this.client.duplicate()
+    if (_.isEmpty(this.topics)) {
+      return
+    }
+    
+    const topicsClient = this.client.duplicate()
 
-    this.topicsClient.on('message', (channel, message) => {
+    topicsClient.on('message', (channel, message) => {
       const handler = this.handlers[channel]
 
       if (handler) {
@@ -46,43 +48,36 @@ class Listener {
   }
 
   _listenQueues() {
-    const redis  = this.client.duplicate()
-    this.workers = {}
+    if (_.isEmpty(this.queues)) {
+      return
+    }
 
-    _.forEach(this.queues, qname => this._createWorker(redis, qname))
-  }
+    const queuesClient = this.client.duplicate()
 
-  _createWorker(redis, qname) {
-    const worker  = new RSMQWorker(qname, { redis })
-    const handler = this.handlers[qname]
+    const next = () => log.info('[msg] Message handled')
+    const args = _.clone(this.queues)
+    args.push(BRPOP_DELAY_IN_SECONDS)
 
-    worker.on('message', (message, next, id) => {
-      const msg = new Msg(qname, message)
-      msg.exec(handler, next)
-    })
+    const listen = () => {
+      queuesClient.brpopAsync(args)
+        .then(value => {
+          if (value) {
+            const [ qname, message ] = value
 
-    // NOTE: Raw message format
-    // A message ( e.g. received by the event data or customExceedCheck )
-    // contains the following keys:
-    // msg.message: ( String ) The queue message content. You can use complex
-    //              content by using a stringified JSON.
-    // msg.id: ( String ) The rsmq internal message id
-    // msg.sent: ( Number ) Timestamp of when this message was sent / created.
-    // msg.fr: ( Number ) Timestamp of when this message was first received.
-    // msg.rc: ( Number ) Number of times this message was received.
-    worker.on('error', (err, msg) => log.error('[msg] Error', err, msg.id))
-    worker.on('exceeded', msg => log.error('[msg] Exceeded', msg.id))
-    worker.on('timeout', msg => log.error('[msg] Timeout', msg.id, msg.rc))
-    worker.on('ready', () => log.info('[msg] Listen queue', qname))
+            const msg     = new Msg(qname, message)
+            const handler = this.handlers[qname]
 
-    worker.start()
+            return msg.exec(handler, next)
+          }
+        })
+        .finally(() => listen())
+    }
 
-    this.workers[qname] = worker
+    return listen()
   }
 
   listen() {
-    return connect(this.config)
-      .then(client => this.client = client)
+    return Promise.resolve()
       .then(() => this._listenTopics())
       .then(() => this._listenQueues())
   }

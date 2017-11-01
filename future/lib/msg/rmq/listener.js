@@ -9,12 +9,10 @@ const splitOnce = (s, delimiter) => {
 }
 
 class Listener {
-  constructor(config, handlers, timeout) {
-    this.channel    = null
-    this.connection = null
-    this.timeout    = timeout || 500
+  constructor(connection, channel, handlers) {
+    this.connection = connection
+    this.channel    = channel
 
-    this.uri    = config.uri
     this.queues = {}
     this.topics = {}
 
@@ -28,45 +26,6 @@ class Listener {
         this.queues[name] = handler
 
       }
-    })
-  }
-
-  _connect() {
-    amqp.connect(this.uri, (err, conn) => {
-      if (err) {
-        log.error('[msg] Error:', err.message)
-        return setTimeout(this._connect, this.timeout)
-      }
-
-      conn.on('error', err => {
-        if (err.message !== 'Connection closing') {
-          log.error('[msg] Error:', err.message)
-        }
-      })
-
-      conn.on('close', () => {
-        log.error('[msg] Reconnecting')
-        return setTimeout(this._connect, this.timeout)
-      })
-
-      conn.createChannel((err, ch) => {
-        if (err) {
-          log.error('[msg] Error:', err.message)
-          return conn.close()
-        }
-
-        ch.on('error', (err) => log.error('[msg] Error:', err.message))
-
-        ch.on('close', () => log.info('[msg] Channel closed'))
-
-        this.channel = ch
-        log.info('[msg] Channel created')
-
-        this.afterConnect()
-      })
-
-      this.connection = conn
-      log.info('[msg] Connected:', this.uri)
     })
   }
 
@@ -106,16 +65,9 @@ class Listener {
   }
 
   listen() {
-    return new Promise((resolve) => {
-      this.afterConnect = () => {
-        this._listenQueues()
-        this._listenTopics()
-
-        resolve()
-      }
-
-      this._connect()
-    })
+    return Promise.resolve()
+      .then(() => this._listenTopics())
+      .then(() => this._listenQueues())
   }
 }
 
