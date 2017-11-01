@@ -2,14 +2,16 @@
 
 const amqp = require('amqplib/callback_api')
 
-const connect = (config, timeout) => {
+const TIMEOUT = 500
+
+const connect = config => {
   const uri = config.uri
 
   return new Promise((resolve, reject) => {
     amqp.connect(uri, (err, connection) => {
       if (err) {
         log.error('[msg] Error:', err.message)
-        return setTimeout(connect, timeout)
+        return setTimeout(connect, TIMEOUT)
       }
 
       connection.on('error', err => {
@@ -20,7 +22,7 @@ const connect = (config, timeout) => {
 
       connection.on('close', () => {
         log.error('[msg] Reconnecting')
-        return setTimeout(connect, timeout)
+        return setTimeout(connect, TIMEOUT)
       })
 
       connection.createChannel((err, channel) => {
@@ -36,7 +38,7 @@ const connect = (config, timeout) => {
 
         log.info('[msg] Channel created')
 
-        return resolve({ channel, connection })
+        return resolve({ connection, channel })
       })
 
       log.info('[msg] Connected:', uri)

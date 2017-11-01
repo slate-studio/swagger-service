@@ -6,15 +6,13 @@ const _ = require('lodash')
 const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
 
 class Message {
-  constructor(client, object, headers={}) {
+  constructor(client, object) {
     this.client = client
-    
-    if (_.isEmpty(headers)) {
-      const requestNamespace    = new RequestNamespace2()
-      const authenticationToken = requestNamespace.get('authenticationToken')
-      const requestId           = requestNamespace.get('requestId')
-      headers                   = { authenticationToken, requestId }
-    }
+
+    const requestNamespace    = new RequestNamespace2()
+    const authenticationToken = requestNamespace.get('authenticationToken')
+    const requestId           = requestNamespace.get('requestId')
+    const headers             = { authenticationToken, requestId }
 
     this.object = { object, headers }
     this.json   = JSON.stringify(this.object)

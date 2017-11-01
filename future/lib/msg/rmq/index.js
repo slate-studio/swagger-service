@@ -3,5 +3,6 @@
 module.exports = {
   Message:  require('./message'),
   Listener: require('./listener'),
-  Msg:      require('./msg')
+  Msg:      require('./msg'),
+  connect:  require('./connect')
 }

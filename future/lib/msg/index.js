@@ -5,55 +5,53 @@ const _ = require('lodash')
 const rmq   = require('./rmq')
 const redis = require('./redis')
 
+const connectRedis = require('../db/redis').connect
+
 class Msg {
   constructor(config) {
-    this._config = config
-    this.globals = {}
+    this.config = config
   }
 
   connect() {
-    const rmqConfig = _.get(this._config, 'rabbitmq', null)
-    if (rmqConfig != null) {
-      return rmqSetup(rmqConfig)
+    let config
+
+    config = _.get(this.config, 'rabbitmq')
+    if (config) {
+      return this.setupRabbitmq(config)
     }
 
-    const redisConfig = _.get(this._config, 'redis', null)
-    if (redisConfig != null) {
-      return redisSetup(redisConfig)
+    config = _.get(this.config, 'redis')
+    if (config) {
+      return this.setupRedis(config)
     }
 
     log.warn('[msg] No configuration defined, messaging is not supported')
-
+    this.globals = {}
     return Promise.resolve(this)
   }
 
-  rmqSetup(config) {
-    log.info('[msg] Use rabbitmq:', config)
-
-    const connect = require('../rabbitmq')
-    return connect(config, 500)
+  setupRabbitmq(config) {
+    return rmq.connect(config)
       .then(({ connection, channel }) => {
-        const Message  = (object, headers) => {
-          return new rmq.Message(connection, channel, object, headers)
-        }
-        const Listener = (handlers, timeout) => {
-          return new rmq.Listener(connection, channel, handlers)
-        }
+        log.info('[msg] Rabbitmq connected to', config)
+
+        const Message  = object => new rmq.Message(connection, channel, object)
+        const Listener = handlers => new rmq.Listener(config, handlers)
         this.globals = { Message, Listener, Msg: rmq.Msg }
+
         return this
       })
-
   }
 
-  redisSetup(config) {
-    log.info('[msg] Use redis:', config)
-
-    const connect = require('../db/redis').connect
-    return connect(config)
+  setupRedis(config) {
+    return connectRedis(config)
       .then(client => {
-        const Message  = (object, headers) => new redis.Message(client, object, headers)
-        const Listener = (handlers, timeout) => new redis.Listener(client, handlers)
+        log.info('[msg] Redis connected to', config)
+
+        const Message  = object => new redis.Message(client, object)
+        const Listener = handlers => new redis.Listener(client, handlers)
         this.globals = { Message, Listener, Msg: redis.Msg }
+
         return this
       })
   }
@@ -61,7 +59,7 @@ class Msg {
 
 exports = module.exports = config => {
   if (!global['log']) {
-    throw new Error('Logger has to be initialized, `global.log` is not defined')
+    throw new Error('[msg] Logger has to be initialized, `global.log` is not defined')
   }
 
   const msg = new Msg(config)

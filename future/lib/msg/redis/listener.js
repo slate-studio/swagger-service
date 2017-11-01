@@ -29,7 +29,7 @@ class Listener {
     if (_.isEmpty(this.topics)) {
       return
     }
-    
+
     const topicsClient = this.client.duplicate()
 
     topicsClient.on('message', (channel, message) => {
@@ -43,7 +43,7 @@ class Listener {
 
     _.forEach(this.topics, address => {
       log.info('[redis] Listen topic', address)
-      this.topicsClient.subscribe(address)
+      topicsClient.subscribe(address)
     })
   }
 
@@ -54,7 +54,7 @@ class Listener {
 
     const queuesClient = this.client.duplicate()
 
-    const next = () => log.info('[msg] Message handled')
+    const next = () => log.info('[msg] Message succesfully handled')
     const args = _.clone(this.queues)
     args.push(BRPOP_DELAY_IN_SECONDS)
 
