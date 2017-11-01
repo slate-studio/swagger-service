@@ -68,8 +68,6 @@
     "nock": "^9.0.27",
     "redis": "^2.7.1",
     "response-time": "^2.3.2",
-    "rsmq-promise": "^1.0.1",
-    "rsmq-worker": "^0.5.2",
     "statuses": "^1.4.0",
     "swagger-client": "^3.3.1",
     "swagger-express-mw": "^0.7.0"
