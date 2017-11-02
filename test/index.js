@@ -25,5 +25,5 @@
 //     .then(() => go())
 // })
 
-// require('./db/mongodb')
+require('./db')
 require('./msg')

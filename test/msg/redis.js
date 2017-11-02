@@ -24,11 +24,11 @@ describe('Redis', () => {
       .then(() => redis(config))
       .then(client => redisClient = client)
       .then(() => redisClient.flushallAsync())
-      .then(() => redisClient.quit())
+      .then(() => redisClient.quitAsync())
       .then(() => msg(config))
-      .then(msg => {
-        Message  = msg.globals.Message
-        Listener = msg.globals.Listener
+      .then(({ globals }) => {
+        Message  = globals.Message
+        Listener = globals.Listener
       })
   })
 
