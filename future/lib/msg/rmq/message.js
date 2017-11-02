@@ -3,16 +3,16 @@
 const amqp             = require('amqplib')
 // const RequestNamespace = require('../../../../src/utils/requestNamespace')
 const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
+const connect = require('./connect')
 
 const splitOnce = (s, delimiter) => {
   const i = s.indexOf(delimiter) ; return [ s.slice(0, i), s.slice(i + 1) ]
 }
 
 class Message {
-  constructor(connection, channel, object) {
-    this.connection = connection
-    this.channel    = channel
-    this.object     = object
+  constructor(config, object) {
+    this.config = config
+    this.object = object
 
     const requestNamespace    = new RequestNamespace2()
     const authenticationToken = requestNamespace.get('authenticationToken')
@@ -29,19 +29,23 @@ class Message {
 
     const [ topic, routingKey ] = splitOnce(address, '.')
 
-    this.channel.assertExchange(topic, 'topic', { durable: false })
-    this.channel.publish(topic, routingKey, this.buffer, this.options)
-
-    return Promise.resolve()
+    return connect(this.config)
+      .then(({ connection, channel }) => {
+        channel.assertExchange(topic, 'topic', { durable: false })
+        channel.publish(topic, routingKey, this.buffer, this.options)
+        channel.close()
+      })
   }
 
   send(queue) {
     log.info('[msg] Send to', queue, this.object)
 
-    this.channel.assertQueue(queue, { durable: false })
-    this.channel.sendToQueue(queue, this.buffer, this.options)
-
-    return Promise.resolve()
+    return connect(this.config)
+      .then(({ connection, channel }) => {
+        channel.assertQueue(queue, { durable: false })
+        channel.sendToQueue(queue, this.buffer, this.options)
+        channel.close()
+      })
   }
 }
 

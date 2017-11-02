@@ -10,8 +10,9 @@ const splitOnce = (s, delimiter) => {
 }
 
 class Listener {
-  constructor(config, handlers) {
-    this.config = config
+  constructor(connection, channel, handlers) {
+    this.connection = connection
+    this.channel    = channel
     this.queues = {}
     this.topics = {}
 
@@ -68,11 +69,7 @@ class Listener {
   }
 
   listen() {
-    return connect(this.config)
-      .then(({ connection, channel }) => {
-        this.connection = connection
-        this.channel    = channel
-      })
+    return Promise.resolve()
       .then(() => this._listenTopics())
       .then(() => this._listenQueues())
   }

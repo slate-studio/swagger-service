@@ -35,8 +35,8 @@ class Msg {
       .then(({ connection, channel }) => {
         log.info('[msg] Rabbitmq connected to', config)
 
-        const Message  = object => new rmq.Message(connection, channel, object)
-        const Listener = handlers => new rmq.Listener(config, handlers)
+        const Message  = object => new rmq.Message(config, object)
+        const Listener = handlers => new rmq.Listener(connection, channel, handlers)
         this.globals = { Message, Listener, Msg: rmq.Msg }
 
         return this
