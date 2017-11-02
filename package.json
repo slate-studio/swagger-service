@@ -51,7 +51,7 @@
     "agentkeepalive": "^3.3.0",
     "amqplib": "^0.5.1",
     "app-root-path": "^2.0.1",
-    "aws-sdk": "^2.124.0",
+    "aws-sdk": "^2.142.0",
     "bluebird": "^3.5.0",
     "bunyan": "^1.8.12",
     "bunyan-firehose": "git+https://github.com/slate-studio/bunyan-firehose.git#v0.0.5",
@@ -79,11 +79,11 @@
   "devDependencies": {
     "chai": "^4.1.2",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.3"
+    "mocha": "^4.0.0"
   },
   "license": "ISC",
   "scripts": {
-    "mocha": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha",
+    "mocha": "istanbul cover _mocha",
     "test": "NODE_ENV=test npm run mocha"
   }
 }

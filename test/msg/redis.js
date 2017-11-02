@@ -32,34 +32,6 @@ describe('Redis', () => {
       })
   })
 
-  it('should listen topic', done => {
-    const handlers = {
-      'demo.topic1': msg => {
-        expect(msg.object.demo).to.equal('data')
-        done()
-      },
-      'demo.topic2': msg => {
-        log.debug('MSG', msg)
-      }
-    }
-
-    listener = Listener(handlers)
-    listener.listen()
-      .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
-      .then(() => {
-        const namespace = {
-          authenticationToken,
-          requestId: 'REQUEST_ID'
-        }
-
-        const requestNamespace = new RequestNamespace(namespace)
-        requestNamespace.save([], () => {
-          const message = Message({ demo: 'data' })
-          message.publish('demo.topic1')
-        })
-      })
-  })
-
   it('should listen to queue', done => {
     const handlers = {
       'demoQueue1': (msg, next) => {
@@ -86,6 +58,34 @@ describe('Redis', () => {
         requestNamespace.save([], () => {
           const message = Message({ demo: 'data' })
           message.send('demoQueue1')
+        })
+      })
+  })
+
+  it('should listen topic', done => {
+    const handlers = {
+      'demo.topic1': msg => {
+        expect(msg.object.demo).to.equal('data')
+        done()
+      },
+      'demo.topic2': msg => {
+        log.debug('MSG', msg)
+      }
+    }
+
+    listener = Listener(handlers)
+    listener.listen()
+      .then(() => new Promise(resolve => setTimeout(resolve, 1000)))
+      .then(() => {
+        const namespace = {
+          authenticationToken,
+          requestId: 'REQUEST_ID'
+        }
+
+        const requestNamespace = new RequestNamespace(namespace)
+        requestNamespace.save([], () => {
+          const message = Message({ demo: 'data' })
+          message.publish('demo.topic1')
         })
       })
   })

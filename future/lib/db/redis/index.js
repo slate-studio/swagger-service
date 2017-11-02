@@ -1,6 +1,5 @@
 'use strict'
 
-const logger   = require('../../log')
 const bluebird = require('bluebird')
 const redis    = require('redis')
 
@@ -13,7 +12,7 @@ const connect = config => {
   const options = {
     host,
     port,
-    enable_offline_queue: false,
+    // enable_offline_queue: false,
     retry_strategy: options => {
       if (options.total_retry_time > 1000 * 60 * 60) {
         return new Error('[redis] Retry time exhausted')
@@ -23,10 +22,11 @@ const connect = config => {
     }
   }
 
+  const client = redis.createClient(options)
+  client.on('error', error => log.error('[redis] Error:', error))
+
   return new Promise(resolve => {
-    const client = redis.createClient(port, host)
     client.on('ready', () => resolve(client))
-    client.on('error', error => log.error('[redis] Error:', error))
   })
 }
 

@@ -28,30 +28,6 @@ describe('Rabbitmq', () => {
       })
   })
 
-  it('should listen topic', done => {
-    const handlers = {
-      'demo.topic': msg => {
-        expect(msg.object.demo).to.equal('data')
-        done()
-      }
-    }
-
-    listener = Listener(handlers)
-    listener.listen()
-      .then(() => {
-        const namespace = {
-          authenticationToken,
-          requestId: 'REQUEST_ID'
-        }
-
-        const requestNamespace = new RequestNamespace(namespace)
-        requestNamespace.save([], () => {
-          const message = Message({ demo: 'data' })
-          message.publish('demo.topic')
-        })
-      })
-  })
-
   it('should listen to queue', done => {
     const handlers = {
       'demoQueue': (msg, next) => {
@@ -73,6 +49,30 @@ describe('Rabbitmq', () => {
         requestNamespace.save([], () => {
           const message = Message({ demo: 'data' })
           message.send('demoQueue')
+        })
+      })
+  })
+
+  it('should listen topic', done => {
+    const handlers = {
+      'demo.topic': msg => {
+        expect(msg.object.demo).to.equal('data')
+        done()
+      }
+    }
+
+    listener = Listener(handlers)
+    listener.listen()
+      .then(() => {
+        const namespace = {
+          authenticationToken,
+          requestId: 'REQUEST_ID'
+        }
+
+        const requestNamespace = new RequestNamespace(namespace)
+        requestNamespace.save([], () => {
+          const message = Message({ demo: 'data' })
+          message.publish('demo.topic')
         })
       })
   })
