@@ -34,7 +34,7 @@ streams = _.compact(streams)
 
 // LOGGER =====================================================================
 
-const name  = processName || _.get(config, 'service.name', 'NO_NAME')
+const name  = processName || _.get(C, 'service.name', 'NO_NAME')
 const level = _.get(C, 'log.level', 'info')
 const serializers = Bunyan.stdSerializers
 
