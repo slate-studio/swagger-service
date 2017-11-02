@@ -7,7 +7,7 @@ const redis = require('./redis')
 
 const connectRedis = require('../db/redis').connect
 
-class Msg {
+class ConnectMsg {
   constructor(config) {
     this.config = config
   }
@@ -62,9 +62,8 @@ exports = module.exports = config => {
     throw new Error('[msg] Logger has to be initialized, `global.log` is not defined')
   }
 
-  const msg = new Msg(config)
-
+  const msg = new ConnectMsg(config)
   return msg.connect()
 }
 
-exports.Msg = Msg
+exports.ConnectMsg = ConnectMsg

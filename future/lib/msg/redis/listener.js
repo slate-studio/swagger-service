@@ -25,26 +25,35 @@ class Listener {
     })
   }
 
+  _duplicateClient() {
+    const client = this.client.duplicate()
+    return new Promise(resolve => {
+      client.on('error', error => log.error('[redis] Error:', error))
+      client.on('ready', () => resolve(client))
+    })
+  }
+
   _listenTopics() {
     if (_.isEmpty(this.topics)) {
       return
     }
 
-    const topicsClient = this.client.duplicate()
+    return this._duplicateClient()
+      .then(client => {
+        client.on('message', (channel, message) => {
+          const handler = this.handlers[channel]
 
-    topicsClient.on('message', (channel, message) => {
-      const handler = this.handlers[channel]
+          if (handler) {
+            const msg = new Msg(channel, message)
+            msg.exec(handler)
+          }
+        })
 
-      if (handler) {
-        const msg = new Msg(channel, message)
-        msg.exec(handler)
-      }
-    })
-
-    _.forEach(this.topics, address => {
-      log.info('[redis] Listen topic', address)
-      topicsClient.subscribe(address)
-    })
+        _.forEach(this.topics, address => {
+          log.info('[redis] Listen topic', address)
+          client.subscribe(address)
+        })
+      })
   }
 
   _listenQueues() {
@@ -52,14 +61,12 @@ class Listener {
       return
     }
 
-    const queuesClient = this.client.duplicate()
-
     const next = () => log.info('[msg] Message succesfully handled')
     const args = _.clone(this.queues)
     args.push(BRPOP_DELAY_IN_SECONDS)
 
     const listen = () => {
-      queuesClient.brpopAsync(args)
+      this.client.brpopAsync(args)
         .then(value => {
           if (value) {
             const [ qname, message ] = value
