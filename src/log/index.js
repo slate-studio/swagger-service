@@ -65,15 +65,11 @@ const log = {
 }
 
 process.on('uncaughtException', err => {
-  new Promise((resolve) => {
-    log.fatal('Uncaught exception:', err)
-    resolve()
-  }).then(res => process.exit(1))
+  log.fatal('Uncaught exception:', err)
 })
 
 process.on('unhandledRejection', (reason, p) => {
   log.fatal('Unhandled rejection at:', p, 'reason:', reason)
-  setImmediate(() => process.exit(1))
 })
 
 exports = module.exports = log

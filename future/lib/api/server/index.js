@@ -98,7 +98,6 @@ class Server {
       })
       .catch(error => {
         log.fatal('[api] Initialization error: ', error)
-        process.exit(1)
       })
   }
 }

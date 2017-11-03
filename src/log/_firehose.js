@@ -10,13 +10,19 @@ exports = module.exports = () => {
   const level  = _.get(C, 'log.level', 'info')
   const type   = 'raw' // 'stream'
 
+  const hasPriority = function (chank) {
+    return (chank.level >= 50)
+  }
+
   const profile = _.get(C, 'log.firehose.credentials.profile')
   if (profile) {
     config.credentials = new aws.SharedIniFileCredentials({ profile })
   }
 
+  config.buffer = { hasPriority }
+
   if (process.env.NODE_ENV !== 'production') {
-    config.buffer = { timeout: 0.5 }
+    config.buffer = _.assign(config.buffer, { timeout: 0.5 })
   }
 
   const stream = bunuanFirehose.createStream(config)

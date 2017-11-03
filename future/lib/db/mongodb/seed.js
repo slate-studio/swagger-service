@@ -29,6 +29,5 @@ module.exports = models => {
     })
     .catch(error => {
       log.error('[mongodb] Seed error:', error)
-      process.exit(1)
     })
 }
