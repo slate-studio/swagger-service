@@ -31,15 +31,16 @@ const updateServiceSpec = (service) => {
 
       }
     })
-    .catch(error => {
-      log.error(service.name, error)
-      process.exit(1)
-    })
 }
 
 if (C.services) {
   const updates = _.map(C.services, updateServiceSpec)
-  Promise.all(updates).then(() => log.info('DONE'))
+  Promise.all(updates)
+    .then(() => log.info('DONE'))
+    .catch(error => {
+      log.error(service.name, error)
+      setTimeout(() => process.exit(1), 1000)
+    })
 
 } else {
   log.info('No services found in config/default.yaml')

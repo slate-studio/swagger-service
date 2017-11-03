@@ -108,7 +108,7 @@ const proc = (msg, options={}) => {
     })
     .then(() => {
       log.info('Request successfully processed.')
-      process.exit(0)
+      setTimeout(() => process.exit(0), 1000)
     })
     .catch(err => {
       log.error(err)
@@ -124,7 +124,9 @@ const proc = (msg, options={}) => {
 
       return rabbitmq.send({ queue, object })
         .then(startService)
-        .then(() => process.exit(1))
+        .then(() => {
+          setTimeout(() => process.exit(1), 1000)
+        })
     })
 }
 
