@@ -66,10 +66,12 @@ const log = {
 
 process.on('uncaughtException', err => {
   log.fatal('Uncaught exception:', err)
+  setTimeout(() => process.exit(1), 1000)
 })
 
 process.on('unhandledRejection', (reason, p) => {
   log.fatal('Unhandled rejection at:', p, 'reason:', reason)
+  setTimeout(() => process.exit(1), 1000)
 })
 
 exports = module.exports = log

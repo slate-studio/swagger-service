@@ -39,6 +39,7 @@ if (C.services) {
   	.then(() => log.info('DONE'))
   	.catch(error => {
       log.error(service.name, error)
+      setTimeout(() => process.exit(1), 1000)
     })
 
 } else {

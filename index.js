@@ -38,6 +38,7 @@ exports = module.exports = () => {
     .then(() => express(service))
     .catch(error => {
       log.error('Service initialization error: ', error)
+      setTimeout(() => process.exit(1), 1000)
     })
 
   return service
