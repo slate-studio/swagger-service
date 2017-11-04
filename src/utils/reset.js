@@ -9,6 +9,7 @@ const request  = require('./request')
 const spawn    = require('child_process').spawn
 const fs       = require('fs')
 const rootPath = process.cwd()
+const exitTimeout = 1000
 
 const SEED_DATA_PATH = `${rootPath}/db/seed`
 const SEED_TEST_PATH = `${rootPath}/db/test`
@@ -108,7 +109,7 @@ const proc = (msg, options={}) => {
     })
     .then(() => {
       log.info('Request successfully processed.')
-      setTimeout(() => process.exit(0), 1000)
+      setTimeout(() => process.exit(0), exitTimeout)
     })
     .catch(err => {
       log.error(err)
@@ -125,7 +126,7 @@ const proc = (msg, options={}) => {
       return rabbitmq.send({ queue, object })
         .then(startService)
         .then(() => {
-          setTimeout(() => process.exit(1), 1000)
+          setTimeout(() => process.exit(1), exitTimeout)
         })
     })
 }

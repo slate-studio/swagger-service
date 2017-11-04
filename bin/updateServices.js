@@ -5,6 +5,8 @@ const request  = service.utils.request
 const rootPath = process.cwd()
 const fs       = require('fs')
 
+const exitTimeout = 1000
+
 const updateServiceSpec = (service) => {
   const [hostname, port] = service.host.split(':')
 
@@ -39,7 +41,7 @@ if (C.services) {
     .then(() => log.info('DONE'))
     .catch(error => {
       log.error(service.name, error)
-      setTimeout(() => process.exit(1), 1000)
+      setTimeout(() => process.exit(1), exitTimeout)
     })
 
 } else {
