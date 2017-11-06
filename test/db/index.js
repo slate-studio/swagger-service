@@ -3,6 +3,6 @@
 describe('Db:', () => {
 
   require('./redis')
-  // require('./mongodb')
+  require('./mongodb')
 
 })

@@ -20,7 +20,7 @@ describe('autoIncrement', () => {
     expect(() => userSchema.plugin(autoIncrement))
       .to.throw('Model name is not defined in options')
 
-    userSchema.plugin(autoIncrement, { model: 'User' })
+    userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
     const User  = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -40,7 +40,7 @@ describe('autoIncrement', () => {
       dept: String
     })
 
-    userSchema.plugin(autoIncrement, { model: 'User', field: 'userId' })
+    userSchema.plugin(autoIncrement, { model: 'User', field: 'userId', mongoose })
 
     const User  = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -60,7 +60,7 @@ describe('autoIncrement', () => {
       dept: String
     })
 
-    userSchema.plugin(autoIncrement, { model: 'User', startAt: 3 })
+    userSchema.plugin(autoIncrement, { model: 'User', startAt: 3, mongoose })
 
     const User  = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -80,7 +80,7 @@ describe('autoIncrement', () => {
       dept: String
     })
 
-    userSchema.plugin(autoIncrement, { model: 'User', incrementBy: 5 })
+    userSchema.plugin(autoIncrement, { model: 'User', incrementBy: 5, mongoose })
 
     const User = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -100,7 +100,7 @@ describe('autoIncrement', () => {
       dept: String
     })
 
-    userSchema.plugin(autoIncrement, { model: 'User' })
+    userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
     const User = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -129,7 +129,7 @@ describe('autoIncrement', () => {
       dept: String
     })
 
-    userSchema.plugin(autoIncrement, { model: 'User' })
+    userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
     const User  = mongoose.model('User', userSchema)
     const user1 = new User({ name: 'Charlie', dept: 'Support', 'integerId': 1.2 })
@@ -154,7 +154,7 @@ describe('autoIncrement', () => {
         dept: String
       })
 
-      userSchema.plugin(autoIncrement, { model: 'User' })
+      userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
       const User = mongoose.model('User', userSchema)
       const user1 = new User({ name: 'Charlie', dept: 'Support' })
@@ -184,7 +184,7 @@ describe('autoIncrement', () => {
         dept: String
       })
 
-      userSchema.plugin(autoIncrement, { model: 'User' })
+      userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
       const User = mongoose.model('User', userSchema)
       const user = new User({name: 'Charlie', dept: 'Support'})
@@ -211,7 +211,7 @@ describe('autoIncrement', () => {
         dept: String
       })
 
-      userSchema.plugin(autoIncrement, { model: 'User' })
+      userSchema.plugin(autoIncrement, { model: 'User', mongoose })
 
       const User = mongoose.model('User', userSchema)
       const user = new User({ name: 'Charlie', dept: 'Support' })

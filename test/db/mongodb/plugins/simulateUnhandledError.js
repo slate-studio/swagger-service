@@ -47,22 +47,24 @@ describe('simulateUnhandledError', () => {
     testSchema.plugin(simulateUnhandledError)
 
     const Test  = mongoose.model('Test', testSchema)
-    Test.schema.simulateUnhandledError(2)
+    Test.schema.simulateUnhandledError(1)
 
     const test1 = new Test({ field: 'field1' })
     const test2 = new Test({ field: 'field2' })
 
     Promise.resolve()
-      .then(() => {
-        return test1.save()
-          .then(test => test.should.have.property('field', 'field1'))
+      .then(() => test1.save())
+      .then(test => test.should.have.property('field', 'field1'))
+      .catch(() => done(new Error('There was an error while saving first object')))
+      .then(() => test2.save())
+      .then(() => done(new Error('No raise `UnhandledError` exception')))
+      .catch(error => {
+        if (error.name !== 'UnhandledMongodbError') {
+          return done(error)
+        }
+
+        done()
       })
-      .then(() => {
-        return test2.save()
-          .then(() => done('No raise `UnhandledError` exception'))
-          .catch((err) => done())
-      })
-      .catch(() => done('There was an error while saving'))
   })
 
 })
