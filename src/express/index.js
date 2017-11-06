@@ -1,5 +1,7 @@
 'use strict'
 
+const exitTimeout = 1000
+
 const connect = (service) => {
   if (C.service.port) {
     const port = C.service.port
@@ -35,7 +37,7 @@ const connect = (service) => {
       })
       .catch(error => {
         log.error('SwaggerMiddleware', error)
-        process.exit(1)
+        setTimeout(() => process.exit(1), exitTimeout)
       })
   }
 

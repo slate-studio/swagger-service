@@ -6,6 +6,8 @@ const config  = require('config')
 const logger  = require('../../log')
 const mongodb = require('./index')
 
+const exitTimeout = 1000
+
 module.exports = models => {
   return logger(config)
     .then(() => mongodb(config.mongodb))
@@ -29,6 +31,6 @@ module.exports = models => {
     })
     .catch(error => {
       log.error('[mongodb] Seed error:', error)
-      setTimeout(() => process.exit(1), 1000)
+      setTimeout(() => process.exit(1), exitTimeout)
     })
 }

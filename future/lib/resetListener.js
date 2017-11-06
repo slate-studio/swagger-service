@@ -19,6 +19,7 @@ const name = _.get(config, 'service.name', 'NO_NAME')
 const host = _.get(config, 'server.host')
 const port = _.get(config, 'server.port')
 
+const exitTimeout    = 1000
 const rootPath       = process.cwd()
 const SEED_DATA_PATH = `${rootPath}/db/seed`
 const SEED_TEST_PATH = `${rootPath}/db/test`
@@ -118,7 +119,7 @@ const proc = (msg, options={}) => {
     })
     .then(() => {
       log.info('Request successfully processed.')
-      process.exit(0)
+      setTimeout(() => process.exit(0), exitTimeout)
     })
     .catch(err => {
       log.error(err)
@@ -134,7 +135,9 @@ const proc = (msg, options={}) => {
 
       return message.send(queue)
         .then(startService)
-        .then(() => process.exit(1))
+        .then(() => {
+          setTimeout(() => process.exit(1), exitTimeout)
+        })
     })
 }
 

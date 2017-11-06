@@ -13,6 +13,8 @@ const Bunyan      = require('bunyan')
 
 const RequestNamespace = require('../utils/requestNamespace')
 
+const exitTimeout = 1000
+
 // STREAMS ====================================================================
 
 const stdout = require('./_stdout')()
@@ -66,12 +68,12 @@ const log = {
 
 process.on('uncaughtException', err => {
   log.fatal('Uncaught exception:', err)
-  setTimeout(() => process.exit(1), 1000)
+  setTimeout(() => process.exit(1), exitTimeout)
 })
 
 process.on('unhandledRejection', (reason, p) => {
   log.fatal('Unhandled rejection at:', p, 'reason:', reason)
-  setTimeout(() => process.exit(1), 1000)
+  setTimeout(() => process.exit(1), exitTimeout)
 })
 
 exports = module.exports = log

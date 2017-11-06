@@ -3,6 +3,8 @@
 const connect = require('./connect')
 const insert  = require('./insert')
 
+const exitTimeout = 1000
+
 module.exports = (hash) => {
   return connect()
     .then((connection) => {
@@ -16,6 +18,9 @@ module.exports = (hash) => {
             setTimeout(() => connection.close().then(resolve), 2000)
           })
         })
-        .catch(error => log.error('Seed error:', error))
+        .catch(error => {
+          log.error('Seed error:', error)
+          setTimeout(() => process.exit(1), exitTimeout)
+        })
     })
 }

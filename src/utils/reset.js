@@ -9,6 +9,7 @@ const request  = require('./request')
 const spawn    = require('child_process').spawn
 const fs       = require('fs')
 const rootPath = require('app-root-path')
+const exitTimeout = 1000
 
 const SEED_DATA_PATH = `${rootPath}/db/seed`
 const SEED_TEST_PATH = `${rootPath}/db/test`
@@ -107,7 +108,7 @@ const proc = (msg, options={}) => {
     })
     .then(() => {
       log.info('Request successfully processed.')
-      process.exit(0)
+      setTimeout(() => process.exit(0), exitTimeout)
     })
     .catch(err => {
       log.error(err)
@@ -124,7 +125,9 @@ const proc = (msg, options={}) => {
       const message = Message(object)
       return message.send(queue)
         .then(startService)
-        .then(() => process.exit(1))
+        .then(() => {
+          setTimeout(() => process.exit(1), exitTimeout)
+        })
     })
 }
 
