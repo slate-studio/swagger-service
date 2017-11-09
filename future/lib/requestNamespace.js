@@ -69,11 +69,7 @@ class RequestNamespace {
       return this.localNamespace
     }
 
-    const keys      = this.clsNamespace.get('_keys')
-    const values    = _.map(keys, key => this.clsNamespace.get(key))
-    const namespace = _.zipObject(keys, values)
-
-    return namespace
+    return this.clsNamespace.active
   }
 }
 

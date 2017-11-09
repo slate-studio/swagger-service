@@ -1,53 +1,47 @@
 'use strict'
 
-module.exports = (mongoose, connection) => {
-  const debug = C.mongodb.debug
-  mongoose.set('debug', debug)
+const RequestNamespace = require('../../../future/lib/requestNamespace')
 
-  // 0 - No logging;
-  // 1 - Log queries without indexes;
-  // 2 - Log all queries;
-  let indexProfilingLevel = C.mongodb.indexProfilingLevel || '1'
-  indexProfilingLevel = parseInt(indexProfilingLevel)
+const IGNORE_METHODS = [
+  'createIndex', 'drop'
+]
 
-  if (indexProfilingLevel > 0) {
-    mongoose.set('debug', (coll, method, query, options) => {
+const logExplanation = (explanation, collection, method, query, options) => {
+  const path  = 'queryPlanner.winningPlan.inputStage.indexName'
+  const index = _.get(explanation, path, null)
 
-      const queryMethods = [
-        'find',
-        'findOne',
-        'findAndUpdate',
-        'findAndModify',
-        'count',
-        'update'
-      ]
+  if (!_.includes(IGNORE_METHODS, method)) {
+    if (_.isEmpty(query)) {
+      const msg = '[mongodb]: Query is empty, potentially slow operation\n'
+      log.warn(msg, { collection, method, query, options, index })
+      return
+    }
 
-      if (coll !== 'identitycounters' && _.indexOf(queryMethods, method) !== -1) {
-
-        const collection = connection.db.collection(coll)
-
-        collection.find(query).explain((err, explaination) => {
-          const indexPath = 'queryPlanner.winningPlan.inputStage.indexName'
-          const useIndex  = _.get(explaination, indexPath, null)
-
-          const jsonQuery   = JSON.stringify(query)
-          const jsonOptions = JSON.stringify(options)
-
-          if (useIndex === null) {
-            const msg = `NO INDEX for ${coll}.${method} QUERY: ${jsonQuery} \
-OPTIONS: ${jsonOptions}`
-            log.warn(msg)
-          }
-
-          if (useIndex !== null && indexProfilingLevel === 2) {
-            const msg = `${coll}.${method} QUERY: ${jsonQuery} OPTIONS: \
-${jsonOptions} INDEX: ${useIndex}`
-
-            log.info(msg)
-          }
-
-        })
-      }
-    })
+    if (index === null) {
+      const msg = '[mongodb]: Query has no index\n'
+      log.warn(msg, { collection, method, query, options })
+      return
+    }
   }
+
+  log.info('[mongodb]:\n', { collection, method, query, options, index })
+}
+
+module.exports = (_mongoose, _connection) => {
+  _mongoose.set('debug', (collection, method, query, options) => {
+    const requestNamespace = new RequestNamespace()
+    const namespace        = requestNamespace.getAll()
+
+    _connection.db.collection(collection)
+      .find(query).explain((err, explanation) => {
+        if (!namespace) {
+          return logExplanation(explanation, collection, method, query, options)
+        }
+
+        const requestNamespace = new RequestNamespace(namespace)
+        requestNamespace.save([ ], () => {
+          logExplanation(explanation, collection, method, query, options)
+        })
+      })
+  })
 }
