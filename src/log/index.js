@@ -68,12 +68,18 @@ const log = {
 
 process.on('uncaughtException', err => {
   log.fatal('Uncaught exception:', err)
-  setTimeout(() => process.exit(1), exitTimeout)
+
+  if (process.env.NODE_ENV !== 'test') {
+    setTimeout(() => process.exit(1), exitTimeout)
+  }
 })
 
 process.on('unhandledRejection', (reason, p) => {
   log.fatal('Unhandled rejection at:', p, 'reason:', reason)
-  setTimeout(() => process.exit(1), exitTimeout)
+
+  if (process.env.NODE_ENV !== 'test') {
+    setTimeout(() => process.exit(1), exitTimeout)
+  }
 })
 
 exports = module.exports = log

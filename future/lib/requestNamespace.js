@@ -30,11 +30,7 @@ class RequestNamespace {
     _.forEach(emitters, emitter => this.clsNamespace.bindEmitter(emitter))
 
     this.clsNamespace.run(() => {
-      this.localNamespace._keys = _.keys(this.localNamespace)
-
       _.forEach(this.localNamespace, (value, key) => this.clsNamespace.set(key, value))
-
-      delete this.localNamespace._keys
 
       if (callback) {
         callback()
@@ -48,10 +44,6 @@ class RequestNamespace {
     }
 
     if (this.clsNamespace) {
-      const keys    = this.clsNamespace.get('_keys')
-      const newKeys = _.chain(keys).union([ key ]).uniq().value()
-
-      this.clsNamespace.set('_keys', newKeys)
       this.clsNamespace.set(key, value)
     }
   }
@@ -69,7 +61,7 @@ class RequestNamespace {
       return this.localNamespace
     }
 
-    return this.clsNamespace.active
+    return this.clsNamespace.active || {}
   }
 }
 
