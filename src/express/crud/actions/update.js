@@ -10,7 +10,7 @@ module.exports = (modelName, options={}) => {
 
     const id          = _.get(req, 'swagger.params.id.value', 0)
     const query       = helpers.buildFindOneQuery(req.defaultScope, id)
-    const params      = req.body
+    const params      = req.body || {}
     const operationId = req.swagger.operation.operationId
 
     log.info(operationId, query, params)

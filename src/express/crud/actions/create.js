@@ -7,7 +7,7 @@ module.exports = (modelName, options={}) => {
   return (req, res) => {
     helpers.setActionFilters(req, options)
 
-    const params      = req.body
+    const params      = req.body || {}
     const operationId = req.swagger.operation.operationId
 
     log.info(operationId, params)
