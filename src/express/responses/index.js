@@ -39,7 +39,7 @@ const errorResponse = (req, res, httpError, errorsList) => {
   }
 
   if (req.timedout) {
-    log.error('Request timeout, response is not sent')
+    log.error('Request timedout, response is not sent')
     return
   }
 
@@ -57,7 +57,7 @@ const errorResponse = (req, res, httpError, errorsList) => {
 module.exports = {
   successResponse: (req, res, result) => {
     if (req.timedout) {
-      log.error('Request timeout, response is not sent')
+      log.error('Request timedout, response is not sent')
       return
     }
 
@@ -66,7 +66,7 @@ module.exports = {
 
   createdResponse: (req, res, result) => {
     if (req.timedout) {
-      log.error('Request timeout, response is not sent')
+      log.error('Request timedout, response is not sent')
       return
     }
 
@@ -75,7 +75,7 @@ module.exports = {
 
   noContentResponse: (req, res) => {
     if (req.timedout) {
-      log.error('Request timeout, response is not sent')
+      log.error('Request timedout, response is not sent')
       return
     }
 
