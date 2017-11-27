@@ -38,6 +38,11 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
   }
 
+  if (res.hasFinished) {
+    log.warn('[swagger response] The response to the current request has already been sent')
+    return
+  }
+
   const errorsPlainObjects = processErrorsToArrayOfPlainObjects(errorsList)
 
   const statusCode = httpError.getStatusCode()
@@ -51,10 +56,20 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
 module.exports = {
   successResponse: (req, res, result) => {
+    if (res.hasFinished) {
+      log.warn('[swagger response] The response to the current request has already been sent')
+      return
+    }
+
     res.status(200).json(result)
   },
 
   createdResponse: (req, res, result) => {
+    if (res.hasFinished) {
+      log.warn('[swagger response] The response to the current request has already been sent')
+      return
+    }
+
     res.status(201).json(result)
   },
 
