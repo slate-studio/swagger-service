@@ -38,8 +38,8 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
   }
 
-  if (res.hasFinished) {
-    log.warn('[swagger response] The response to the current request has already been sent')
+  if (req.timedout) {
+    log.error('Request timeout, response is not sent')
     return
   }
 
@@ -56,8 +56,8 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
 module.exports = {
   successResponse: (req, res, result) => {
-    if (res.hasFinished) {
-      log.warn('[swagger response] The response to the current request has already been sent')
+    if (req.timedout) {
+      log.error('Request timeout, response is not sent')
       return
     }
 
@@ -65,8 +65,8 @@ module.exports = {
   },
 
   createdResponse: (req, res, result) => {
-    if (res.hasFinished) {
-      log.warn('[swagger response] The response to the current request has already been sent')
+    if (req.timedout) {
+      log.error('Request timeout, response is not sent')
       return
     }
 
@@ -74,6 +74,11 @@ module.exports = {
   },
 
   noContentResponse: (req, res) => {
+    if (req.timedout) {
+      log.error('Request timeout, response is not sent')
+      return
+    }
+
     res.set('Content-Type', 'application/json').status(204).end()
   },
 
