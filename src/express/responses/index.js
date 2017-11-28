@@ -38,6 +38,11 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
   }
 
+  if (req.timedout) {
+    log.error('Request timedout, response is not sent')
+    return
+  }
+
   const errorsPlainObjects = processErrorsToArrayOfPlainObjects(errorsList)
 
   const statusCode = httpError.getStatusCode()
@@ -51,14 +56,29 @@ const errorResponse = (req, res, httpError, errorsList) => {
 
 module.exports = {
   successResponse: (req, res, result) => {
+    if (req.timedout) {
+      log.error('Request timedout, response is not sent')
+      return
+    }
+
     res.status(200).json(result)
   },
 
   createdResponse: (req, res, result) => {
+    if (req.timedout) {
+      log.error('Request timedout, response is not sent')
+      return
+    }
+
     res.status(201).json(result)
   },
 
   noContentResponse: (req, res) => {
+    if (req.timedout) {
+      log.error('Request timedout, response is not sent')
+      return
+    }
+
     res.set('Content-Type', 'application/json').status(204).end()
   },
 

@@ -1,4 +1,17 @@
 'use strict'
-var timeout = require('connect-timeout')
+const timeout = require('connect-timeout')
 
-module.exports = timeout('15s')
+const executionTimeout = 15000
+
+module.exports =  (req, res, next) => {
+  const handler = timeout(executionTimeout)
+  handler(req, res, err => {
+    if (err) {
+      log.error(err)
+      const message = err.message
+      return res.status(err.statusCode).json({ message })
+    }
+
+    next()
+  })
+}
