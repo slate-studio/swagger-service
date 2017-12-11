@@ -1,19 +1,28 @@
 'use strict'
 
+const cors       = require('cors')
+const bodyParser = require('body-parser')
+
 const exitTimeout = 1000
 
 const connect = (service) => {
   if (C.service.port) {
-    const port = C.service.port
+    const port           = C.service.port
+    const Authentication = _.get(C, 'service.Authentication', null)
+    const bodySizeLimit  = _.get(C, 'server.bodySizeLimit', '10mb')
+    const corsConfig     = _.get(C, 'server.cors', {})
 
-    const cors         = require('cors')
     const responseTime = require('response-time')
     const middleware   = require('./middleware')
 
-    if (process.env.NODE_ENV !== 'production') {
-      service.use(cors())
+    if (!Authentication) {
+      log.warn('`service.Authentication` class is not defined.')
     }
 
+    service.set('Authentication', Authentication)
+
+    service.use(bodyParser.json( { limit: bodySizeLimit } ))
+    service.use(cors(corsConfig))
     service.use(responseTime())
     service.use(middleware.namespace)
     service.use(middleware.timeout)

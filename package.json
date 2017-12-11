@@ -56,6 +56,7 @@
     "bunyan": "^1.8.12",
     "bunyan-firehose": "git+https://github.com/slate-studio/bunyan-firehose.git#v0.0.5",
     "bunyan-logstash": "^0.3.4",
+    "body-parser": "^1.18.2",
     "cls-bluebird": "^2.0.1",
     "config": "^1.26.2",
     "connect-timeout": "^1.9.0",
