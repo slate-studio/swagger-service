@@ -9,8 +9,8 @@ const connect = (service) => {
   if (C.service.port) {
     const port           = C.service.port
     const Authentication = _.get(C, 'swagger.Authentication', null)
-    const bodySizeLimit  = _.get(C, 'server.bodySizeLimit', '10mb')
-    const corsConfig     = _.get(C, 'server.cors', {})
+    const bodySizeLimit  = _.get(C, 'service.bodySizeLimit', '10mb')
+    const corsConfig     = _.get(C, 'service.cors', {})
 
     const responseTime = require('response-time')
     const middleware   = require('./middleware')
