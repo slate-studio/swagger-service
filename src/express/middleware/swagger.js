@@ -34,6 +34,8 @@ const buildConfig = () => {
 exports = module.exports = (service) => {
   const config = buildConfig()
 
+  C.swagger = _.assign(C.swagger, { basePath: config.swagger.basePath })
+  
   return new Promise((resolve, reject) => {
     swaggerMiddleware.create(config, (error, middleware) => {
       if (error) {

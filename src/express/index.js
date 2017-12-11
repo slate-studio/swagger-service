@@ -8,7 +8,7 @@ const exitTimeout = 1000
 const connect = (service) => {
   if (C.service.port) {
     const port           = C.service.port
-    const Authentication = _.get(C, 'service.Authentication', null)
+    const Authentication = _.get(C, 'swagger.Authentication', null)
     const bodySizeLimit  = _.get(C, 'server.bodySizeLimit', '10mb')
     const corsConfig     = _.get(C, 'server.cors', {})
 
