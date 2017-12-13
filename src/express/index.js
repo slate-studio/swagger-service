@@ -1,8 +1,13 @@
 'use strict'
 
+const fs         = require('fs')
+const yaml       = require('js-yaml')
+const rootPath   = require('app-root-path')
 const cors       = require('cors')
 const bodyParser = require('body-parser')
+const responses  = require('./responses')
 
+const yamlPath    = `${rootPath}/api/swagger/swagger.yaml`
 const exitTimeout = 1000
 
 const connect = (service) => {
@@ -29,7 +34,13 @@ const connect = (service) => {
     service.use(middleware.logger)
     service.use(middleware.session)
     service.use(middleware.scope)
+
     service.use('/', middleware.health)
+    service.use('/swagger', (req, res) => {
+      const spec = yaml.safeLoad(fs.readFileSync(yamlPath, 'utf8'))
+      spec.host  = `${C.service.host}:${C.service.port}`
+      responses.successResponse(req, res, spec)
+    })
 
     if (!middleware.swagger.isEnabled()) {
       log.info('No API specification found')
