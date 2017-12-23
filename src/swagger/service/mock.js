@@ -11,7 +11,7 @@ const services      = {}
 const dependencies  = {}
 
 const rootPath      = process.cwd()
-const yamlPath      = `${rootPath}/src/api/swagger.yaml`
+const yamlPath      = `${rootPath}/api/swagger/swagger.yaml`
 const yml           = fs.readFileSync(yamlPath, 'utf8')
 const spec          = yaml.safeLoad(yml)
 
@@ -39,8 +39,6 @@ const HTTP_SUCCESS_RESPONSES = {
 class Mock {
   constructor(baseOperationId) {
     this.baseOperationId = baseOperationId
-    const serviceSpec    = require(`${rootPath}/src/api/swagger.json`)
-    this.baseOperationDependencies = serviceSpec.path
   }
 
   setMock(destination, params, response = {}) {
