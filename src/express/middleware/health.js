@@ -1,13 +1,16 @@
 'use strict'
 
-const router    = require('express').Router()
-const cors      = require('cors')
-const rootPath  = require('app-root-path')
-const pkg       = require(`${rootPath}/package.json`)
-const version   = pkg.version
-const responses = require('../responses')
-const request   = require('../../utils').request
-const path      = '/health'
+const router      = require('express').Router()
+const cors        = require('cors')
+const rootPath    = require('app-root-path')
+const serviceSpec = require(`${rootPath}/src/api/swagger.json`)
+const pkg         = require(`${rootPath}/package.json`)
+const version     = pkg.version
+const responses   = require('../responses')
+const request     = require('../../utils').request
+const path        = '/health'
+
+const HEALTH_REQUEST_TIMEOUT = 1000
 
 const checkService = config => {
   const spec              = require(`${rootPath}/${config.spec}`)
@@ -20,18 +23,18 @@ const checkService = config => {
   const options = {
     hostname: hostname,
     port:     parseInt(port),
-    path:     '/swagger',
+    path:     '/health',
     method:   'GET',
-    timeout:  1000
+    timeout:  HEALTH_REQUEST_TIMEOUT
   }
 
   return request(options)
     .then(res => {
-      const remoteVersion      = res.object.info.version
+      const remoteVersion      = res.object.apiVersion
       const remoteVersionMajor = remoteVersion.split('.')[0]
 
       if (localVersionMajor !== remoteVersionMajor) {
-        const message = `Specification version mismatch, expected: v${localVersion}, \
+        const message = `Specification mismatch, expected: v${localVersion}, \
 returned: v${remoteVersion}`
 
         return { name: name, message: message }
@@ -45,14 +48,17 @@ returned: v${remoteVersion}`
 }
 
 const health = (req, res) => {
+  const checkDependencies = (req.query.checkDependencies === 'true') ? true : false
+
   const response = {
-    name:    C.service.name,
-    version: version,
-    status:  'OK',
-    errors:  []
+    name:       C.service.name,
+    version:    version,
+    apiVersion: serviceSpec.info.version,
+    status:     'OK',
+    errors:     []
   }
 
-  if (C.services) {
+  if (checkDependencies && C.services) {
     const checks = _.map(C.services, checkService)
 
     return Promise.all(checks)

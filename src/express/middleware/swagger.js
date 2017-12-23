@@ -3,6 +3,7 @@
 const swaggerMiddleware = require('swagger-express-mw')
 const errors            = require('../../errors')
 
+const _        = require('lodash')
 const fs       = require('fs')
 const yaml     = require('js-yaml')
 const rootPath = require('app-root-path')
@@ -45,6 +46,12 @@ exports = module.exports = (service) => {
       middleware.register(service)
 
       const authenticationToken = (req, spec, authenticationToken, callback) => {
+        if (!req.headers['x-original-operation-id']) {
+          const { operationId }                  = req.swagger.operation
+          req.headers['x-original-operation-id'] = operationId
+          req.requestNamespace.set('sourceOperationId', operationId)
+        }
+
         const Authentication = _.get(C, 'swagger.Authentication', null)
 
         if (!Authentication) {

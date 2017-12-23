@@ -24,6 +24,7 @@ const request = (...args) => {
   const addRequestHeaders = req => {
     const authenticationToken = namespace.get('authenticationToken')
     const requestId           = namespace.get('requestId')
+    const sourceOperationId   = namespace.get('sourceOperationId')
 
     if (authenticationToken) {
       req.headers['x-authentication-token'] = authenticationToken
@@ -31,6 +32,10 @@ const request = (...args) => {
 
     if (requestId) {
       req.headers['x-request-id'] = requestId
+    }
+
+    if (sourceOperationId) {
+      req.headers['x-original-operation-id'] = sourceOperationId
     }
 
     req.serviceName = service.name
@@ -103,7 +108,7 @@ class Service extends EventEmitter {
     })
 
     if (IS_TEST_ENVIRONMENT) {
-      this.mock = mock(spec)
+      mock(this.name, spec)
     }
 
   }
