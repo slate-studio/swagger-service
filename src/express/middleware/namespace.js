@@ -1,7 +1,7 @@
 'use strict'
 
-const RequestNamespace    = require('../../../feature/lib/requestNamespace')
-const getRequestNamespace = require('../../../feature/lib/getRequestNamespace')
+const RequestNamespace    = require('../../../future/lib/requestNamespace')
+const getRequestNamespace = require('../../../future/lib/getRequestNamespace')
 
 module.exports = (req, res, next) => {
   const { headers } = req
