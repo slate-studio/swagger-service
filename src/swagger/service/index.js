@@ -1,12 +1,12 @@
 'use strict'
 
-const cls           = require('continuation-local-storage')
-const namespace     = cls.getNamespace('requestNamespace')
-const nock          = require('nock')
-const SwaggerClient = require('swagger-client')
-const mock          = require('./mock')
-const EventEmitter  = require('events')
-const http          = require('./request/http')
+const cls              = require('continuation-local-storage')
+const RequestNamespace = require('../../../future/lib/requestNamespace')
+const nock             = require('nock')
+const SwaggerClient    = require('swagger-client')
+const mock             = require('./mock')
+const EventEmitter     = require('events')
+const http             = require('./request/http')
 
 const IS_TEST_ENVIRONMENT = [ 'test', 'gitlab' ].indexOf(process.env.NODE_ENV) > -1
 const CONNECTION_ERRORS   = [ 'ECONNRESET', 'EPIPE', 'ETIMEDOUT', 'ECONNREFUSED' ]
@@ -22,9 +22,10 @@ const request = (...args) => {
   const reject      = args[4]
 
   const addRequestHeaders = req => {
-    const authenticationToken = namespace.get('authenticationToken')
-    const requestId           = namespace.get('requestId')
-    const sourceOperationId   = namespace.get('sourceOperationId')
+    const requestNamespace    = new RequestNamespace()
+    const authenticationToken = requestNamespace.get('authenticationToken')
+    const requestId           = requestNamespace.get('requestId')
+    const sourceOperationId   = requestNamespace.get('sourceOperationId')
 
     if (authenticationToken) {
       req.headers['x-authentication-token'] = authenticationToken

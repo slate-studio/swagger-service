@@ -8,7 +8,8 @@ module.exports = (req, res, next) => {
 
   const requestId           = _.get(headers, 'x-request-id')
   const authenticationToken = _.get(headers, 'x-authentication-token')
-  const namespace           = { requestId }
+  const sourceOperationId   = _.get(headers, 'x-original-operation-id')
+  const namespace           = { requestId, sourceOperationId }
 
   _.extend(namespace, getRequestNamespace(authenticationToken))
 
