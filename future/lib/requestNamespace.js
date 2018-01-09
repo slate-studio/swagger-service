@@ -9,6 +9,13 @@ const NAMESPACE_NAME = 'requestNamespace'
 const clsNamespace   = cls.createNamespace(NAMESPACE_NAME)
 require('cls-bluebird')(clsNamespace)
 
+class UndefinedNamespaceError extends Error {
+  constructor() {
+    super('Namespace is not defined')
+    this.name = this.constructor.name
+  }
+}
+
 class RequestNamespace {
   constructor(namespace) {
     if (namespace) {
@@ -20,9 +27,9 @@ class RequestNamespace {
     }
   }
 
-  save(emitters = [], callback = null) {
+  save(emitters = [], callback) {
     if (!this.localNamespace) {
-      throw new Error('RequestNamespace: localNamespace is not set')
+      throw new UndefinedNamespaceError()
     }
 
     this.clsNamespace = cls.getNamespace('requestNamespace')
@@ -32,9 +39,7 @@ class RequestNamespace {
     this.clsNamespace.run(() => {
       _.forEach(this.localNamespace, (value, key) => this.clsNamespace.set(key, value))
 
-      if (callback) {
-        callback()
-      }
+      callback()
     })
   }
 

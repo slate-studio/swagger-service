@@ -2,9 +2,8 @@
 
 const _ = require('lodash')
 
-// const RequestNamespace    = require('../../requestNamespace')
-// const getRequestNamespace = require('../../getRequestNamespace')
-const RequestNamespace2 = require('../../../../src/utils/requestNamespace')
+const RequestNamespace    = require('../../requestNamespace')
+const getRequestNamespace = require('../../getRequestNamespace')
 
 class Msg {
   constructor(channel, json) {
@@ -15,34 +14,33 @@ class Msg {
     this.headers = source.headers
   }
 
-  exec(callback, next) {
+  exec(callback) {
     const requestId           = _.get(this.headers, 'requestId', null)
     const authenticationToken = _.get(this.headers, 'authenticationToken', null)
-    // const namespace           = { requestId }
-
-    const headers = {
-      'x-authentication-token': authenticationToken,
-      'x-request-id':           requestId
-    }
+    const sourceOperationId   = _.get(this.headers, 'sourceOperationId', null)
+    const namespace           = { requestId, sourceOperationId }
 
     // TODO: Implement support for authentication method.
-
     if (!authenticationToken) {
-      log.error('[msg] AuthenticationToken header is not defined, skiping message')
-
-      if (next) {
-        next()
-      }
-
+      log.warn('[msg] AuthenticationToken header is not defined, skiping message')
       return
     }
 
-    // _.extend(namespace, getRequestNamespace(authenticationToken))
+    _.extend(namespace, getRequestNamespace(authenticationToken))
 
-    // this.requestNamespace = new RequestNamespace(namespace)
+    this.requestNamespace = new RequestNamespace(namespace)
+    this.requestNamespace.save([], async() => {
+      log.info(`[msg] Got message from ${this.channel}`)
 
-    this.requestNamespace = new RequestNamespace2(headers)
-    this.requestNamespace.save([], () => callback(this, next))
+      try {
+        await callback(this)
+        log.info('[msg] Message succesfully handled')
+
+      } catch (error) {
+        log.error('[msg] Message handler error:', error)
+
+      }
+    })
   }
 }
 
