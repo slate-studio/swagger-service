@@ -18,7 +18,7 @@ module.exports = (options) => {
         try {
           res.object = JSON.parse(res.body)
 
-        } cache(error) {
+        } catch (error) {
           reject(error)
 
         }
