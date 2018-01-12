@@ -15,7 +15,13 @@ module.exports = (options) => {
       res.on('data', chunk => res.body = (res.body || '') + chunk)
 
       res.on('end', () => {
-        res.object = JSON.parse(res.body)
+        try {
+          res.object = JSON.parse(res.body)
+
+        } catch (error) {
+          reject(error)
+        }
+
         resolve(res)
       })
     })
