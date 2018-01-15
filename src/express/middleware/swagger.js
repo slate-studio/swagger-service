@@ -46,9 +46,9 @@ exports = module.exports = (service) => {
       middleware.register(service)
 
       const authenticationToken = (req, spec, authenticationToken, callback) => {
-        if (!req.headers['x-original-operation-id']) {
+        if (!req.headers['x-source-operation-id']) {
           const { operationId }                  = req.swagger.operation
-          req.headers['x-original-operation-id'] = operationId
+          req.headers['x-source-operation-id'] = operationId
           req.requestNamespace.set('sourceOperationId', operationId)
         }
 
