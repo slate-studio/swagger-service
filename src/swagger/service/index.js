@@ -28,7 +28,7 @@ const request = (...args) => {
     const sourceOperationId   = requestNamespace.get('sourceOperationId')
 
     if (authenticationToken) {
-      req.headers['x-authentication-token'] = authenticationToken
+      req.headers['authorization'] = authenticationToken
     }
 
     if (requestId) {

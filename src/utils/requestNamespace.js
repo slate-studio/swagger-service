@@ -9,7 +9,7 @@ class RequestNamespace {
 
   constructor(headers) {
     const authenticationToken = _
-      .get(headers, 'x-authentication-token', null)
+      .get(headers, 'authorization', null)
 
     const requestId = _
       .get(headers, 'x-request-id', null)

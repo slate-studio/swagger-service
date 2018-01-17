@@ -20,7 +20,7 @@ class Msg {
     // const namespace           = { requestId }
 
     const headers = {
-      'x-authentication-token': authenticationToken,
+      'authorization': authenticationToken,
       'x-request-id':           requestId
     }
 

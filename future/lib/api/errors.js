@@ -37,7 +37,7 @@ class DocumentNotFoundError extends Error {
 
 class AuthenticationError extends Error {
   constructor() {
-    super('Bad X-Authentication-Token')
+    super('Bad Authorization')
 
     this.name           = this.constructor.name
     this.httpStatusCode = 'Forbidden'

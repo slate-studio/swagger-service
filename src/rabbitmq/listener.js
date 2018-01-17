@@ -82,7 +82,7 @@ class Listener {
       return this.channel.ack(msg)
     }
 
-    const headers = { 'x-authentication-token': authenticationToken }
+    const headers = { 'authorization': authenticationToken }
 
     msg.requestNamespace = new RequestNamespace(headers)
     msg.requestNamespace.save({}, () => callback(msg, this.channel))

@@ -10,7 +10,7 @@ const createRequestNamespace = (req, res, next) => {
   const { headers } = req
 
   const requestId           = _.get(headers, 'x-request-id')
-  const authenticationToken = _.get(headers, 'x-authentication-token')
+  const authenticationToken = _.get(headers, 'authorization')
   const namespace           = { requestId }
 
   _.extend(namespace, getRequestNamespace(authenticationToken))

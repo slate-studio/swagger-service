@@ -2,17 +2,27 @@
 
 const _ = require('lodash')
 
-module.exports = authenticationToken => {
-  if (!authenticationToken) {
+module.exports = token => {
+   if (!token) {
     return {}
   }
 
-  const json   = new Buffer(authenticationToken, 'base64').toString()
-  const object = JSON.parse(json)
+  let payload
 
-  const namespace = { authenticationToken }
+  try {
+    const payloadBase64 = token.split('.')[1]
+    const json = new Buffer(payloadBase64, 'base64').toString()
+    payload = JSON.parse(json)
 
-  _.extend(namespace, object)
+  } catch (error) {
+    log.warn('Authentication token error:',  error)
+    throw new Error('Invalid authentication token')
+
+  }
+
+  const namespace = { authenticationToken: token }
+
+  _.extend(namespace, payload)
 
   return namespace
 }
